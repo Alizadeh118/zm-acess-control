@@ -1,0 +1,23 @@
+{
+  "dashboard": "Dashboard",
+  "dashboardItems": {
+    "versionOne": "Version One",
+    "versionTwo": "Version Two",
+    "versionThree": "Version Three",
+    "versionFour": "Version Four"
+  },
+  "notFound": {
+    "title": "خطا!",
+    "text": "متاسفانه چنین صفحه‌ای وجود ندارد!",
+    "button": "بازگشت به صفحه اصلی"
+  },
+  "search": "جستجو",
+  "session": {
+    "signIn": "ورود",
+    "register": "ایجاد حساب کاربری",
+    "forgot": "رمز عبور را فراموش کرده‌ام",
+    "username": "نام کاربری",
+    "password": "رمز عبور"
+
+  }
+}
