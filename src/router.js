@@ -17,8 +17,17 @@ const routes = [
     redirect: "/app/pages/blank",
 
     children: [
-     
-
+      // devices
+      {
+        path: "/devices",
+        component: () => import("./views/app/devices/list"),
+        children: [
+          // {
+          //   path: "edit",
+          //   component: () => import("./views/app/devices/edit")
+          // },
+        ]
+      },
    
       // pages
       {

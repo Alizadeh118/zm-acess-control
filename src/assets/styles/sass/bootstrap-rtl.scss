@@ -1,6 +1,6 @@
-@import "../vendor/bootstrap/functions";
-@import "../vendor/bootstrap/variables";
-@import "../vendor/bootstrap/mixins";
+@import "../vendor/bootstrap-rtl/functions";
+@import "../vendor/bootstrap-rtl/variables";
+@import "../vendor/bootstrap-rtl/mixins";
 
 // @import "~bootstrap/scss/functions.scss";
 // @import "~bootstrap/scss/variables.scss";
@@ -109,4 +109,8 @@
       @include border-radius(0);
     }
   }
+}
+
+.dir-ltr {
+  direction: ltr;
 }

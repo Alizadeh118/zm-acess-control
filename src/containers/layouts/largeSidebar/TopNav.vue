@@ -4,13 +4,13 @@
       <img src="@/assets/images/logo.png" alt />
     </div>
 
-    <div @click="sideBarToggle" class="menu-toggle">
+    <div @click="sideBarToggle" class="menu-toggle" v-if="0">
       <div></div>
       <div></div>
       <div></div>
     </div>
 
-    <div class="d-flex align-items-center">
+    <div class="d-flex align-items-center" v-if="0">
       <div class="search-bar" @click="toggleSearch">
         <input type="text" :placeholder="$t('search')" />
         <i class="search-icon text-muted i-Magnifi-Glass1"></i>
