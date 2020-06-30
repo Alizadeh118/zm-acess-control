@@ -10,6 +10,7 @@
   "dependencies": {
     "@johmun/vue-tags-input": "^2.1.0",
     "apexcharts": "^3.18.1",
+    "axios": "^0.19.2",
     "babel-polyfill": "^6.26.0",
     "bootstrap": "^4.4.1",
     "bootstrap-vue": "^2.10.1",
@@ -18,6 +19,7 @@
     "echarts": "^4.7.0",
     "es6-promise": "^4.2.8",
     "firebase": "^7.13.2",
+    "font-awesome": "^4.7.0",
     "mobile-device-detect": "^0.3.3",
     "nprogress": "^0.2.0",
     "v-calendar": "^1.0.3",
@@ -29,6 +31,7 @@
     "vue-cropperjs": "^4.0.1",
     "vue-echarts": "^5.0.0-beta.0",
     "vue-flag-icon": "^1.0.6",
+    "vue-fontawesome-icon": "^1.3.0",
     "vue-form-wizard": "^0.8.4",
     "vue-good-table": "^2.19.1",
     "vue-i18n": "^8.16.0",
@@ -50,9 +53,7 @@
     "vuejs-smart-table": "0.0.5",
     "vuelidate": "^0.7.5",
     "vuetable-2": "^1.7.5",
-    "vuex": "^3.1.3",
-    "vue-fontawesome-icon": "^1.3.0",
-    "font-awesome": "^4.7.0"
+    "vuex": "^3.1.3"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.3.1",

@@ -9,6 +9,7 @@ import invoice from "./modules/invoice";
 import cart from "./modules/cart";
 import verticalSidebar from "./modules/verticalSidebar";
 import scrumboard from "./modules/scrumboard";
+import api from "./modules/api";
 
 
 // Load Vuex
@@ -25,6 +26,7 @@ export default new Vuex.Store({
     invoice,
     cart,
     verticalSidebar,
-    scrumboard
+    scrumboard,
+    api
   }
 });

@@ -26,57 +26,58 @@
                       allLabel: 'همه',
                     }"
                     styleClass="tableOne vgt-table"
-                    :rows="rows"
+                    :rows="$store.state.api.devices"
             >
+                <div slot="emptystate" class="text-center py-2">
+                    دستگاهی برای نمایش وجود ندارد
+                </div>
                 <div slot="table-actions" class="mb-4">
                     <b-button variant="primary" class="btn-rounded d-none d-sm-block" v-b-modal.addDevice
                     ><i class="i-Add-Window align-middle text-white mr-2"> </i>افزودن دستگاه
                     </b-button>
 
-                    <b-modal id="addDevice" title="افزودن دستگاه" ok-title="تایید و افزودن دستگاه" cancel-title="انصراف">
+                    <b-modal id="addDevice" :title="device.update ? 'ویرایش دستگاه' : 'افزودن دستگاه'" :ok-title="device.update ? 'تایید و ویرایش دستگاه' : 'تایید و افزودن دستگاه'" cancel-title="انصراف"
+                             @ok="addOrUpdateDevice" @hidden="onModalHidden">
                         <b-form>
                             <b-form-group
-                                    id="input-group-1"
                                     label="نام دستگاه:"
                                     label-for="input-1"
                             >
                                 <b-form-input
-                                        id="input-1"
                                         type="text"
                                         required
                                         placeholder="ورودی ساختمان یک"
+                                        v-model="device.Name"
                                 ></b-form-input>
                             </b-form-group>
 
                             <b-row>
                                 <b-col md="8">
                                     <b-form-group
-                                            id="input-group-1"
                                             label="آدرس IP:"
                                             label-for="input-1"
                                     >
                                         <b-form-input
-                                                id="input-1"
                                                 type="text"
                                                 class="dir-ltr text-right"
                                                 required
                                                 placeholder="192.168.1.100"
+                                                v-model="device.IP"
                                         ></b-form-input>
                                     </b-form-group>
                                 </b-col>
 
                                 <b-col md="4" class="mt-3 mt-md-0">
                                     <b-form-group
-                                            id="input-group-1"
                                             label="شماره Port:"
                                             label-for="input-1"
                                     >
                                         <b-form-input
-                                                id="input-1"
                                                 type="text"
                                                 class="dir-ltr text-right"
                                                 required
                                                 placeholder="4376"
+                                                v-model="device.Port"
                                         ></b-form-input>
                                     </b-form-group>
                                 </b-col>
@@ -92,7 +93,8 @@
 
                                         </b-col>
                                         <b-col class="text-right">
-                                            <b-form-checkbox value="that" class="ml-0">داده‌های دستگاه پاک شود</b-form-checkbox>
+                                            <b-form-checkbox value="that" class="ml-0">داده‌های دستگاه پاک شود
+                                            </b-form-checkbox>
                                         </b-col>
                                     </b-row>
 
@@ -103,10 +105,29 @@
                 </div>
 
                 <template slot="table-row" slot-scope="props">
-                <span v-if="props.column.field === 'connected'">
-                  <span class="badge badge-primary" v-if="props.row.connected">متصل</span>
-                  <span class="badge badge-secondary" v-else>غیر متصل</span>
-                </span>
+
+                    <span v-if="props.column.field === 'State'">
+                      <span class="badge badge-primary" v-if="props.row.State">متصل</span>
+                      <span class="badge badge-secondary" v-else>غیر متصل</span>
+                    </span>
+
+                    <span v-else-if="props.column.field === 'Button'">
+
+                      <a @click="editDevice(props.row)"
+                         v-b-tooltip.hover
+                         class="o-hidden d-inline-block"
+                         title="Edit">
+                        <i class="i-Eraser-2 text-25 text-info mr-2"></i>
+                      </a>
+
+                      <a @click="removeDevice(props.row)"
+                         v-b-tooltip.hover
+                         class="o-hidden d-inline-block"
+                         title="Delete">
+                        <i class="i-Close-Window text-25 text-danger"></i>
+                        </a>
+                    </span>
+
                 </template>
 
             </vue-good-table>
@@ -122,117 +143,98 @@
         },
         data() {
             return {
-                foods: ["apple", "orrange"],
                 columns: [
                     {
                         label: "نام دستگاه",
-                        field: "title"
+                        field: "Name"
                     },
                     {
                         label: "وضعیت",
-                        field: "connected"
+                        field: "State"
                     },
                     {
                         label: "آدرس IP",
-                        field: "ip"
+                        field: "IP"
                     },
                     {
                         label: "شماره Port",
-                        field: "port"
+                        field: "Port"
+                    },
+                    {
+                        label: "Button",
+                        field: "Button",
+                        html: true,
+                        tdClass: "text-right",
+                        thClass: "text-right"
                     }
                 ],
-                rows: [
-                    {
-                        id: 1,
-                        title: "لورم",
-                        connected: false,
-                        ip: "jhonwick_23@gmail.com",
-                        port: "+88012378478",
-                    },
-                    {
-                        id: 2,
-                        title: "ایپسوم",
-                        connected: true,
-                        ip: "jameswann@gmail.com",
-                        port: "+88012378478",
-                    },
-                    {
-                        id: 3,
-                        title: "سوسن",
-                        connected: true,
-                        ip: "jameswann@gmail.com",
-                        port: "+88012378478",
-                    },
-                    {
-                        id: 4,
-                        title: "محتوا",
-                        connected: false,
-                        ip: "jhonwick_23@gmail.com",
-                        port: "+88012378478",
-                    },
-                    {
-                        id: 5,
-                        title: "فهیم",
-                        connected: false,
-                        ip: "jhonwick_23@gmail.com",
-                        port: "+88012378478",
-                    },
-                    {
-                        id: 6,
-                        title: "متنی",
-                        connected: false,
-                        ip: "jameswann@gmail.com",
-                        port: "+88012378478",
-                    },
-                    {
-                        id: 1,
-                        title: "علی",
-                        connected: true,
-                        ip: "dan_brown@gmail.com",
-                        port: "+88012378478",
-                    },
-                    {
-                        id: 2,
-                        title: "کیوان",
-                        connected: false,
-                        ip: "jameswann@gmail.com",
-                        port: "+88012378478",
-                    },
-                    {
-                        id: 3,
-                        title: "دفتر",
-                        connected: true,
-                        ip: "janeswann@gmail.com",
-                        port: "+88012378478",
-                    },
-                    {
-                        id: 4,
-                        title: "شبها",
-                        connected: true,
-                        ip: "jaasdameswann@gmail.com",
-                        port: "+88012378478",
-                    },
-                    {
-                        id: 5,
-                        title: "بالا",
-                        connected: true,
-                        ip: "doomwaytne@gmail.com",
-                        port: "+88012378478",
-                    },
-                    {
-                        id: 6,
-                        title: "دلربا",
-                        connected: false,
-                        ip: "sidsacc@gmail.com",
-                        port: "+88012378478",
-                    }
-                ]
+                device: {
+                    Name: '',
+                    IP: '',
+                    Port: '',
+                    CommKey: '0'
+                }
             };
         },
         methods: {
-            addFile() {
-                console.log("hello");
-            }
+            addOrUpdateDevice(update = false) {
+                console.log("hello", this.device);
+                if (update) {
+                    this.loading= true;
+                    this.$store.dispatch('updateDevice', this.device)
+                        .then(res => {
+console.log('res', res);
+                        })
+                        .catch(err => {
+console.log('err', err);
+
+                        })
+                }
+            },
+            getDevicesState() {
+                this.$store.dispatch('getDevicesState');
+                setInterval(() => {
+                    this.$store.dispatch('getDevicesState');
+                }, 60000) // sync devices state every 60 seconds
+            },
+            editDevice(device) {
+                this.device = {
+                    ...device,
+                    update: true
+                };
+                this.$bvModal.show('addDevice');
+            },
+            removeDevice(device) {
+                const msg = `آیا واقعا می‌خواهید دستگاه با نام «${device.Name}» را حذف کنید؟`
+                this.$bvModal
+                    .msgBoxConfirm(msg, {
+                        title: "حذف دستگاه",
+                        buttonSize: "sm",
+                        okVariant: "danger",
+                        okTitle: "بله، دستگاه حذف شود",
+                        cancelTitle: "انصراف",
+                        footerClass: "p-2",
+                        hideHeaderClose: false,
+                        centered: true
+                    })
+                    .then(ok => {
+                        if (ok)
+                            this.$store.dispatch('removeDevice', device.ID)
+                    })
+            },
+            onModalHidden() {
+                this.device = {
+                    Name: '',
+                    IP: '',
+                    Port: '',
+                    CommKey: '0',
+                    update: false
+                }
+            },
+        },
+        async created() {
+            await this.$store.dispatch('getDevices');
+            this.getDevicesState()
         }
     };
 </script>
