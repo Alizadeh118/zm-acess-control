@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@johmun/vue-tags-input": "^2.1.0",
+    "@riophae/vue-treeselect": "^0.4.0",
     "apexcharts": "^3.18.1",
     "axios": "^0.19.2",
     "babel-polyfill": "^6.26.0",

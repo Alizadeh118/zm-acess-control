@@ -4,8 +4,8 @@
             <slot name="header">
                <h1>{{page}}</h1>
                     <ul>
-                        <li><a href=""> {{folder}} </a></li>
-                        <li> {{page}} </li>
+                        <li> {{folder}} </li>
+                        <li></li>
                     </ul>
             </slot>
         </div>

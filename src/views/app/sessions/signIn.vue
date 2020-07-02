@@ -90,7 +90,7 @@ export default {
     return {
      email:"",
      password:"",
-      bgImage: require("@/assets/images/photo-wide-4.jpg"),
+      bgImage: require("@/assets/images/bg.jpg"),
       logo: require("@/assets/images/logo.png"),
       signInImage: require("@/assets/images/photo-long-3.jpg")
     };

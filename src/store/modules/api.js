@@ -1,11 +1,14 @@
 import axios from 'axios';
 
 const request = axios.create({
-    baseURL: 'http://192.168.1.101:8002/api',
+    // baseURL: 'http://192.168.1.106:8002/api',
+    baseURL: 'http://172.20.10.2:8002/api',
 });
 
 const state = {
-    devices: []
+    devices: [],
+    employees: [],
+    departments: [],
 };
 
 // const getters = {
@@ -13,13 +16,15 @@ const state = {
 // };
 
 const actions = {
-    async getDevices({commit}) {
+    // devices
+    async getDevices({commit, dispatch}) {
         try {
             const response = await request.get('/device');
             commit("ADD_DEVICES", response.data);
+            dispatch('getDevicesState');
             return response.data;
         } catch (e) {
-            return e;
+            return Promise.reject(e);
         }
     },
     async getDevicesState({commit}) {
@@ -30,10 +35,18 @@ const actions = {
                     id: device.ID,
                     state: response.data
                 });
-                return response.data;
             } catch (e) {
-                return e;
+                console.log(e);
             }
+        }
+    },
+    async addDevice({dispatch}, device) {
+        try {
+            const response = await request.post('/device/', device);
+            dispatch('getDevices');
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
         }
     },
     async updateDevice({dispatch}, device) {
@@ -42,7 +55,7 @@ const actions = {
             dispatch('getDevices');
             return response.data;
         } catch (e) {
-            return e;
+            return Promise.reject(e);
         }
     },
     async removeDevice({dispatch}, deviceId) {
@@ -51,7 +64,70 @@ const actions = {
             dispatch('getDevices');
             return response.data;
         } catch (e) {
-            return e;
+            return Promise.reject(e);
+        }
+    },
+    async syncTime(ctx, deviceId) {
+        try {
+            const response = await request.get(`/device/${deviceId}/sync/time`);
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    async clearData(ctx, deviceId) {
+        try {
+            const response = await request.get(`/device/${deviceId}/clear`);
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    // employees
+    async getEmployees({commit}) {
+        try {
+            const response = await request.get('/employee');
+            commit("ADD_EMPLOYEES", response.data);
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    async addEmployee({dispatch}, employee) {
+        try {
+            const response = await request.post('/employee/', employee);
+            dispatch('getEmployees');
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    async updateEmployee({dispatch}, employee) {
+        try {
+            const response = await request.put('/employee/'+employee.ID, employee);
+            dispatch('getEmployees');
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    async removeEmployee({dispatch}, EmployeeId) {
+        try {
+            const response = await request.delete(`/Employee/${EmployeeId}`);
+            dispatch('getEmployees');
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    // departments
+    async getDepartments({commit}) {
+        try {
+            const response = await request.get('/department');
+            commit("ADD_DEPARTMENTS", response.data);
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
         }
     },
 };
@@ -66,6 +142,12 @@ const mutations = {
                 device.State = data.state;
             return device;
         })
+    },
+    ADD_EMPLOYEES(state, data) {
+        state.employees = data;
+    },
+    ADD_DEPARTMENTS(state, data) {
+        state.departments = data;
     },
 };
 

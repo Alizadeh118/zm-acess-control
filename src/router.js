@@ -20,13 +20,11 @@ const routes = [
       // devices
       {
         path: "/devices",
-        component: () => import("./views/app/devices/list"),
-        children: [
-          // {
-          //   path: "edit",
-          //   component: () => import("./views/app/devices/edit")
-          // },
-        ]
+        component: () => import("./views/app/devices"),
+      },
+      {
+        path: "/employees",
+        component: () => import("./views/app/employees"),
       },
    
       // pages

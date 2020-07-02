@@ -27,25 +27,25 @@
                     </li>
                     <li
                             @mouseenter="toggleSubMenu"
-                            :class="{ active: selectedParentMenu == 'pages' }"
+                            :class="{ active: selectedParentMenu == 'personnel' }"
                             class="nav-item"
-                            data-item="pages"
+                            data-item="personnel"
                     >
                         <a class="nav-item-hold" href="#">
-                            <i class="nav-icon i-Double-Tap"></i>
-                            <span class="nav-text">Pages</span>
+                            <i class="nav-icon i-Business-ManWoman"></i>
+                            <span class="nav-text">کارمندان</span>
                         </a>
                         <div class="triangle"></div>
                     </li>
                     <li
                             @mouseenter="toggleSubMenu"
+                            :class="{ active: selectedParentMenu == 'access-control' }"
                             class="nav-item"
-                            :class="{ active: selectedParentMenu == 'sessions' }"
-                            data-item="sessions"
+                            data-item="access-control"
                     >
                         <a class="nav-item-hold" href="#">
-                            <i class="nav-icon i-Administrator"></i>
-                            <span class="nav-text">Sessions</span>
+                            <i class="nav-icon i-Laptop-Secure"></i>
+                            <span class="nav-text">کنترل دسترسی</span>
                         </a>
                         <div class="triangle"></div>
                     </li>
@@ -67,63 +67,59 @@
                         :class="{ 'd-block': selectedParentMenu == 'devices' }"
                 >
                     <li class="nav-item">
-                        <router-link tag="a" class to="/devices/list">
-                            <i class="nav-icon i-Checked-User"></i>
-                            <span class="item-name">لیست</span>
+                        <router-link tag="a" class to="/devices">
+                            <i class="nav-icon i-Double-Tap"></i>
+                            <span class="item-name">دستگاه‌ها</span>
                         </router-link>
                     </li>
                 </ul>
                 <ul
                         class="childNav d-none"
-                        data-parent="sessions"
-                        :class="{ 'd-block': selectedParentMenu == 'sessions' }"
+                        data-parent="personnel"
+                        :class="{ 'd-block': selectedParentMenu == 'personnel' }"
                 >
                     <li class="nav-item">
                         <router-link tag="a" class to="/app/sessions/signIn">
-                            <i class="nav-icon i-Checked-User"></i>
-                            <span class="item-name">Sign in</span>
+                            <i class="nav-icon i-Building"></i>
+                            <span class="item-name">دپارتمان</span>
+                        </router-link>
+                    </li>
+                    <li class="nav-item">
+                        <router-link tag="a" class to="/employees">
+                            <i class="nav-icon i-Business-ManWoman"></i>
+                            <span class="item-name">کارمندان</span>
+                        </router-link>
+                    </li>
+                </ul>
+                <ul
+                        class="childNav d-none"
+                        data-parent="personnel"
+                        :class="{ 'd-block': selectedParentMenu == 'access-control' }"
+                >
+                    <li class="nav-item">
+                        <router-link tag="a" class to="/app/sessions/signIn">
+                            <i class="nav-icon i-Over-Time"></i>
+                            <span class="item-name">منطقه زمانی</span>
                         </router-link>
                     </li>
                     <li class="nav-item">
                         <router-link tag="a" class to="/app/sessions/signUp">
-                            <i class="nav-icon i-Add-User"></i>
-                            <span class="item-name">Sign up</span>
+                            <i class="nav-icon i-Jeep-2"></i>
+                            <span class="item-name">تعطیلات</span>
                         </router-link>
                     </li>
                     <li class="nav-item">
-                        <router-link tag="a" class to="/app/sessions/forgot">
-                            <i class="nav-icon i-Find-User"></i>
-                            <span class="item-name">Forgot</span>
+                        <router-link tag="a" class to="/app/sessions/signUp">
+                            <i class="nav-icon i-Door"></i>
+                            <span class="item-name">تنظیمات درب‌ها</span>
                         </router-link>
                     </li>
-                </ul>
-                <ul
-                        class="childNav d-none"
-                        data-parent="others"
-                        :class="{ 'd-block': selectedParentMenu == 'pages' }"
-                >
-
                     <li class="nav-item">
-                        <router-link tag="a" class to="/app/pages/blank">
-                            <i class="nav-icon i-Error-404-Window"></i>
-                            <span class="item-name">Blank Page</span>
+                        <router-link tag="a" class to="/app/sessions/signUp">
+                            <i class="nav-icon i-Duplicate-Layer"></i>
+                            <span class="item-name">سطوح دسترسی</span>
                         </router-link>
                     </li>
-
-
-                    <li class="nav-item">
-                        <router-link tag="a" class to="/app/pages/error">
-                            <i class="nav-icon i-Error-404-Window"></i>
-                            <span class="item-name">Not Found</span>
-                        </router-link>
-                    </li>
-
-                    <!-- <li class="nav-item">
-                      <a href="blank.html" class="open">
-                        <i class="nav-icon i-File-Horizontal"></i>
-                        <span class="item-name">Blank Page</span>
-                      </a>
-                    </li>-->
                 </ul>
             </div>
         </vue-perfect-scrollbar>
@@ -199,7 +195,7 @@
                     .split("/")
                     .filter(x => x !== "")[1];
 
-                if (currentParentUrl !== undefined || currentParentUrl !== null) {
+                if (currentParentUrl !== undefined && currentParentUrl !== null) {
                     this.selectedParentMenu = currentParentUrl.toLowerCase();
                 } else {
                     this.selectedParentMenu = "dashboards";

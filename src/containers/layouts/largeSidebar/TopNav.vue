@@ -19,7 +19,7 @@
 
     <div style="margin: auto"></div>
 
-    <div class="header-part-right">
+    <div v-if="false" class="header-part-right">
       <!-- Full screen toggle -->
       <i
         class="i-Full-Screen header-icon d-none d-sm-inline-block"
@@ -191,7 +191,7 @@
     ></search-component>
   </div>
 
-  <!-- header top menu end -->
+  <!-- header top menu entoLowerCased -->
 </template>
 <script>
 import Util from "@/utils";
