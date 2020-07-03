@@ -1,8 +1,8 @@
 <template>
     <div class="main-content">
-        <breadcumb page="دستگاه" :folder="'دستگاه‌ها'"/>
+        <breadcumb page="دستگاه‌ها" />
         <!-- <div class="wrapper"> -->
-        <b-card>
+        <b-card class="mb-30">
             <vue-good-table
                     :columns="columns"
                     :line-numbers="false"
@@ -224,7 +224,7 @@
                             this.$bvToast.toast(`دستگاه با موفقیت ویرایش شد`, {
                                 title: `ویرایش دستگاه`,
                                 variant: 'success',
-                                toaster: 'b-toaster-bottom-right'
+                                toaster: 'b-toaster-top-left'
                             });
                         })
                         .catch(err => {
@@ -232,7 +232,7 @@
                             this.$bvToast.toast(`ویرایش دستگاه با خطا همراه بود`, {
                                 title: `ویرایش دستگاه`,
                                 variant: 'danger',
-                                toaster: 'b-toaster-bottom-right'
+                                toaster: 'b-toaster-top-left'
                             });
 
                         })
@@ -248,7 +248,7 @@
                             this.$bvToast.toast(`دستگاه با موفقیت افزوده شد`, {
                                 title: `افزودن دستگاه`,
                                 variant: 'success',
-                                toaster: 'b-toaster-bottom-right'
+                                toaster: 'b-toaster-top-left'
                             });
                         })
                         .catch(err => {
@@ -256,7 +256,7 @@
                             this.$bvToast.toast(`افزودن دستگاه با خطا همراه بود`, {
                                 title: `افزودن دستگاه`,
                                 variant: 'danger',
-                                toaster: 'b-toaster-bottom-right'
+                                toaster: 'b-toaster-top-left'
                             });
                         })
                         .finally(() => this.loading.addOrUpdateDevice = false)
@@ -296,14 +296,14 @@
                                     this.$bvToast.toast(`دستگاه با موفقیت حذف شد`, {
                                         title: `حذف دستگاه`,
                                         variant: 'success',
-                                        toaster: 'b-toaster-bottom-right'
+                                        toaster: 'b-toaster-top-left'
                                     });
                                 })
                                 .catch(() => {
                                     this.$bvToast.toast(`حذف دستگاه با خطا همراه بود`, {
                                         title: `حذف دستگاه`,
                                         variant: 'danger',
-                                        toaster: 'b-toaster-bottom-right'
+                                        toaster: 'b-toaster-top-left'
                                     });
                                 })
                                 .finally(() => this.loading.removeDevice = false)
@@ -332,14 +332,14 @@
                                     this.$bvToast.toast(`پاکسازی داده‌های دستگاه با موفقیت انجام شد`, {
                                         title: `پاکسازی دستگاه`,
                                         variant: 'success',
-                                        toaster: 'b-toaster-bottom-right'
+                                        toaster: 'b-toaster-top-left'
                                     });
                                 })
                                 .catch(() => {
                                     this.$bvToast.toast(`پاکسازی داده‌های دستگاه با خطا همراه بود`, {
                                         title: `پاکسازی دستگاه`,
                                         variant: 'danger',
-                                        toaster: 'b-toaster-bottom-right'
+                                        toaster: 'b-toaster-top-left'
                                     });
                                 })
                                 .finally(() => this.loading.clearData = false)
@@ -354,14 +354,14 @@
                         this.$bvToast.toast(`زمان دستگاه با موفقیت تنظیم شد`, {
                             title: `تنظیم زمان`,
                             variant: 'success',
-                            toaster: 'b-toaster-bottom-right',
+                            toaster: 'b-toaster-top-left',
                         });
                     })
                     .catch(() => {
                         this.$bvToast.toast(`تنظیم زمان دستگاه با خطا همراه بود`, {
                             title: `تنظیم زمان`,
                             variant: 'danger',
-                            toaster: 'b-toaster-bottom-right'
+                            toaster: 'b-toaster-top-left'
                         });
                     })
                     .finally(() => this.loading.syncTime = false)
@@ -385,7 +385,7 @@
                     this.$bvToast.toast(`دریافت لیست دستگاه‌ها با خطا همراه بود`, {
                         title: `لیست دستگاه‌ها`,
                         variant: 'danger',
-                        toaster: 'b-toaster-bottom-right',
+                        toaster: 'b-toaster-top-left',
                         noAutoHide: true,
                     });
                 })

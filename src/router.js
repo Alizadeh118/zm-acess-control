@@ -14,7 +14,7 @@ const routes = [
     path: "/",
     component: () => import("./views/app"), //webpackChunkName app
     // beforeEnter: authenticate,
-    redirect: "/app/pages/blank",
+    redirect: "/devices",
 
     children: [
       // devices
@@ -31,8 +31,12 @@ const routes = [
         component: () => import("./views/app/departments"),
       },
       {
-        path: "/timezones",
-        component: () => import("./views/app/timezones"),
+        path: "/time-zones",
+        component: () => import("./views/app/time-zones"),
+      },
+      {
+        path: "/access-levels",
+        component: () => import("./views/app/access-levels"),
       },
    
       // pages

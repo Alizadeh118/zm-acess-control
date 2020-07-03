@@ -1,8 +1,8 @@
 <template>
     <div class="main-content">
-        <breadcumb page="دپارتمان" :folder="'کارمندان'"/>
+        <breadcumb page="دپارتمان‌ها"/>
         <!-- <div class="wrapper"> -->
-        <b-card>
+        <b-card class="mb-30">
             <vue-good-table
                     :columns="columns"
                     :line-numbers="false"
@@ -190,7 +190,7 @@
                             this.$bvToast.toast(`دپارتمان با موفقیت ویرایش شد`, {
                                 title: `ویرایش دپارتمان`,
                                 variant: 'success',
-                                toaster: 'b-toaster-bottom-right'
+                                toaster: 'b-toaster-top-left'
                             });
                         })
                         .catch(err => {
@@ -198,7 +198,7 @@
                             this.$bvToast.toast(`ویرایش دپارتمان با خطا همراه بود`, {
                                 title: `ویرایش دپارتمان`,
                                 variant: 'danger',
-                                toaster: 'b-toaster-bottom-right'
+                                toaster: 'b-toaster-top-left'
                             });
                         })
                         .finally(() => this.loading.addOrUpdateDepartment = false)
@@ -210,7 +210,7 @@
                             this.$bvToast.toast(`دپارتمان با موفقیت افزوده شد`, {
                                 title: `افزودن دپارتمان`,
                                 variant: 'success',
-                                toaster: 'b-toaster-bottom-right'
+                                toaster: 'b-toaster-top-left'
                             });
                         })
                         .catch(err => {
@@ -218,7 +218,7 @@
                             this.$bvToast.toast(`افزودن دپارتمان با خطا همراه بود`, {
                                 title: `افزودن دپارتمان`,
                                 variant: 'danger',
-                                toaster: 'b-toaster-bottom-right'
+                                toaster: 'b-toaster-top-left'
                             });
                         })
                         .finally(() => this.loading.addOrUpdateDepartment = false)
@@ -253,14 +253,14 @@
                                     this.$bvToast.toast(`دپارتمان با موفقیت حذف شد`, {
                                         title: `حذف دپارتمان`,
                                         variant: 'success',
-                                        toaster: 'b-toaster-bottom-right'
+                                        toaster: 'b-toaster-top-left'
                                     });
                                 })
                                 .catch(() => {
                                     this.$bvToast.toast(`حذف دپارتمان با خطا همراه بود`, {
                                         title: `حذف دپارتمان`,
                                         variant: 'danger',
-                                        toaster: 'b-toaster-bottom-right'
+                                        toaster: 'b-toaster-top-left'
                                     });
                                 })
                                 .finally(() => this.loading.removeDepartment = false)
@@ -282,7 +282,7 @@
                     this.$bvToast.toast(`دریافت لیست دپارتمان‌ها با خطا همراه بود`, {
                         title: `لیست دپارتمان‌ها`,
                         variant: 'danger',
-                        toaster: 'b-toaster-bottom-right',
+                        toaster: 'b-toaster-top-left',
                         noAutoHide: true,
                     });
                 })

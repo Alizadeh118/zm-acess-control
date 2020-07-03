@@ -14,115 +14,69 @@
             <div>
                 <ul class="navigation-left">
                     <li
-                            @mouseenter="toggleSubMenu"
+                            @mouseenter="toggleSubMenu" @mouseleave="selectedParentMenu = null"
+                            :class="{ active: selectedParentMenu == 'access-levels' }"
+                            class="nav-item"
+                            data-item="access-levels"
+                    >
+                        <router-link tag="a" class="nav-item-hold" to="/access-levels" active-class="text-primary">
+                            <i class="nav-icon i-Laptop-Secure"></i>
+                            <span class="nav-text">دسترسی‌ها</span>
+                        </router-link>
+                        <div class="triangle"></div>
+                    </li>
+                    <li
+                            @mouseenter="toggleSubMenu" @mouseleave="selectedParentMenu = null"
                             :class="{ active: selectedParentMenu == 'devices' }"
                             class="nav-item"
                             data-item="devices"
                     >
-                        <a class="nav-item-hold" href="#">
+                        <router-link tag="a" class="nav-item-hold" to="/devices" active-class="text-primary">
                             <i class="nav-icon i-Double-Tap"></i>
                             <span class="nav-text">دستگاه‌ها</span>
-                        </a>
+                        </router-link>
                         <div class="triangle"></div>
                     </li>
                     <li
-                            @mouseenter="toggleSubMenu"
-                            :class="{ active: selectedParentMenu == 'personnel' }"
+                            @mouseenter="toggleSubMenu" @mouseleave="selectedParentMenu = null"
+                            :class="{ active: selectedParentMenu == 'employees' }"
                             class="nav-item"
-                            data-item="personnel"
+                            data-item="employees"
                     >
-                        <a class="nav-item-hold" href="#">
+                        <router-link tag="a" class="nav-item-hold" to="/employees" active-class="text-primary">
                             <i class="nav-icon i-Business-ManWoman"></i>
                             <span class="nav-text">کارمندان</span>
-                        </a>
+                        </router-link>
                         <div class="triangle"></div>
                     </li>
                     <li
-                            @mouseenter="toggleSubMenu"
-                            :class="{ active: selectedParentMenu == 'access-control' }"
+                            @mouseenter="toggleSubMenu" @mouseleave="selectedParentMenu = null"
+                            :class="{ active: selectedParentMenu == 'departments' }"
                             class="nav-item"
-                            data-item="access-control"
+                            data-item="departments"
                     >
-                        <a class="nav-item-hold" href="#">
-                            <i class="nav-icon i-Laptop-Secure"></i>
-                            <span class="nav-text">کنترل دسترسی</span>
-                        </a>
+                        <router-link tag="a" class="nav-item-hold" to="/departments" active-class="text-primary">
+                            <i class="nav-icon i-Building"></i>
+                            <span class="nav-text">دپارتمان‌ها</span>
+                        </router-link>
+                        <div class="triangle"></div>
+                    </li>
+                    <li
+                            @mouseenter="toggleSubMenu" @mouseleave="selectedParentMenu = null"
+                            :class="{ active: selectedParentMenu == 'time-zones' }"
+                            class="nav-item"
+                            data-item="time-zones"
+                    >
+                        <router-link tag="a" class="nav-item-hold" to="/time-zones" active-class="text-primary">
+                            <i class="nav-icon i-Over-Time"></i>
+                            <span class="nav-text">مناطق زمانی</span>
+                        </router-link>
                         <div class="triangle"></div>
                     </li>
                 </ul>
             </div>
         </vue-perfect-scrollbar>
 
-        <vue-perfect-scrollbar
-                :class="{ open: getSideBarToggleProperties.isSecondarySideNavOpen }"
-                :settings="{ suppressScrollX: true, wheelPropagation: false }"
-                class="sidebar-left-secondary ps rtl-ps-none"
-        >
-            <div ref="sidebarChild">
-                <!-- Submenu Dashboards -->
-
-                <ul
-                        class="childNav d-none"
-                        data-parent="sessions"
-                        :class="{ 'd-block': selectedParentMenu == 'devices' }"
-                >
-                    <li class="nav-item">
-                        <router-link tag="a" class to="/devices">
-                            <i class="nav-icon i-Double-Tap"></i>
-                            <span class="item-name">دستگاه‌ها</span>
-                        </router-link>
-                    </li>
-                </ul>
-                <ul
-                        class="childNav d-none"
-                        data-parent="personnel"
-                        :class="{ 'd-block': selectedParentMenu == 'personnel' }"
-                >
-                    <li class="nav-item">
-                        <router-link tag="a" class to="/departments">
-                            <i class="nav-icon i-Building"></i>
-                            <span class="item-name">دپارتمان</span>
-                        </router-link>
-                    </li>
-                    <li class="nav-item">
-                        <router-link tag="a" class to="/employees">
-                            <i class="nav-icon i-Business-ManWoman"></i>
-                            <span class="item-name">کارمندان</span>
-                        </router-link>
-                    </li>
-                </ul>
-                <ul
-                        class="childNav d-none"
-                        data-parent="personnel"
-                        :class="{ 'd-block': selectedParentMenu == 'access-control' }"
-                >
-                    <li class="nav-item">
-                        <router-link tag="a" class to="/timezones">
-                            <i class="nav-icon i-Over-Time"></i>
-                            <span class="item-name">منطقه زمانی</span>
-                        </router-link>
-                    </li>
-                    <li class="nav-item">
-                        <router-link tag="a" class to="/app/sessions/signUp">
-                            <i class="nav-icon i-Jeep-2"></i>
-                            <span class="item-name">تعطیلات</span>
-                        </router-link>
-                    </li>
-                    <li class="nav-item">
-                        <router-link tag="a" class to="/app/sessions/signUp">
-                            <i class="nav-icon i-Door"></i>
-                            <span class="item-name">تنظیمات درب‌ها</span>
-                        </router-link>
-                    </li>
-                    <li class="nav-item">
-                        <router-link tag="a" class to="/app/sessions/signUp">
-                            <i class="nav-icon i-Duplicate-Layer"></i>
-                            <span class="item-name">سطوح دسترسی</span>
-                        </router-link>
-                    </li>
-                </ul>
-            </div>
-        </vue-perfect-scrollbar>
         <div
                 @click="removeOverlay()"
                 class="sidebar-overlay"
@@ -202,12 +156,12 @@
                 }
             },
             toggleSubMenu(e) {
-                let childrens = this.$refs.sidebarChild.children;
+                // let childrens = this.$refs.sidebarChild.children;
                 let parent = e.target.dataset.item;
 
                 this.selectedParentMenu = parent;
 
-                this.changeSecondarySidebarPropertiesViaMenuItem(true);
+                // this.changeSecondarySidebarPropertiesViaMenuItem(true);
             },
 
             removeOverlay() {

@@ -1,8 +1,8 @@
 <template>
     <div class="main-content">
-        <breadcumb page="کارمندان" :folder="'کارمندان'"/>
+        <breadcumb page="کارمندان" />
         <!-- <div class="wrapper"> -->
-        <b-card>
+        <b-card class="mb-30">
             <vue-good-table
                     :columns="columns"
                     :line-numbers="false"
@@ -215,7 +215,7 @@
                             this.$bvToast.toast(`کارمند با موفقیت ویرایش شد`, {
                                 title: `ویرایش کارمند`,
                                 variant: 'success',
-                                toaster: 'b-toaster-bottom-right'
+                                toaster: 'b-toaster-top-left'
                             });
                         })
                         .catch(err => {
@@ -223,7 +223,7 @@
                             this.$bvToast.toast(`ویرایش کارمند با خطا همراه بود`, {
                                 title: `ویرایش کارمند`,
                                 variant: 'danger',
-                                toaster: 'b-toaster-bottom-right'
+                                toaster: 'b-toaster-top-left'
                             });
 
                         })
@@ -235,7 +235,7 @@
                             this.$bvToast.toast(`کارمند با موفقیت افزوده شد`, {
                                 title: `افزودن کارمند`,
                                 variant: 'success',
-                                toaster: 'b-toaster-bottom-right'
+                                toaster: 'b-toaster-top-left'
                             });
                         })
                         .catch(err => {
@@ -243,7 +243,7 @@
                             this.$bvToast.toast(`افزودن کارمند با خطا همراه بود`, {
                                 title: `افزودن کارمند`,
                                 variant: 'danger',
-                                toaster: 'b-toaster-bottom-right'
+                                toaster: 'b-toaster-top-left'
                             });
                         })
                         .finally(() => this.loading.addOrUpdateEmployee = false)
@@ -278,14 +278,14 @@
                                     this.$bvToast.toast(`کارمند با موفقیت حذف شد`, {
                                         title: `حذف کارمند`,
                                         variant: 'success',
-                                        toaster: 'b-toaster-bottom-right'
+                                        toaster: 'b-toaster-top-left'
                                     });
                                 })
                                 .catch(() => {
                                     this.$bvToast.toast(`حذف کارمند با خطا همراه بود`, {
                                         title: `حذف کارمند`,
                                         variant: 'danger',
-                                        toaster: 'b-toaster-bottom-right'
+                                        toaster: 'b-toaster-top-left'
                                     });
                                 })
                                 .finally(() => this.loading.removeEmployee = false)
@@ -308,7 +308,7 @@
                     this.$bvToast.toast(`دریافت لیست کارمندان با خطا همراه بود`, {
                         title: `لیست کارمندان`,
                         variant: 'danger',
-                        toaster: 'b-toaster-bottom-right',
+                        toaster: 'b-toaster-top-left',
                         noAutoHide: true,
                     });
                 })
@@ -320,7 +320,7 @@
                     this.$bvToast.toast(`دریافت لیست دپارتمان‌ها با خطا همراه بود`, {
                         title: `لیست دپارتمان`,
                         variant: 'danger',
-                        toaster: 'b-toaster-bottom-right',
+                        toaster: 'b-toaster-top-left',
                         noAutoHide: true,
                     });
                 })

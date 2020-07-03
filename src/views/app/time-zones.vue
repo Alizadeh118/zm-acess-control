@@ -1,8 +1,8 @@
 <template>
     <div class="main-content">
-        <breadcumb page="منطقه زمانی" :folder="'کنترل دسترسی'"/>
+        <breadcumb page="مناطق زمانی"/>
         <!-- <div class="wrapper"> -->
-        <b-card>
+        <b-card class="mb-30">
             <vue-good-table
                     :columns="columns"
                     :line-numbers="false"
@@ -336,7 +336,7 @@
                             this.$bvToast.toast(`منطقه زمانی با موفقیت ویرایش شد`, {
                                 title: `ویرایش منطقه زمانی`,
                                 variant: 'success',
-                                toaster: 'b-toaster-bottom-right'
+                                toaster: 'b-toaster-top-left'
                             });
                         })
                         .catch(err => {
@@ -344,7 +344,7 @@
                             this.$bvToast.toast(`ویرایش منطقه زمانی با خطا همراه بود`, {
                                 title: `ویرایش منطقه زمانی`,
                                 variant: 'danger',
-                                toaster: 'b-toaster-bottom-right'
+                                toaster: 'b-toaster-top-left'
                             });
 
                         })
@@ -356,7 +356,7 @@
                             this.$bvToast.toast(`منطقه زمانی با موفقیت افزوده شد`, {
                                 title: `افزودن منطقه زمانی`,
                                 variant: 'success',
-                                toaster: 'b-toaster-bottom-right'
+                                toaster: 'b-toaster-top-left'
                             });
                         })
                         .catch(err => {
@@ -364,7 +364,7 @@
                             this.$bvToast.toast(`افزودن منطقه زمانی با خطا همراه بود`, {
                                 title: `افزودن منطقه زمانی`,
                                 variant: 'danger',
-                                toaster: 'b-toaster-bottom-right'
+                                toaster: 'b-toaster-top-left'
                             });
                         })
                         .finally(() => this.loading.addOrUpdateTimezone = false)
@@ -404,14 +404,14 @@
                                     this.$bvToast.toast(`منطقه زمانی با موفقیت حذف شد`, {
                                         title: `حذف منطقه زمانی`,
                                         variant: 'success',
-                                        toaster: 'b-toaster-bottom-right'
+                                        toaster: 'b-toaster-top-left'
                                     });
                                 })
                                 .catch(() => {
                                     this.$bvToast.toast(`حذف منطقه زمانی با خطا همراه بود`, {
                                         title: `حذف منطقه زمانی`,
                                         variant: 'danger',
-                                        toaster: 'b-toaster-bottom-right'
+                                        toaster: 'b-toaster-top-left'
                                     });
                                 })
                                 .finally(() => this.loading.removeTimezone = false)
@@ -439,7 +439,7 @@
                     this.$bvToast.toast(`دریافت لیست مناطق زمانی با خطا همراه بود`, {
                         title: `لیست مناطق زمانی`,
                         variant: 'danger',
-                        toaster: 'b-toaster-bottom-right',
+                        toaster: 'b-toaster-top-left',
                         noAutoHide: true,
                     });
                 })

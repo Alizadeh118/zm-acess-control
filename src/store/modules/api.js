@@ -10,6 +10,7 @@ const state = {
     employees: [],
     departments: [],
     timezones: [],
+    accessLevels: [],
 };
 
 // const getters = {
@@ -52,7 +53,7 @@ const actions = {
     },
     async updateDevice({dispatch}, device) {
         try {
-            const response = await request.put('/device/'+device.ID, device);
+            const response = await request.put('/device/' + device.ID, device);
             dispatch('getDevices');
             return response.data;
         } catch (e) {
@@ -105,7 +106,7 @@ const actions = {
     },
     async updateEmployee({dispatch}, employee) {
         try {
-            const response = await request.put('/employee/'+employee.ID, employee);
+            const response = await request.put('/employee/' + employee.ID, employee);
             dispatch('getEmployees');
             return response.data;
         } catch (e) {
@@ -142,7 +143,7 @@ const actions = {
     },
     async updateDepartment({dispatch}, department) {
         try {
-            const response = await request.put('/department/'+department.ID, department);
+            const response = await request.put('/department/' + department.ID, department);
             dispatch('getDepartments');
             return response.data;
         } catch (e) {
@@ -179,7 +180,7 @@ const actions = {
     },
     async updateTimezone({dispatch}, timezone) {
         try {
-            const response = await request.put('/timezone/'+timezone.ID, timezone);
+            const response = await request.put('/timezone/' + timezone.ID, timezone);
             dispatch('getTimezones');
             return response.data;
         } catch (e) {
@@ -190,6 +191,51 @@ const actions = {
         try {
             const response = await request.delete(`/timezone/${timezoneId}`);
             dispatch('getTimezones');
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    // accessLevels
+    async getAccessLevels({commit}) {
+        try {
+            const response = await request.get('/access');
+            commit("ADD_ACCESS_LEVELS", response.data);
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    async addAccessLevel(ctx, accessLevel) {
+        try {
+            const response = await request.post('/access/', accessLevel);
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    async addAccessLevelMembers({dispatch}, accessLevel) {
+        try {
+            const response = await request.post('/access/member/' + accessLevel.ID, accessLevel);
+            dispatch('getAccessLevels');
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    async updateAccessLevel({dispatch}, accessLevel) {
+        try {
+            const response = await request.put('/access/' + accessLevel.ID, accessLevel);
+            dispatch('getAccessLevels');
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    async removeAccessLevel({dispatch}, accessLevelId) {
+        try {
+            const response = await request.delete(`/access/${accessLevelId}`);
+            dispatch('getAccessLevels');
             return response.data;
         } catch (e) {
             return Promise.reject(e);
@@ -216,6 +262,9 @@ const mutations = {
     },
     ADD_TIMEZONES(state, data) {
         state.timezones = data;
+    },
+    ADD_ACCESS_LEVELS(state, data) {
+        state.accessLevels = data;
     },
 };
 
