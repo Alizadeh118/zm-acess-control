@@ -9,6 +9,7 @@ const state = {
     devices: [],
     employees: [],
     departments: [],
+    timezones: [],
 };
 
 // const getters = {
@@ -21,7 +22,7 @@ const actions = {
         try {
             const response = await request.get('/device');
             commit("ADD_DEVICES", response.data);
-            // dispatch('getDevicesState');
+            dispatch('getDevicesState');
             return response.data;
         } catch (e) {
             return Promise.reject(e);
@@ -157,6 +158,43 @@ const actions = {
             return Promise.reject(e);
         }
     },
+    // timezones
+    async getTimezones({commit}) {
+        try {
+            const response = await request.get('/timezone');
+            commit("ADD_TIMEZONES", response.data);
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    async addTimezone({dispatch}, timezone) {
+        try {
+            const response = await request.post('/timezone/', timezone);
+            dispatch('getTimezones');
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    async updateTimezone({dispatch}, timezone) {
+        try {
+            const response = await request.put('/timezone/'+timezone.ID, timezone);
+            dispatch('getTimezones');
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    async removeTimezone({dispatch}, timezoneId) {
+        try {
+            const response = await request.delete(`/timezone/${timezoneId}`);
+            dispatch('getTimezones');
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
 };
 
 const mutations = {
@@ -175,6 +213,9 @@ const mutations = {
     },
     ADD_DEPARTMENTS(state, data) {
         state.departments = data;
+    },
+    ADD_TIMEZONES(state, data) {
+        state.timezones = data;
     },
 };
 

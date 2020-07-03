@@ -97,7 +97,7 @@
                         :class="{ 'd-block': selectedParentMenu == 'access-control' }"
                 >
                     <li class="nav-item">
-                        <router-link tag="a" class to="/app/sessions/signIn">
+                        <router-link tag="a" class to="/timezones">
                             <i class="nav-icon i-Over-Time"></i>
                             <span class="item-name">منطقه زمانی</span>
                         </router-link>

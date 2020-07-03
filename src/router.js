@@ -30,6 +30,10 @@ const routes = [
         path: "/departments",
         component: () => import("./views/app/departments"),
       },
+      {
+        path: "/timezones",
+        component: () => import("./views/app/timezones"),
+      },
    
       // pages
       {
