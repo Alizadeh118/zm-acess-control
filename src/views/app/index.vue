@@ -20,3 +20,9 @@ export default {
   methods: {}
 };
 </script>
+<style>
+  .spinner-modal {
+    font-size: 4px;
+    margin: 0 20px 0 auto !important;
+  }
+</style>

@@ -79,7 +79,7 @@
                         :class="{ 'd-block': selectedParentMenu == 'personnel' }"
                 >
                     <li class="nav-item">
-                        <router-link tag="a" class to="/app/sessions/signIn">
+                        <router-link tag="a" class to="/departments">
                             <i class="nav-icon i-Building"></i>
                             <span class="item-name">دپارتمان</span>
                         </router-link>

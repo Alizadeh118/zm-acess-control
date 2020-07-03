@@ -21,7 +21,7 @@ const actions = {
         try {
             const response = await request.get('/device');
             commit("ADD_DEVICES", response.data);
-            dispatch('getDevicesState');
+            // dispatch('getDevicesState');
             return response.data;
         } catch (e) {
             return Promise.reject(e);
@@ -125,6 +125,33 @@ const actions = {
         try {
             const response = await request.get('/department');
             commit("ADD_DEPARTMENTS", response.data);
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    async addDepartment({dispatch}, department) {
+        try {
+            const response = await request.post('/department/', department);
+            dispatch('getDepartments');
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    async updateDepartment({dispatch}, department) {
+        try {
+            const response = await request.put('/department/'+department.ID, department);
+            dispatch('getDepartments');
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    async removeDepartment({dispatch}, departmentId) {
+        try {
+            const response = await request.delete(`/department/${departmentId}`);
+            dispatch('getDepartments');
             return response.data;
         } catch (e) {
             return Promise.reject(e);

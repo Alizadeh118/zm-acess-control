@@ -1,6 +1,6 @@
 <template>
     <div class="main-content">
-        <breadcumb page="کارمندان" :folder="'کارمندان'"/>
+        <breadcumb page="دپارتمان" :folder="'کارمندان'"/>
         <!-- <div class="wrapper"> -->
         <b-card>
             <vue-good-table
@@ -13,7 +13,7 @@
                     }"
                     :sort-options="{
                       enabled: true,
-                      initialSortBy: {field: 'LastName', type: 'asc'}
+                      initialSortBy: {field: 'Name', type: 'asc'}
                     }"
                     :pagination-options="{
                       enabled: false,
@@ -26,57 +26,38 @@
                       allLabel: 'همه',
                     }"
                     styleClass="tableOne vgt-table"
-                    :rows="$store.state.api.employees"
+                    :rows="$store.state.api.departments"
             >
                 <div slot="emptystate" class="text-center py-2">
-                    <span v-if="loading.getEmployees">در حال دریافت لیست کارمندان...</span>
-                    <span v-else>کارمندی برای نمایش وجود ندارد</span>
+                    <span v-if="loading.getDepartments">در حال دریافت لیست دپارتمان‌ها...</span>
+                    <span v-else>دپارتمانی برای نمایش وجود ندارد</span>
                 </div>
                 <div slot="table-actions" class="mb-4">
-                    <b-button variant="primary" class="btn-rounded d-none d-sm-block" v-b-modal.addEmployee
-                    ><i class="i-Add-Window align-middle text-white mr-2"> </i>افزودن کارمند
+                    <b-button variant="primary" class="btn-rounded d-none d-sm-block" v-b-modal.addDepartment
+                    ><i class="i-Add-Window align-middle text-white mr-2"> </i>افزودن دپارتمان
                     </b-button>
 
-                    <b-modal id="addEmployee" :title="employee.update ? 'ویرایش کارمند' : 'افزودن کارمند'"
-                             @ok.prevent="addOrUpdateEmployee" @hidden="onModalHidden">
+                    <b-modal id="addDepartment" :title="department.update ? 'ویرایش دپارتمان' : 'افزودن دپارتمان'"
+                             @ok.prevent="addOrUpdateDepartment" @hidden="onModalHidden" @show="department.Parent_ID = null">
                         <b-form>
                             <b-row>
                                 <b-col>
-                                    <b-form-group label="نام:">
+                                    <b-form-group label="نام دپارتمان:">
                                         <b-form-input
                                                 type="text"
                                                 required
                                                 placeholder="علی"
-                                                v-model="employee.Name"
-                                        ></b-form-input>
-                                    </b-form-group>
-                                </b-col>
-                                <b-col>
-                                    <b-form-group label="نام خانوادگی:">
-                                        <b-form-input
-                                                type="text"
-                                                required
-                                                placeholder="جوادی"
-                                                v-model="employee.LastName"
+                                                v-model="department.Name"
                                         ></b-form-input>
                                     </b-form-group>
                                 </b-col>
                             </b-row>
 
                             <b-row class="mt-3">
-                                <b-col cols="3">
-                                    <b-form-group label="شناسه">
-                                        <b-form-input
-                                                type="text"
-                                                required
-                                                v-model="employee.BadgeNumber"
-                                        ></b-form-input>
-                                    </b-form-group>
-                                </b-col>
                                 <b-col>
                                     <div>
-                                        <b-form-group label="دپارتمان:">
-                                            <treeselect v-model="employee.Department_ID" :options="departments"
+                                        <b-form-group label="دپارتمان پدر:">
+                                            <treeselect v-model="department.Parent_ID" :options="departments"
                                                         placeholder="دپارتمان‌(های) مربوط را انتخاب کنید"
                                                         clearAllText="حذف همه گزینه‌ها"/>
                                         </b-form-group>
@@ -86,12 +67,12 @@
 
                         </b-form>
                         <template v-slot:modal-footer="{ ok, cancel }">
-                            <div class="spinner-bubble spinner-bubble-primary spinner-modal" v-show="loading.addOrUpdateEmployee"></div>
-                            <b-button variant="secondary" @click="cancel()" :disabled="loading.addOrUpdateEmployee">
+                            <div class="spinner-bubble spinner-bubble-primary spinner-modal" v-show="loading.addOrUpdateDepartment"></div>
+                            <b-button variant="secondary" @click="cancel()" :disabled="loading.addOrUpdateDepartment">
                                 انصراف
                             </b-button>
-                            <b-button variant="primary" @click="ok()" :disabled="loading.addOrUpdateEmployee">
-                                {{ employee.update ? 'تایید و ویرایش کارمند' : 'تایید و افزودن کارمند' }}
+                            <b-button variant="primary" @click="ok()" :disabled="loading.addOrUpdateDepartment">
+                                {{ department.update ? 'تایید و ویرایش دپارتمان' : 'تایید و افزودن دپارتمان' }}
                             </b-button>
                         </template>
                     </b-modal>
@@ -100,18 +81,18 @@
                 <template slot="table-row" slot-scope="props">
 
                      <span v-if="props.column.field === 'Button'">
-                      <a @click.prevent="editEmployee(props.row)"
+                      <a @click.prevent="editDepartment(props.row)"
                          href=""
                          v-b-tooltip.hover
                          class="o-hidden d-inline-block"
-                         title="ویرایش کارمند">
+                         title="ویرایش دپارتمان">
                         <i class="i-Eraser-2 text-25 text-info mr-2"></i>
                       </a>
-                      <a @click.prevent="removeEmployee(props.row)"
+                      <a @click.prevent="removeDepartment(props.row)"
                          href=""
                          v-b-tooltip.hover
                          class="o-hidden d-inline-block"
-                         title="حذف کارمند">
+                         title="حذف دپارتمان">
                         <i class="i-Close-Window text-25 text-danger"></i>
                         </a>
                     </span>
@@ -134,26 +115,18 @@
         data() {
             return {
                 loading: {
-                    addOrUpdateEmployee: false,
-                    removeEmployee: false,
-                    getEmployees: true,
+                    addOrUpdateDepartment: false,
+                    removeDepartment: false,
+                    getDepartments: true,
                 },
                 columns: [
                     {
-                        label: "نام",
+                        label: "نام دپارتمان",
                         field: "Name"
                     },
                     {
-                        label: "نام خانوادگی",
-                        field: "LastName"
-                    },
-                    {
-                        label: "شماره پرسنلی",
-                        field: "BadgeNumber"
-                    },
-                    {
-                        label: "دپارتمان",
-                        field: "Department.Name"
+                        label: "دپارتمان پدر",
+                        field: "Parent_Department.Name"
                     },
                     {
                         label: "عملیات",
@@ -164,10 +137,9 @@
                         thClass: "text-right"
                     }
                 ],
-                employee: {
+                department: {
                     Name: '',
-                    LastName: '',
-                    Department_ID: null,
+                    Parent_ID: null,
                     update: false
                 },
             };
@@ -205,66 +177,69 @@
             },
         },
         methods: {
-            addOrUpdateEmployee() {
-                this.loading.addOrUpdateEmployee = true;
+            addOrUpdateDepartment() {
+                this.loading.addOrUpdateDepartment = true;
 
-                if (this.employee.update) {
-                    this.$store.dispatch('updateEmployee', this.employee)
+                if (this.department.Parent_ID === null)
+                    this.department.Parent_ID = -1;
+
+                if (this.department.update) {
+                    this.$store.dispatch('updateDepartment', this.department)
                         .then(() => {
-                            this.$bvModal.hide('addEmployee');
-                            this.$bvToast.toast(`کارمند با موفقیت ویرایش شد`, {
-                                title: `ویرایش کارمند`,
+                            this.$bvModal.hide('addDepartment');
+                            this.$bvToast.toast(`دپارتمان با موفقیت ویرایش شد`, {
+                                title: `ویرایش دپارتمان`,
                                 variant: 'success',
                                 toaster: 'b-toaster-bottom-right'
                             });
                         })
                         .catch(err => {
-                            console.log('Could not update employee', err);
-                            this.$bvToast.toast(`ویرایش کارمند با خطا همراه بود`, {
-                                title: `ویرایش کارمند`,
+                            console.log('Could not update department', err);
+                            this.$bvToast.toast(`ویرایش دپارتمان با خطا همراه بود`, {
+                                title: `ویرایش دپارتمان`,
                                 variant: 'danger',
                                 toaster: 'b-toaster-bottom-right'
                             });
-
                         })
-                        .finally(() => this.loading.addOrUpdateEmployee = false)
+                        .finally(() => this.loading.addOrUpdateDepartment = false)
+
                 } else {
-                    this.$store.dispatch('addEmployee', this.employee)
+                    this.$store.dispatch('addDepartment', this.department)
                         .then(() => {
-                            this.$bvModal.hide('addEmployee');
-                            this.$bvToast.toast(`کارمند با موفقیت افزوده شد`, {
-                                title: `افزودن کارمند`,
+                            this.$bvModal.hide('addDepartment');
+                            this.$bvToast.toast(`دپارتمان با موفقیت افزوده شد`, {
+                                title: `افزودن دپارتمان`,
                                 variant: 'success',
                                 toaster: 'b-toaster-bottom-right'
                             });
                         })
                         .catch(err => {
-                            console.log('Could not add employee', err);
-                            this.$bvToast.toast(`افزودن کارمند با خطا همراه بود`, {
-                                title: `افزودن کارمند`,
+                            console.log('Could not add department', err);
+                            this.$bvToast.toast(`افزودن دپارتمان با خطا همراه بود`, {
+                                title: `افزودن دپارتمان`,
                                 variant: 'danger',
                                 toaster: 'b-toaster-bottom-right'
                             });
                         })
-                        .finally(() => this.loading.addOrUpdateEmployee = false)
+                        .finally(() => this.loading.addOrUpdateDepartment = false)
                 }
             },
-            editEmployee(employee) {
-                this.employee = {
-                    ...employee,
+            editDepartment(department) {
+                this.department = {
+                    ...department,
                     update: true
                 };
-                this.$bvModal.show('addEmployee');
+                this.$bvModal.show('addDepartment');
             },
-            removeEmployee(employee) {
+            removeDepartment(department) {
 
-                const msg = `آیا واقعا می‌خواهید کارمند «${employee.Name + ' ' + employee.LastName}» را حذف کنید؟`;
+                const msg = `آیا واقعا می‌خواهید دپارتمان «${department.Name}» را حذف کنید؟`;
                 this.$bvModal
                     .msgBoxConfirm(msg, {
-                        title: "حذف کارمند",
+                        title: "حذف دپارتمان",
                         buttonSize: "sm",
                         okVariant: "danger",
-                        okTitle: "بله، کارمند حذف شود",
+                        okTitle: "بله، دپارتمان حذف شود",
                         cancelTitle: "انصراف",
                         footerClass: "p-2",
                         hideHeaderClose: false,
@@ -272,58 +247,46 @@
                     })
                     .then(ok => {
                         if (ok) {
-                            this.loading.removeEmployee = true;
-                            this.$store.dispatch('removeEmployee', employee.ID)
+                            this.loading.removeDepartment = true;
+                            this.$store.dispatch('removeDepartment', department.ID)
                                 .then(() => {
-                                    this.$bvToast.toast(`کارمند با موفقیت حذف شد`, {
-                                        title: `حذف کارمند`,
+                                    this.$bvToast.toast(`دپارتمان با موفقیت حذف شد`, {
+                                        title: `حذف دپارتمان`,
                                         variant: 'success',
                                         toaster: 'b-toaster-bottom-right'
                                     });
                                 })
                                 .catch(() => {
-                                    this.$bvToast.toast(`حذف کارمند با خطا همراه بود`, {
-                                        title: `حذف کارمند`,
+                                    this.$bvToast.toast(`حذف دپارتمان با خطا همراه بود`, {
+                                        title: `حذف دپارتمان`,
                                         variant: 'danger',
                                         toaster: 'b-toaster-bottom-right'
                                     });
                                 })
-                                .finally(() => this.loading.removeEmployee = false)
+                                .finally(() => this.loading.removeDepartment = false)
                         }
                     })
             },
             onModalHidden() {
-                this.employee = {
+                this.department = {
                     Name: '',
-                    LastName: '',
-                    Department_ID: null,
+                    Parent_ID: null,
                     update: false
                 }
             },
         },
         created() {
-            this.$store.dispatch('getEmployees')
-                .catch(e => {
-                    console.log('Could not get employees', e);
-                    this.$bvToast.toast(`دریافت لیست کارمندان با خطا همراه بود`, {
-                        title: `لیست کارمندان`,
-                        variant: 'danger',
-                        toaster: 'b-toaster-bottom-right',
-                        noAutoHide: true,
-                    });
-                })
-                .finally(() => this.loading.getEmployees = false);
-
             this.$store.dispatch('getDepartments')
                 .catch(e => {
-                    console.log(' Could not get departments', e);
+                    console.log('Could not get devices', e);
                     this.$bvToast.toast(`دریافت لیست دپارتمان‌ها با خطا همراه بود`, {
-                        title: `لیست دپارتمان`,
+                        title: `لیست دپارتمان‌ها`,
                         variant: 'danger',
                         toaster: 'b-toaster-bottom-right',
                         noAutoHide: true,
                     });
                 })
+                .finally(() => this.loading.getDepartments = false)
         }
     };
 </script>

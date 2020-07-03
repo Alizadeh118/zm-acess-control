@@ -26,6 +26,10 @@ const routes = [
         path: "/employees",
         component: () => import("./views/app/employees"),
       },
+      {
+        path: "/departments",
+        component: () => import("./views/app/departments"),
+      },
    
       // pages
       {

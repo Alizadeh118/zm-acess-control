@@ -15,6 +15,7 @@
 @import "footer";
 @import "utilities/utilities";
 @import "views/views";
+
 html {
   font-size: 16px;
 }
@@ -112,6 +113,7 @@ blockquote {
   right: 0;
   margin: auto;
   top: calc(50% - 150px);
+
   .big-bubble {
     height: 280px;
     width: 280px;
@@ -121,6 +123,7 @@ blockquote {
     display: flex;
     align-items: center;
     justify-content: center;
+
     i {
       font-size: 108px;
       color: #ffffff;
@@ -139,6 +142,7 @@ blockquote {
   height: 100vh;
   background: #ffffff;
   z-index: 999;
+
   .loader {
     position: absolute;
     top: calc(50vh - 50px);
@@ -146,6 +150,7 @@ blockquote {
     right: 0;
     margin: auto;
   }
+
   .logo {
     display: inline-block !important;
     width: 80px;
@@ -188,21 +193,26 @@ blockquote {
 #nprogress {
   .bar {
     background: $primary;
+    dispay: none !important;
+    //left: auto !important;
+    //right: 0;
   }
 
   .spinner-icon {
     border-top-color: $primary;
     border-left-color: $primary;
   }
+
   .spinner {
     display: block;
     position: fixed;
     z-index: 1031;
     top: 15px;
-    right: 15px;
+    left: 15px;
     width: auto;
     height: auto;
     background: transparent;
+
     &:after {
       background: transparent;
     }

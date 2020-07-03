@@ -29,7 +29,8 @@
                     :rows="$store.state.api.devices"
             >
                 <div slot="emptystate" class="text-center py-2">
-                    دستگاهی برای نمایش وجود ندارد
+                    <span v-if="loading.getDevices">در حال دریافت لیست دستگاه‌ها...</span>
+                    <span v-else>دستگاهی برای نمایش وجود ندارد</span>
                 </div>
                 <div slot="table-actions" class="mb-4">
                     <b-button variant="primary" class="btn-rounded d-none d-sm-block" v-b-modal.addDevice
@@ -89,7 +90,8 @@
 
                                 <b-row>
                                     <b-col>
-                                        <b-form-checkbox v-model="syncTimeChecked">زمان دستگاه تنظیم شود</b-form-checkbox>
+                                        <b-form-checkbox v-model="syncTimeChecked">زمان دستگاه تنظیم شود
+                                        </b-form-checkbox>
                                     </b-col>
                                     <b-col cols="auto">
                                         <b-form-checkbox v-model="clearDataChecked" class="ml-0">داده‌های دستگاه پاک شود
@@ -100,7 +102,7 @@
                             </b-form-group>
                         </b-form>
                         <template v-slot:modal-footer="{ ok, cancel }">
-                            <div class="spinner-bubble spinner-bubble-primary" v-show="loading.addOrUpdateDevice"></div>
+                            <div class="spinner-bubble spinner-bubble-primary spinner-modal" v-show="loading.addOrUpdateDevice"></div>
                             <b-button variant="secondary" @click="cancel()" :disabled="loading.addOrUpdateDevice">
                                 انصراف
                             </b-button>
@@ -122,7 +124,6 @@
 
                         <a href="#" @click.prevent="syncTime(props.row)"
                            :class="{'opacity-2': loading.syncTime}"
-                           :disabled="loading.syncTime"
                            v-b-tooltip.hover
                            class="o-hidden d-inline-block mx-3"
                            title="تنظیم زمان دستگاه">
@@ -131,28 +132,26 @@
 
                         <a href="#" @click.prevent="clearData(props.row)"
                            :class="{'opacity-2': loading.clearData}"
-                           :disabled="loading.clearData"
                            v-b-tooltip.hover
                            class="o-hidden d-inline-block mx-3"
                            title="پاکسازی داده‌های دستگاه">
                             <i class="i-Cloud-Remove text-25 text-warning"></i>
                         </a>
 
-                         <a href="#" @click.prevent="editDevice(props.row)"
-                            v-b-tooltip.hover
-                            class="o-hidden d-inline-block mx-3"
-                            title="ویرایش دستگاه">
+                        <a href="#" @click.prevent="editDevice(props.row)"
+                           v-b-tooltip.hover
+                           class="o-hidden d-inline-block mx-3"
+                           title="ویرایش دستگاه">
                             <i class="i-Eraser-2 text-25 text-info"></i>
-                          </a>
+                        </a>
 
-                         <a href="#" @click.prevent="removeDevice(props.row)"
-                            :class="{'opacity-2': loading.removeDevice}"
-                            :disabled="loading.removeDevice"
-                            v-b-tooltip.hover
-                            class="o-hidden d-inline-block mx-3"
-                            title="حذف دستگاه">
+                        <a href="#" @click.prevent="removeDevice(props.row)"
+                           :class="{'opacity-2': loading.removeDevice}"
+                           v-b-tooltip.hover
+                           class="o-hidden d-inline-block mx-3"
+                           title="حذف دستگاه">
                             <i class="i-Close-Window text-25 text-danger"></i>
-                         </a>
+                        </a>
 
                     </div>
 
@@ -172,6 +171,7 @@
                     syncTime: false,
                     addOrUpdateDevice: false,
                     removeDevice: false,
+                    getDevices: true,
                 },
                 columns: [
                     {
@@ -348,7 +348,7 @@
             },
             syncTime(device) {
                 if (this.loading.syncTime) return;
-                this.loading.syncTime = true
+                this.loading.syncTime = true;
                 this.$store.dispatch('syncTime', device.ID)
                     .then(() => {
                         this.$bvToast.toast(`زمان دستگاه با موفقیت تنظیم شد`, {
@@ -373,13 +373,24 @@
                     Port: '',
                     CommKey: '0',
                     update: false
-                }
+                };
                 this.syncTimeChecked = false;
                 this.clearDataChecked = false;
             },
         },
-        async created() {
-            await this.$store.dispatch('getDevices');
+        created() {
+            this.$store.dispatch('getDevices')
+                .catch(e => {
+                    console.log('Could not get devices', e);
+                    this.$bvToast.toast(`دریافت لیست دستگاه‌ها با خطا همراه بود`, {
+                        title: `لیست دستگاه‌ها`,
+                        variant: 'danger',
+                        toaster: 'b-toaster-bottom-right',
+                        noAutoHide: true,
+                    });
+                })
+                .finally(() => this.loading.getDevices = false)
+
         }
     };
 </script>
@@ -398,10 +409,5 @@
 
     .btn-link:focus, .btn-link.focus {
         text-decoration: none !important;
-    }
-
-    .spinner-bubble {
-        font-size: 4px;
-        margin: 0 20px 0 auto !important;
     }
 </style>
