@@ -15,18 +15,6 @@
                 <ul class="navigation-left">
                     <li
                             @mouseenter="toggleSubMenu" @mouseleave="selectedParentMenu = null"
-                            :class="{ active: selectedParentMenu == 'access-levels' }"
-                            class="nav-item"
-                            data-item="access-levels"
-                    >
-                        <router-link tag="a" class="nav-item-hold" to="/access-levels" active-class="text-primary">
-                            <i class="nav-icon i-Laptop-Secure"></i>
-                            <span class="nav-text">دسترسی‌ها</span>
-                        </router-link>
-                        <div class="triangle"></div>
-                    </li>
-                    <li
-                            @mouseenter="toggleSubMenu" @mouseleave="selectedParentMenu = null"
                             :class="{ active: selectedParentMenu == 'devices' }"
                             class="nav-item"
                             data-item="devices"
@@ -70,6 +58,18 @@
                         <router-link tag="a" class="nav-item-hold" to="/time-zones" active-class="text-primary">
                             <i class="nav-icon i-Over-Time"></i>
                             <span class="nav-text">مناطق زمانی</span>
+                        </router-link>
+                        <div class="triangle"></div>
+                    </li>
+                    <li
+                            @mouseenter="toggleSubMenu" @mouseleave="selectedParentMenu = null"
+                            :class="{ active: selectedParentMenu == 'access-levels' }"
+                            class="nav-item"
+                            data-item="access-levels"
+                    >
+                        <router-link tag="a" class="nav-item-hold" to="/access-levels" active-class="text-primary">
+                            <i class="nav-icon i-Laptop-Secure"></i>
+                            <span class="nav-text">دسترسی‌ها</span>
                         </router-link>
                         <div class="triangle"></div>
                     </li>

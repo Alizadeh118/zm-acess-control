@@ -258,7 +258,7 @@
             },
             removeEmployee(employee) {
 
-                const msg = `آیا واقعا می‌خواهید کارمند «${employee.Name + ' ' + employee.LastName}» را حذف کنید؟`;
+                const msg = `آیا واقعا می‌خواهید کارمند «${(employee.Name || '') + ' ' + (employee.LastName || '')}» را حذف کنید؟`;
                 this.$bvModal
                     .msgBoxConfirm(msg, {
                         title: "حذف کارمند",

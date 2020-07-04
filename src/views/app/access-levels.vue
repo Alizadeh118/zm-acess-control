@@ -94,6 +94,13 @@
                         </template>
                     </b-modal>
                 </div>
+                <div slot="table-actions-bottom" class="text-right mt-16">
+                    <b-button variant="dark" class="btn-rounded" :disabled="loading.syncData" @click="syncData">
+                        <i class="i-Arrow-Refresh align-middle d-inline-block mr-2" :class="{'spin': loading.syncData}"></i>
+                        <span>همگام‌سازی دستگاه‌ها</span>
+                    </b-button>
+                </div>
+
 
                 <template slot="table-row" slot-scope="props">
 
@@ -165,6 +172,7 @@
                     addOrUpdateAccessLevel: false,
                     addOrUpdateAccessLevelText: '',
                     removeAccessLevel: false,
+                    syncData: false,
                     getAccessLevels: true,
                 },
                 columns: [
@@ -328,6 +336,26 @@
                         }
                     })
             },
+            syncData() {
+                if (this.loading.syncData) return;
+                this.loading.syncData = true;
+                this.$store.dispatch('syncData')
+                    .then(() => {
+                        this.$bvToast.toast(`همگام‌سازی دستگاه‌ها با موفقیت انجام شد`, {
+                            title: `همگام‌سازی`,
+                            variant: 'success',
+                            toaster: 'b-toaster-top-left',
+                        });
+                    })
+                    .catch(() => {
+                        this.$bvToast.toast(`همگام‌سازی دستگاه‌ها با خطا همراه بود`, {
+                            title: `همگام‌سازی`,
+                            variant: 'danger',
+                            toaster: 'b-toaster-top-left'
+                        });
+                    })
+                    .finally(() => this.loading.syncData = false)
+            },
             onModalHidden() {
                 this.accessLevel = {
                     Name: '',
@@ -400,5 +428,9 @@
 
     .badge {
         font-size: 80%;
+    }
+
+    .vgt-wrap__actions-footer {
+        border: 0 !important;
     }
 </style>

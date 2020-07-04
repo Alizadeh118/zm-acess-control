@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const request = axios.create({
-    // baseURL: 'http://192.168.1.106:8002/api',
-    baseURL: 'http://172.20.10.2:8002/api',
+    // baseURL: 'http://192.168.1.106/api',
+    baseURL: '/api',
 });
 
 const state = {
@@ -24,6 +24,14 @@ const actions = {
             const response = await request.get('/device');
             commit("ADD_DEVICES", response.data);
             dispatch('getDevicesState');
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    async getDataFromDevice(ctx, deviceId) {
+        try {
+            const response = await request.get('/device/data/' + deviceId);
             return response.data;
         } catch (e) {
             return Promise.reject(e);
@@ -236,6 +244,16 @@ const actions = {
         try {
             const response = await request.delete(`/access/${accessLevelId}`);
             dispatch('getAccessLevels');
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    async syncData({state}) {
+        try {
+            const response = await request.post('/access/sync', {
+                devices: state.devices.map(d => d.ID)
+            });
             return response.data;
         } catch (e) {
             return Promise.reject(e);

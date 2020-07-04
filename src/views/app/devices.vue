@@ -122,6 +122,14 @@
 
                     <div v-else-if="props.column.field === 'Button'">
 
+                        <a href="#" @click.prevent="getDataFromDevice(props.row)"
+                           :class="{'opacity-2': loading.getDataFromDevice}"
+                           v-b-tooltip.hover
+                           class="o-hidden d-inline-block mx-3"
+                           title="دریافت داده‌های دستگاه">
+                            <i class="i-Data-Download text-25 text-info"></i>
+                        </a>
+
                         <a href="#" @click.prevent="syncTime(props.row)"
                            :class="{'opacity-2': loading.syncTime}"
                            v-b-tooltip.hover
@@ -170,6 +178,7 @@
                     clearData: false,
                     syncTime: false,
                     addOrUpdateDevice: false,
+                    getDataFromDevice: false,
                     removeDevice: false,
                     getDevices: true,
                 },
@@ -365,6 +374,26 @@
                         });
                     })
                     .finally(() => this.loading.syncTime = false)
+            },
+            getDataFromDevice(device) {
+                if (this.loading.getDataFromDevice) return;
+                this.loading.getDataFromDevice = true;
+                this.$store.dispatch('getDataFromDevice', device.ID)
+                    .then(() => {
+                        this.$bvToast.toast(`داده‌های دستگاه با موفقیت دریافت شد`, {
+                            title: `دریافت داده‌ها`,
+                            variant: 'success',
+                            toaster: 'b-toaster-top-left',
+                        });
+                    })
+                    .catch(() => {
+                        this.$bvToast.toast(`دریافت داده‌های دستگاه با خطا همراه بود`, {
+                            title: `دریافت داده‌ها`,
+                            variant: 'danger',
+                            toaster: 'b-toaster-top-left'
+                        });
+                    })
+                    .finally(() => this.loading.getDataFromDevice = false)
             },
             onModalHidden() {
                 this.device = {

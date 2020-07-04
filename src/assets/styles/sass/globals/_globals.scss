@@ -192,8 +192,8 @@ blockquote {
 // np progress bar
 #nprogress {
   .bar {
-    background: $primary;
-    dispay: none !important;
+    background: #ffffff;
+    //display: none !important;
     //left: auto !important;
     //right: 0;
   }
@@ -204,7 +204,7 @@ blockquote {
   }
 
   .spinner {
-    display: block;
+    display: none !important;
     position: fixed;
     z-index: 1031;
     top: 15px;
