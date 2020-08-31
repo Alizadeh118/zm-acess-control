@@ -1,8 +1,12 @@
 import axios from 'axios';
 
+const token = localStorage.getItem("token");
+if (token)
+    axios.defaults.headers.common.Authorization = `bearer ${token}`;
+
 const request = axios.create({
-    // baseURL: 'http://192.168.1.106/api',
-    baseURL: '/api',
+    baseURL: 'http://172.20.10.5:8003/api',
+    // baseURL: '/api',
 });
 
 const state = {
@@ -11,6 +15,7 @@ const state = {
     departments: [],
     timezones: [],
     accessLevels: [],
+    token: null,
 };
 
 // const getters = {
@@ -31,7 +36,9 @@ const actions = {
     },
     async getDataFromDevice(ctx, deviceId) {
         try {
-            const response = await request.get('/device/data/' + deviceId);
+            const response = await request.post('/device/data', {
+                devices: [deviceId]
+            });
             return response.data;
         } catch (e) {
             return Promise.reject(e);
@@ -87,7 +94,17 @@ const actions = {
     },
     async clearData(ctx, deviceId) {
         try {
-            const response = await request.get(`/device/${deviceId}/clear`);
+            const response = await request.post(`/device/clear`, {
+                devices: [deviceId]
+            });
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    async getDataFromDeviceProgress() {
+        try {
+            const response = await request.get(`/device/data/progress`);
             return response.data;
         } catch (e) {
             return Promise.reject(e);
@@ -259,9 +276,40 @@ const actions = {
             return Promise.reject(e);
         }
     },
+    // account
+    async login({commit}, data) {
+        try {
+            const response =  await request.post('/account/token', new URLSearchParams({
+                username: data.username,
+                password: data.password,
+                grant_type: "password"
+            }), {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            });
+            commit('LOGIN', response.data);
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    async logout({commit}) {
+        commit('LOGOUT');
+    },
+
 };
 
 const mutations = {
+    LOGIN(state, {access_token}) {
+        state.token = access_token;
+        localStorage.setItem("token", access_token);
+        axios.defaults.headers.common.Authorization = `bearer ${access_token}`;
+    },
+    LOGOUT(state) {
+        state.token = null;
+        localStorage.removeItem("token");
+        delete axios.defaults.headers.common.Authorization;
+    },
     ADD_DEVICES(state, data) {
         state.devices = data;
     },

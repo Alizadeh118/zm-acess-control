@@ -9,22 +9,27 @@ import GullKit from "./plugins/gull.kit";
 // es6Promise.polyfill();
 import store from "./store";
 import Breadcumb from "./components/breadcumb";
-import firebase from "firebase/app";
-import "firebase/auth";
-import {firebaseSettings} from "@/data/config";
+// import firebase from "firebase/app";
+// import "firebase/auth";
+// import {firebaseSettings} from "@/data/config";
 import i18n from "./lang/lang";
+
+// import axios from 'axios';
+
+
+
 
 Vue.component("breadcumb", Breadcumb);
 // Vue.use(VueRouter);
 
 Vue.use(GullKit);
-firebase.initializeApp(firebaseSettings);
+// firebase.initializeApp(firebaseSettings);
 
 Vue.config.productionTip = false;
 
 new Vue({
-  store,
-  router,
-  i18n,
-  render: h => h(App)
+    store,
+    router,
+    i18n,
+    render: h => h(App)
 }).$mount("#app");

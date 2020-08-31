@@ -1,11 +1,11 @@
 export default (to, from, next) => {
   if (
-    localStorage.getItem("userInfo") != null &&
-    localStorage.getItem("userInfo").length > 0
+    localStorage.getItem("token") != null &&
+    localStorage.getItem("token").length > 0
   ) {
     next();
   } else {
-    localStorage.removeItem("userInfo");
-    next("/app/sessions/signIn");
+    localStorage.removeItem("token");
+    next("/login");
   }
 };

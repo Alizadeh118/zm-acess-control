@@ -1,5 +1,5 @@
 <template>
-  <div class="main-header bg-primary">
+  <div class="main-header">
     <div class="logo">
       <img src="@/assets/images/logo-white.png" alt />
     </div>
@@ -19,7 +19,7 @@
 
     <div style="margin: auto"></div>
 
-    <div v-if="false" class="header-part-right">
+    <div v-if="1" class="header-part-right">
       <!-- Full screen toggle -->
       <i
         class="i-Full-Screen header-icon d-none d-sm-inline-block"
@@ -172,14 +172,13 @@
             />
           </template>
 
-          <div class="dropdown-menu-right" aria-labelledby="userDropdown">
+          <div class="dropdown-menu-right text-left">
             <div class="dropdown-header">
-              <i class="i-Lock-User mr-1"></i> Timothy Carlson
+              <i class="i-Lock-User mr-1"></i> احمد شاملو
             </div>
-            <a class="dropdown-item">Account settings</a>
-            <a class="dropdown-item">Billing history</a>
+            <a class="dropdown-item">تنظیمات حساب کاربری</a>
             <a class="dropdown-item" href="#" @click.prevent="logoutUser"
-              >Sign out</a
+              >خروج از برنامه</a
             >
           </div>
         </b-dropdown>
@@ -231,7 +230,7 @@ export default {
 
       "changeSidebarProperties",
       "changeThemeMode",
-      "signOut"
+      "logout"
     ]),
 
     // megaMenuToggle() {
@@ -244,9 +243,9 @@ export default {
       Util.toggleFullScreen();
     },
     logoutUser() {
-      this.signOut();
+      this.logout();
 
-      this.$router.push("/app/sessions/signIn");
+      this.$router.push("/login");
     },
 
     closeMegaMenu() {

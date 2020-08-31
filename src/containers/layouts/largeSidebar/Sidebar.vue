@@ -73,6 +73,18 @@
                         </router-link>
                         <div class="triangle"></div>
                     </li>
+                    <li
+                            @mouseenter="toggleSubMenu" @mouseleave="selectedParentMenu = null"
+                            :class="{ active: selectedParentMenu == 'users' }"
+                            class="nav-item"
+                            data-item="users"
+                    >
+                        <router-link tag="a" class="nav-item-hold" to="/users" active-class="text-primary">
+                            <i class="nav-icon i-Mens"></i>
+                            <span class="nav-text">کاربران</span>
+                        </router-link>
+                        <div class="triangle"></div>
+                    </li>
                 </ul>
             </div>
         </vue-perfect-scrollbar>

@@ -4,7 +4,7 @@ import largeSidebar from "./modules/largeSidebar";
 import compactSidebar from "./modules/compactSidebar";
 import chat from "./modules/chat";
 import config from "./modules/config";
-import authData from "./modules/authData";
+// import authData from "./modules/authData";
 import invoice from "./modules/invoice";
 import cart from "./modules/cart";
 import verticalSidebar from "./modules/verticalSidebar";
@@ -22,7 +22,7 @@ export default new Vuex.Store({
     compactSidebar,
     chat,
     config,
-    authData,
+    // authData,
     invoice,
     cart,
     verticalSidebar,

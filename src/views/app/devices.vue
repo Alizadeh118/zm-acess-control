@@ -167,6 +167,11 @@
 
             </vue-good-table>
         </b-card>
+
+        <b-modal id="getDataFromDeviceProgressModal" title="دریافت داده‌ها" hide-footer no-close-on-backdrop no-close-on-esc hide-header-close>
+            <p class="mt-2 text-center">لطفا تا اتمام کامل عملیات منتظر بمانید</p>
+            <b-progress class="mb-2 mt-4" :value="getDataFromDeviceProgressValue" striped animated></b-progress>
+        </b-modal>
     </div>
 </template>
 
@@ -217,6 +222,8 @@
                 },
                 syncTimeChecked: false,
                 clearDataChecked: false,
+                getDataFromDeviceProgressValue: 0,
+                getDataFromDeviceProgressInterval: null,
             };
         },
         methods: {
@@ -377,7 +384,8 @@
             },
             getDataFromDevice(device) {
                 if (this.loading.getDataFromDevice) return;
-                this.loading.getDataFromDevice = true;
+                this.loading.getDataFromDevice = true; // trigger modal
+
                 this.$store.dispatch('getDataFromDevice', device.ID)
                     .then(() => {
                         this.$bvToast.toast(`داده‌های دستگاه با موفقیت دریافت شد`, {
@@ -406,6 +414,20 @@
                 this.syncTimeChecked = false;
                 this.clearDataChecked = false;
             },
+        },
+        watch:{
+            'loading.getDataFromDevice'(v){
+                if (v) {
+                    this.$bvModal.show('getDataFromDeviceProgressModal');
+                    this.getDataFromDeviceProgressInterval = setInterval(()=>{
+                        this.$store.dispatch('getDataFromDeviceProgress')
+                            .then(value => this.getDataFromDeviceProgressValue = value)
+                    }, 500)
+                } else {
+                    this.$bvModal.hide('getDataFromDeviceProgressModal');
+                    clearInterval(this.getDataFromDeviceProgressInterval);
+                }
+            }
         },
         created() {
             this.$store.dispatch('getDevices')
