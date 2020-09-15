@@ -1,6 +1,6 @@
 <template>
     <div class="main-content">
-        <breadcumb page="کاربران" />
+        <breadcumb page="کاربران"/>
         <!-- <div class="wrapper"> -->
         <b-card class="mb-30">
             <vue-good-table
@@ -13,7 +13,7 @@
                     }"
                     :sort-options="{
                       enabled: true,
-                      initialSortBy: {field: 'LastName', type: 'asc'}
+                      initialSortBy: {field: 'Role', type: 'desc'}
                     }"
                     :pagination-options="{
                       enabled: false,
@@ -26,72 +26,86 @@
                       allLabel: 'همه',
                     }"
                     styleClass="tableOne vgt-table"
-                    :rows="$store.state.api.employees"
+                    :rows="$store.state.api.users"
             >
                 <div slot="emptystate" class="text-center py-2">
-                    <span v-if="loading.getEmployees">در حال دریافت لیست کارمندان...</span>
-                    <span v-else>کارمندی برای نمایش وجود ندارد</span>
+                    <span v-if="loading.getUsers">در حال دریافت لیست کاربران...</span>
+                    <span v-else>کاربری برای نمایش وجود ندارد</span>
                 </div>
                 <div slot="table-actions" class="mb-4">
-                    <b-button variant="primary" class="btn-rounded d-none d-sm-block" v-b-modal.addEmployee
-                    ><i class="i-Add-Window align-middle text-white mr-2"> </i>افزودن کارمند
+                    <b-button variant="primary" class="btn-rounded d-none d-sm-block" v-b-modal.addUser
+                    ><i class="i-Add-Window align-middle text-white mr-2"> </i>افزودن کاربر
                     </b-button>
 
-                    <b-modal id="addEmployee" :title="employee.update ? 'ویرایش کارمند' : 'افزودن کارمند'"
-                             @ok.prevent="addOrUpdateEmployee" @hidden="onModalHidden">
+                    <b-modal id="addUser" :title="user.update ? 'ویرایش کاربر' : 'افزودن کاربر'"
+                             @ok.prevent="addOrUpdateUser" @hidden="onModalHidden">
                         <b-form>
                             <b-row>
-                                <b-col>
-                                    <b-form-group label="نام:">
+                                <b-col cols="12">
+                                    <b-form-group label="نام کاربری:">
                                         <b-form-input
+                                                class="dir-ltr"
                                                 type="text"
                                                 required
-                                                placeholder="علی"
-                                                v-model="employee.Name"
+                                                :disabled="user.update"
+                                                v-model="user.UserName"
                                         ></b-form-input>
                                     </b-form-group>
                                 </b-col>
-                                <b-col>
-                                    <b-form-group label="نام خانوادگی:">
+                                <b-col cols="12" v-show="user.update && user.UserName === ownUser.Name">
+                                    <b-form-group label="رمز عبور فعلی">
                                         <b-form-input
-                                                type="text"
+                                                class="dir-ltr"
+                                                type="password"
                                                 required
-                                                placeholder="جوادی"
-                                                v-model="employee.LastName"
+                                                v-model="user.OldPassword"
                                         ></b-form-input>
                                     </b-form-group>
+                                </b-col>
+                                <b-col cols="12">
+                                    <b-form-group :label="user.update ? 'رمز عبور جدید:' : 'رمز عبور:'">
+                                        <b-form-input
+                                                class="dir-ltr"
+                                                type="password"
+                                                required
+                                                v-model="user.Password"
+                                        ></b-form-input>
+                                    </b-form-group>
+                                </b-col>
+                                <b-col cols="12" v-show="!user.update || user.UserName === ownUser.Name">
+                                    <b-form-group label="تکرار رمز عبور:">
+                                        <b-form-input
+                                                class="dir-ltr"
+                                                type="password"
+                                                required
+                                                v-model="user.ConfirmPassword"
+                                        ></b-form-input>
+                                    </b-form-group>
+                                </b-col>
+                                <b-col cols="12" v-show="!user.update">
+
+                                    <b-form-group label="نقش" :disabled="user.update">
+                                        <b-form-radio v-model="user.Is_Admin" name="admin" :value="true">
+                                            <span style="font-size: 1.3em;">مدیر</span>
+                                        </b-form-radio>
+                                        <b-form-radio v-model="user.Is_Admin" name="security" :value="false">
+                                            <span style="font-size: 1.3em;">نگهبان</span>
+                                        </b-form-radio>
+                                    </b-form-group>
+
                                 </b-col>
                             </b-row>
 
-                            <b-row class="mt-3">
-                                <b-col cols="3">
-                                    <b-form-group label="شناسه">
-                                        <b-form-input
-                                                type="text"
-                                                required
-                                                v-model="employee.BadgeNumber"
-                                        ></b-form-input>
-                                    </b-form-group>
-                                </b-col>
-                                <b-col>
-                                    <div>
-                                        <b-form-group label="دپارتمان:">
-                                            <treeselect v-model="employee.Department_ID" :options="departments"
-                                                        placeholder="دپارتمان‌(های) مربوط را انتخاب کنید"
-                                                        clearAllText="حذف همه گزینه‌ها"/>
-                                        </b-form-group>
-                                    </div>
-                                </b-col>
-                            </b-row>
 
                         </b-form>
                         <template v-slot:modal-footer="{ ok, cancel }">
-                            <div class="spinner-bubble spinner-bubble-primary spinner-modal" v-show="loading.addOrUpdateEmployee"></div>
-                            <b-button variant="secondary" @click="cancel()" :disabled="loading.addOrUpdateEmployee">
+                            <div class="spinner-bubble spinner-bubble-sm spinner-bubble-primary spinner-modal"
+                                 v-show="loading.addOrUpdateUser"></div>
+                            <b-button variant="secondary" @click="cancel()" :disabled="loading.addOrUpdateUser">
                                 انصراف
                             </b-button>
-                            <b-button variant="primary" @click="ok()" :disabled="loading.addOrUpdateEmployee">
-                                {{ employee.update ? 'تایید و ویرایش کارمند' : 'تایید و افزودن کارمند' }}
+                            <b-button variant="primary" @click="ok()" :disabled="loading.addOrUpdateUser">
+                                {{ user.update ? 'تایید و ویرایش کاربر' : 'تایید و افزودن کاربر' }}
                             </b-button>
                         </template>
                     </b-modal>
@@ -99,22 +113,23 @@
 
                 <template slot="table-row" slot-scope="props">
 
-                     <span v-if="props.column.field === 'Button'">
-                      <a @click.prevent="editEmployee(props.row)"
-                         href=""
-                         v-b-tooltip.hover
-                         class="o-hidden d-inline-block"
-                         title="ویرایش کارمند">
-                        <i class="i-Eraser-2 text-25 text-info mr-2"></i>
-                      </a>
-                      <a @click.prevent="removeEmployee(props.row)"
-                         href=""
-                         v-b-tooltip.hover
-                         class="o-hidden d-inline-block"
-                         title="حذف کارمند">
-                        <i class="i-Close-Window text-25 text-danger"></i>
+                    <div v-if="props.column.field === 'Button' && (props.row.Role !== 'admin' || props.row.Name === ownUser.Name)"
+                         class="d-flex justify-content-end">
+                        <a @click.prevent="editUser(props.row)"
+                           href=""
+                           v-b-tooltip.hover
+                           class="o-hidden d-inline-block"
+                           title="تغییر رمز عبور">
+                            <i class="i-Eraser-2 text-20 d-block text-info mr-2"></i>
                         </a>
-                    </span>
+                        <a @click.prevent="removeUser(props.row)"
+                           href=""
+                           v-b-tooltip.hover
+                           class="o-hidden d-inline-block"
+                           title="حذف کاربر">
+                            <i class="i-Close-Window text-20 d-block text-danger"></i>
+                        </a>
+                    </div>
 
                 </template>
 
@@ -124,36 +139,29 @@
 </template>
 
 <script>
-    import Treeselect from '@riophae/vue-treeselect'
-    import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
     export default {
-        components: {
-            Treeselect
+        metaInfo() {
+            return {
+                title: "کاربران",
+            }
         },
         data() {
             return {
                 loading: {
-                    addOrUpdateEmployee: false,
-                    removeEmployee: false,
-                    getEmployees: true,
+                    addOrUpdateUser: false,
+                    removeUser: false,
+                    getUsers: true,
                 },
                 columns: [
                     {
-                        label: "نام",
+                        label: "نام کاربری",
                         field: "Name"
                     },
                     {
-                        label: "نام خانوادگی",
-                        field: "LastName"
-                    },
-                    {
-                        label: "شماره پرسنلی",
-                        field: "BadgeNumber"
-                    },
-                    {
-                        label: "دپارتمان",
-                        field: "Department.Name"
+                        label: "نقش",
+                        field: "Role",
+                        formatFn: this.getPersianRole
                     },
                     {
                         label: "عملیات",
@@ -164,107 +172,107 @@
                         thClass: "text-right"
                     }
                 ],
-                employee: {
-                    Name: '',
-                    LastName: '',
-                    Department_ID: null,
-                    update: false
+                user: {
+                    UserName: '',
+                    OldPassword: '',
+                    Password: '',
+                    ConfirmPassword: '',
+                    Is_Admin: false,
+                    update: false,
                 },
             };
         },
-        computed: {
-            departments() {
-                const list = this.$store.state.api.departments;
-                let map = {}, node, roots = [], i;
-                for (i = 0; i < list.length; i += 1) {
-                    map[list[i].ID] = i; // initialize the map
-                }
-                for (i = 0; i < list.length; i += 1) {
-                    node = list[i];
-                    if (node.Parent_ID !== -1) {
-                        // if you have dangling branches check that map[node.parentId] exists
-                        list[map[node.Parent_ID]].children = list[map[node.Parent_ID]].children || [];
-                        list[map[node.Parent_ID]].children.push(node);
-                    } else {
-                        roots.push(node);
-                    }
-                }
-
-                // add id and label
-                const addIDAndLabelKeys = (arr) => {
-                    for (let i = 0; i < arr.length; i++) {
-                        arr[i].id = arr[i]['ID'];
-                        arr[i].label = arr[i]['Name'];
-                        if (arr[i]['children'])
-                            arr[i]['children'] = addIDAndLabelKeys(arr[i]['children'])
-                    }
-                    return arr;
-                };
-                addIDAndLabelKeys(roots);
-                return roots;
-            },
-        },
         methods: {
-            addOrUpdateEmployee() {
-                this.loading.addOrUpdateEmployee = true;
+            addOrUpdateUser() {
+                this.loading.addOrUpdateUser = true;
 
-                if (this.employee.update) {
-                    this.$store.dispatch('updateEmployee', this.employee)
-                        .then(() => {
-                            this.$bvModal.hide('addEmployee');
-                            this.$bvToast.toast(`کارمند با موفقیت ویرایش شد`, {
-                                title: `ویرایش کارمند`,
-                                variant: 'success',
-                                toaster: 'b-toaster-top-left'
-                            });
+                if (this.user.update) {
+                    if (this.user.UserName === this.ownUser.Name)
+                        this.$store.dispatch('changePassword', {
+                            UserID: this.user.User_Id,
+                            OldPassword: this.user.OldPassword,
+                            NewPassword: this.user.Password,
+                            ConfirmPassword: this.user.ConfirmPassword,
                         })
-                        .catch(err => {
-                            console.log('Could not update employee', err);
-                            this.$bvToast.toast(`ویرایش کارمند با خطا همراه بود`, {
-                                title: `ویرایش کارمند`,
-                                variant: 'danger',
-                                toaster: 'b-toaster-top-left'
-                            });
-
+                            .then(() => {
+                                this.$bvModal.hide('addUser');
+                                this.$bvToast.toast(`رمز عبور شما با موفقیت ویرایش شد`, {
+                                    title: `ویرایش رمز عبور`,
+                                    variant: 'success',
+                                    toaster: 'b-toaster-top-left'
+                                });
+                            })
+                            .catch(err => {
+                                console.log('Could not edit user', err);
+                                this.$bvToast.toast(`ویرایش رمز عبور شما با خطا همراه بود`, {
+                                    title: `ویرایش رمز عبور`,
+                                    variant: 'danger',
+                                    toaster: 'b-toaster-top-left'
+                                });
+                            })
+                            .finally(() => this.loading.addOrUpdateUser = false)
+                    else
+                        this.$store.dispatch('resetPassword', {
+                            UserID: this.user.User_Id,
+                            NewPassword: this.user.Password
                         })
-                        .finally(() => this.loading.addOrUpdateEmployee = false)
+                            .then(() => {
+                                this.$bvModal.hide('addUser');
+                                this.$bvToast.toast(`رمز عبور کاربر با موفقیت ویرایش شد`, {
+                                    title: `ویرایش رمز عبور`,
+                                    variant: 'success',
+                                    toaster: 'b-toaster-top-left'
+                                });
+                            })
+                            .catch(err => {
+                                console.log('Could not edit user', err);
+                                this.$bvToast.toast(`ویرایش رمز عبور کاربر با خطا همراه بود`, {
+                                    title: `ویرایش رمز عبور`,
+                                    variant: 'danger',
+                                    toaster: 'b-toaster-top-left'
+                                });
+                            })
+                            .finally(() => this.loading.addOrUpdateUser = false)
                 } else {
-                    this.$store.dispatch('addEmployee', this.employee)
+
+                    this.$store.dispatch('addUser', this.user)
                         .then(() => {
-                            this.$bvModal.hide('addEmployee');
-                            this.$bvToast.toast(`کارمند با موفقیت افزوده شد`, {
-                                title: `افزودن کارمند`,
+                            this.$bvModal.hide('addUser');
+                            this.$bvToast.toast(`کاربر با موفقیت افزوده شد`, {
+                                title: `افزودن کاربر`,
                                 variant: 'success',
                                 toaster: 'b-toaster-top-left'
                             });
                         })
                         .catch(err => {
-                            console.log('Could not add employee', err);
-                            this.$bvToast.toast(`افزودن کارمند با خطا همراه بود`, {
-                                title: `افزودن کارمند`,
+                            console.log('Could not add user', err);
+                            this.$bvToast.toast(`افزودن کاربر با خطا همراه بود`, {
+                                title: `افزودن کاربر`,
                                 variant: 'danger',
                                 toaster: 'b-toaster-top-left'
                             });
                         })
-                        .finally(() => this.loading.addOrUpdateEmployee = false)
+                        .finally(() => this.loading.addOrUpdateUser = false)
                 }
             },
-            editEmployee(employee) {
-                this.employee = {
-                    ...employee,
+            editUser(user) {
+                this.user = {
+                    ...user,
+                    UserName: user.Name,
+                    Is_Admin: user.Role === 'admin',
                     update: true
                 };
-                this.$bvModal.show('addEmployee');
+                this.$bvModal.show('addUser');
             },
-            removeEmployee(employee) {
+            removeUser(user) {
 
-                const msg = `آیا واقعا می‌خواهید کارمند «${(employee.Name || '') + ' ' + (employee.LastName || '')}» را حذف کنید؟`;
+                const msg = `آیا واقعا می‌خواهید کاربر «${(user.Name || '') + ' ' + (user.LastName || '')}» را حذف کنید؟`;
                 this.$bvModal
                     .msgBoxConfirm(msg, {
-                        title: "حذف کارمند",
+                        title: "حذف کاربر",
                         buttonSize: "sm",
                         okVariant: "danger",
-                        okTitle: "بله، کارمند حذف شود",
+                        okTitle: "بله، کاربر حذف شود",
                         cancelTitle: "انصراف",
                         footerClass: "p-2",
                         hideHeaderClose: false,
@@ -272,58 +280,62 @@
                     })
                     .then(ok => {
                         if (ok) {
-                            this.loading.removeEmployee = true;
-                            this.$store.dispatch('removeEmployee', employee.ID)
+                            this.loading.removeUser = true;
+                            this.$store.dispatch('removeUser', user.ID)
                                 .then(() => {
-                                    this.$bvToast.toast(`کارمند با موفقیت حذف شد`, {
-                                        title: `حذف کارمند`,
+                                    this.$bvToast.toast(`کاربر با موفقیت حذف شد`, {
+                                        title: `حذف کاربر`,
                                         variant: 'success',
                                         toaster: 'b-toaster-top-left'
                                     });
                                 })
                                 .catch(() => {
-                                    this.$bvToast.toast(`حذف کارمند با خطا همراه بود`, {
-                                        title: `حذف کارمند`,
+                                    this.$bvToast.toast(`حذف کاربر با خطا همراه بود`, {
+                                        title: `حذف کاربر`,
                                         variant: 'danger',
                                         toaster: 'b-toaster-top-left'
                                     });
                                 })
-                                .finally(() => this.loading.removeEmployee = false)
+                                .finally(() => this.loading.removeUser = false)
                         }
                     })
             },
             onModalHidden() {
-                this.employee = {
+                this.user = {
                     Name: '',
                     LastName: '',
                     Department_ID: null,
                     update: false
                 }
             },
+            getPersianRole(role) {
+                switch (role) {
+                    case 'admin':
+                        return 'مدیر'
+                    case 'security':
+                        return 'نگهبان'
+                    default:
+                        return role
+                }
+            }
+        },
+        computed: {
+            ownUser() {
+                return this.$store.state.api.users.find(u => u.Name === this.$store.state.api.user.userName)
+            }
         },
         created() {
-            this.$store.dispatch('getEmployees')
+            this.$store.dispatch('getUsers')
                 .catch(e => {
-                    console.log('Could not get employees', e);
-                    this.$bvToast.toast(`دریافت لیست کارمندان با خطا همراه بود`, {
-                        title: `لیست کارمندان`,
+                    console.log('Could not get users', e);
+                    this.$bvToast.toast(`دریافت لیست کاربران با خطا همراه بود`, {
+                        title: `لیست کاربران`,
                         variant: 'danger',
                         toaster: 'b-toaster-top-left',
                         noAutoHide: true,
                     });
                 })
-                .finally(() => this.loading.getEmployees = false);
-
-            this.$store.dispatch('getDepartments')
-                .catch(e => {
-                    console.log(' Could not get departments', e);
-                    this.$bvToast.toast(`دریافت لیست دپارتمان‌ها با خطا همراه بود`, {
-                        title: `لیست دپارتمان`,
-                        variant: 'danger',
-                        toaster: 'b-toaster-top-left',
-                        noAutoHide: true,
-                    });
-                })
+                .finally(() => this.loading.getUsers = false);
         }
     };
 </script>

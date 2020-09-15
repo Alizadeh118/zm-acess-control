@@ -1,6 +1,6 @@
 <template>
     <div class="main-content">
-        <breadcumb page="مناطق زمانی"/>
+        <breadcumb page="محدوده زمانی"/>
         <!-- <div class="wrapper"> -->
         <b-card class="mb-30">
             <vue-good-table
@@ -29,19 +29,19 @@
                     :rows="$store.state.api.timezones"
             >
                 <div slot="emptystate" class="text-center py-2">
-                    <span v-if="loading.getTimezones">در حال دریافت لیست مناطق زمانی...</span>
-                    <span v-else>منطقه زمانی برای نمایش وجود ندارد</span>
+                    <span v-if="loading.getTimezones">در حال دریافت لیست محدوده زمانی...</span>
+                    <span v-else>محدوده زمانی برای نمایش وجود ندارد</span>
                 </div>
                 <div slot="table-actions" class="mb-4">
                     <b-button variant="primary" class="btn-rounded d-none d-sm-block" v-b-modal.addTimezone
-                    ><i class="i-Add-Window align-middle text-white mr-2"> </i>افزودن منطقه زمانی
+                    ><i class="i-Add-Window align-middle text-white mr-2"> </i>افزودن محدوده زمانی
                     </b-button>
 
-                    <b-modal id="addTimezone" :title="timezone.update ? 'ویرایش منطقه زمانی' : 'افزودن منطقه زمانی'"
+                    <b-modal id="addTimezone" :title="timezone.update ? 'ویرایش محدوده زمانی' : 'افزودن محدوده زمانی'"
                              @ok.prevent="addOrUpdateTimezone" @hidden="onModalHidden">
                         <b-form>
 
-                            <b-form-group label="نام منطقه زمانی:" class="mb-4">
+                            <b-form-group label="نام محدوده زمانی:" class="mb-4">
                                 <b-form-input type="text" required v-model="timezone.Name"></b-form-input>
                             </b-form-group>
 
@@ -209,13 +209,13 @@
 
                         </b-form>
                         <template v-slot:modal-footer="{ ok, cancel }">
-                            <div class="spinner-bubble spinner-bubble-primary spinner-modal"
+                            <div class="spinner-bubble spinner-bubble-sm spinner-bubble-primary spinner-modal"
                                  v-show="loading.addOrUpdateTimezone"></div>
                             <b-button variant="secondary" @click="cancel()" :disabled="loading.addOrUpdateTimezone">
                                 انصراف
                             </b-button>
                             <b-button variant="primary" @click="ok()" :disabled="loading.addOrUpdateTimezone">
-                                {{ timezone.update ? 'تایید و ویرایش منطقه زمانی' : 'تایید و افزودن منطقه زمانی' }}
+                                {{ timezone.update ? 'تایید و ویرایش محدوده زمانی' : 'تایید و افزودن محدوده زمانی' }}
                             </b-button>
                         </template>
                     </b-modal>
@@ -228,7 +228,7 @@
                         <a href="#" @click.prevent="editTimezone(props.row)"
                            v-b-tooltip.hover
                            class="o-hidden d-inline-block mx-3"
-                           title="ویرایش منطقه زمانی">
+                           title="ویرایش محدوده زمانی">
                             <i class="i-Eraser-2 text-25 text-info"></i>
                         </a>
 
@@ -236,7 +236,7 @@
                            :class="{'opacity-2': loading.removeTimezone}"
                            v-b-tooltip.hover
                            class="o-hidden d-inline-block mx-3"
-                           title="حذف منطقه زمانی">
+                           title="حذف محدوده زمانی">
                             <i class="i-Close-Window text-25 text-danger"></i>
                         </a>
 
@@ -251,6 +251,11 @@
 
 <script>
     export default {
+        metaInfo(){
+            return {
+                title: "محدوده زمانی",
+            }
+        },
         data() {
             return {
                 loading: {
@@ -260,7 +265,7 @@
                 },
                 columns: [
                     {
-                        label: "نام منطقه زمانی",
+                        label: "نام محدوده زمانی",
                         field: "Name"
                     },
                     {
@@ -333,16 +338,16 @@
                     this.$store.dispatch('updateTimezone', timezone)
                         .then(() => {
                             this.$bvModal.hide('addTimezone');
-                            this.$bvToast.toast(`منطقه زمانی با موفقیت ویرایش شد`, {
-                                title: `ویرایش منطقه زمانی`,
+                            this.$bvToast.toast(`محدوده زمانی با موفقیت ویرایش شد`, {
+                                title: `ویرایش محدوده زمانی`,
                                 variant: 'success',
                                 toaster: 'b-toaster-top-left'
                             });
                         })
                         .catch(err => {
                             console.log('Could not update timezone', err);
-                            this.$bvToast.toast(`ویرایش منطقه زمانی با خطا همراه بود`, {
-                                title: `ویرایش منطقه زمانی`,
+                            this.$bvToast.toast(`ویرایش محدوده زمانی با خطا همراه بود`, {
+                                title: `ویرایش محدوده زمانی`,
                                 variant: 'danger',
                                 toaster: 'b-toaster-top-left'
                             });
@@ -353,16 +358,16 @@
                     this.$store.dispatch('addTimezone', timezone)
                         .then(() => {
                             this.$bvModal.hide('addTimezone');
-                            this.$bvToast.toast(`منطقه زمانی با موفقیت افزوده شد`, {
-                                title: `افزودن منطقه زمانی`,
+                            this.$bvToast.toast(`محدوده زمانی با موفقیت افزوده شد`, {
+                                title: `افزودن محدوده زمانی`,
                                 variant: 'success',
                                 toaster: 'b-toaster-top-left'
                             });
                         })
                         .catch(err => {
                             console.log('Could not add timezone', err);
-                            this.$bvToast.toast(`افزودن منطقه زمانی با خطا همراه بود`, {
-                                title: `افزودن منطقه زمانی`,
+                            this.$bvToast.toast(`افزودن محدوده زمانی با خطا همراه بود`, {
+                                title: `افزودن محدوده زمانی`,
                                 variant: 'danger',
                                 toaster: 'b-toaster-top-left'
                             });
@@ -384,13 +389,13 @@
             },
             removeTimezone(timezone) {
                 if (this.loading.removeTimezone) return;
-                const msg = `آیا واقعا می‌خواهید منطقه زمانی با نام «${timezone.Name}» را حذف کنید؟`
+                const msg = `آیا واقعا می‌خواهید محدوده زمانی با نام «${timezone.Name}» را حذف کنید؟`
                 this.$bvModal
                     .msgBoxConfirm(msg, {
-                        title: "حذف منطقه زمانی",
+                        title: "حذف محدوده زمانی",
                         buttonSize: "sm",
                         okVariant: "danger",
-                        okTitle: "بله، منطقه زمانی حذف شود",
+                        okTitle: "بله، محدوده زمانی حذف شود",
                         cancelTitle: "انصراف",
                         footerClass: "p-2",
                         hideHeaderClose: false,
@@ -401,15 +406,15 @@
                             this.loading.removeTimezone = true;
                             this.$store.dispatch('removeTimezone', timezone.ID)
                                 .then(() => {
-                                    this.$bvToast.toast(`منطقه زمانی با موفقیت حذف شد`, {
-                                        title: `حذف منطقه زمانی`,
+                                    this.$bvToast.toast(`محدوده زمانی با موفقیت حذف شد`, {
+                                        title: `حذف محدوده زمانی`,
                                         variant: 'success',
                                         toaster: 'b-toaster-top-left'
                                     });
                                 })
                                 .catch(() => {
-                                    this.$bvToast.toast(`حذف منطقه زمانی با خطا همراه بود`, {
-                                        title: `حذف منطقه زمانی`,
+                                    this.$bvToast.toast(`حذف محدوده زمانی با خطا همراه بود`, {
+                                        title: `حذف محدوده زمانی`,
                                         variant: 'danger',
                                         toaster: 'b-toaster-top-left'
                                     });
@@ -436,8 +441,8 @@
             this.$store.dispatch('getTimezones')
                 .catch(e => {
                     console.log('Could not get timezones', e);
-                    this.$bvToast.toast(`دریافت لیست مناطق زمانی با خطا همراه بود`, {
-                        title: `لیست مناطق زمانی`,
+                    this.$bvToast.toast(`دریافت لیست محدوده زمانی با خطا همراه بود`, {
+                        title: `لیست محدوده زمانی`,
                         variant: 'danger',
                         toaster: 'b-toaster-top-left',
                         noAutoHide: true,

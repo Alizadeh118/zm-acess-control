@@ -152,7 +152,7 @@
         <i class="sidebar-close i-Close" @click="compactSideBarToggle"></i>
         <header>
           <div class="logo">
-            <img src="@/assets/images/logo-text.png" alt />
+<!--            <img src="@/assets/images/logo-text.png" alt />-->
           </div>
         </header>
 

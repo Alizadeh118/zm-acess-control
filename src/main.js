@@ -27,6 +27,14 @@ Vue.use(GullKit);
 
 Vue.config.productionTip = false;
 
+Vue.mixin({
+    methods: {
+        capitalizeFirstLetter: str => str.charAt(0).toUpperCase() + str.slice(1),
+        persian2english: s => s.replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)),
+        english2persian: s => s.replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]),
+    }
+});
+
 new Vue({
     store,
     router,

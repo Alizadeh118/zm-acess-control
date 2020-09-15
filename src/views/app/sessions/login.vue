@@ -6,13 +6,13 @@
         <div class="auth-content">
             <div class="card o-hidden">
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <div class="p-4">
                             <div class="auth-logo text-center mb-20">
                                 <img :src="logo"/>
+                                <div class="text-primary">سامانه جامع مدیریت و کنترل تردد حافظ</div>
                             </div>
-                            <h1 class="mb-3 text-18">{{ $t("session.signIn") }}</h1>
-                            <b-form @submit.prevent="formSubmit">
+                            <b-form @submit.prevent="formSubmit" class="mt-5">
                                 <b-form-group :label="$t('session.username')" class="text-12">
                                     <b-form-input
                                             class="form-control-rounded dir-ltr"
@@ -31,36 +31,22 @@
                                     ></b-form-input>
                                 </b-form-group>
 
-                                <!-- <b-button block to="/" variant="primary btn-rounded mt-2"
-                                  >Sign In</b-button
-                                > -->
+                                <div class="typo__p float-left" :class="{invisible: !loading}">
+                                    <div class="spinner sm spinner-primary mt-1"></div>
+                                </div>
+                                <div class="text-danger mt-3" :class="{invisible: !error}">
+                                    <small>نام کاربری یا کلمه عبور اشتباه است</small>
+                                </div>
                                 <b-button
                                         type="submit"
                                         tag="button"
-                                        class="btn-rounded btn-block mt-2"
+                                        class="btn-rounded btn-block"
                                         variant="primary mt-2"
                                         :disabled="loading"
                                 >
                                     {{ $t('session.signIn') }}
                                 </b-button>
 
-                                <div v-once class="typo__p" v-if="loading">
-                                    <div class="spinner sm spinner-primary mt-3"></div>
-                                </div>
-
-                                <div class="text-danger ml-2 mt-3" v-if="error">
-                                    <small>نام کاربری یا کلمه عبور اشتباه است</small>
-                                </div>
-
-                                <b-button
-                                        v-if="0"
-                                        to="signUp"
-                                        block
-                                        variant="primary mt-2"
-                                        class="btn-rounded"
-                                >{{ $t('session.register') }}
-                                </b-button
-                                >
                             </b-form>
 
                             <div class="mt-3 text-center" v-if="0">
@@ -70,20 +56,6 @@
                             </div>
                         </div>
                     </div>
-
-
-                    <b-col
-                            md="6"
-                            class="text-center"
-                            style="backgroundSize: cover;"
-                            :style="{ backgroundImage: 'url(' + signInImage + ')' }"
-                    >
-                        <div class="pr-3 auth-right">
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. A, alias dicta eligendi ex
-                                laborum magni rerum! Aliquam amet, exercitationem illo incidunt ipsa laboriosam libero
-                                molestias nam nisi quia quisquam, voluptate!</p>
-                        </div>
-                    </b-col>
                 </div>
             </div>
         </div>
@@ -119,7 +91,7 @@
                     password: this.password,
                 })
                     .then(() => {
-                        this.$router.push("/")
+                        this.$router.push("/devices")
                     })
                     .catch(err => {
                         console.log(err);

@@ -120,3 +120,15 @@
     opacity: #{$i / 10};
   }
 }
+
+.spinner-bubble-sm {
+  font-size: 5px !important;
+}
+
+.user-select-none {
+  user-select: none !important;
+}
+
+.pointer-events-none {
+  pointer-events: none !important;
+}

@@ -19,14 +19,14 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   modules: {
     largeSidebar,
-    compactSidebar,
-    chat,
+    // compactSidebar,
+    // chat,
     config,
     // authData,
-    invoice,
-    cart,
-    verticalSidebar,
-    scrumboard,
+    // invoice,
+    // cart,
+    // verticalSidebar,
+    // scrumboard,
     api
   }
 });

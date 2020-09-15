@@ -1,6 +1,6 @@
 <template>
     <div class="main-content">
-        <breadcumb page="دسترسی‌ها" />
+        <breadcumb page="دسترسی‌ها"/>
         <!-- <div class="wrapper"> -->
         <b-card class="mb-30">
             <vue-good-table
@@ -53,7 +53,7 @@
                                     </b-form-group>
                                 </b-col>
                                 <b-col>
-                                    <b-form-group label="منطقه زمانی:">
+                                    <b-form-group label="محدوده زمانی:">
                                         <b-form-select
                                                 required
                                                 :options="$store.state.api.timezones"
@@ -66,6 +66,8 @@
 
                             <b-form-group label="کارمندان:">
                                 <treeselect v-model="accessLevel.employee" :options="employees"
+                                            value-consists-of="LEAF_PRIORITY"
+                                            noOptionsText="گزینه‌ای وجود ندارد"
                                             multiple :limit="6" :limitText="count => `+${count}`"
                                             placeholder="کارمند(های) مربوط را انتخاب کنید"
                                             clearAllText="حذف همه گزینه‌ها"/>
@@ -73,10 +75,14 @@
 
                             <b-form-group label="دستگاه‌ها:">
                                 <treeselect v-model="accessLevel.device" :options="devices"
+                                            noOptionsText="گزینه‌ای وجود ندارد"
                                             multiple :limit="6" :limitText="count => `+${count}`"
                                             placeholder="دستگاه(های) مربوط را انتخاب کنید"
                                             clearAllText="حذف همه گزینه‌ها"/>
                             </b-form-group>
+
+                            <b-form-checkbox v-model="accessLevel.Is_Guest" class="ml-0">دسترسی مهمان</b-form-checkbox>
+
 
                         </b-form>
                         <template v-slot:modal-footer="{ ok, cancel }">
@@ -88,15 +94,17 @@
                             <b-button variant="secondary" @click="cancel()" :disabled="loading.addOrUpdateAccessLevel">
                                 انصراف
                             </b-button>
-                            <b-button variant="primary" @click="ok()" :disabled="loading.addOrUpdateAccessLevel || accessLevel.update">
+                            <b-button variant="primary" @click="ok()" :disabled="loading.addOrUpdateAccessLevel">
                                 {{ accessLevel.update ? 'تایید و ویرایش دسترسی' : 'تایید و افزودن دسترسی' }}
                             </b-button>
                         </template>
                     </b-modal>
                 </div>
                 <div slot="table-actions-bottom" class="text-right mt-16">
-                    <b-button variant="dark" class="btn-rounded" :disabled="loading.syncData" @click="syncData">
-                        <i class="i-Arrow-Refresh align-middle d-inline-block mr-2" :class="{'spin': loading.syncData}"></i>
+                    <b-button variant="dark" class="btn-rounded" :disabled="loading.syncAccesses.includes(-1)"
+                              @click="syncAccesses(-1)">
+                        <i class="i-Arrow-Refresh align-middle d-inline-block mr-2"
+                           :class="{'spin': loading.syncAccesses.includes(-1)}"></i>
                         <span>همگام‌سازی دستگاه‌ها</span>
                     </b-button>
                 </div>
@@ -105,6 +113,14 @@
                 <template slot="table-row" slot-scope="props">
 
                     <div v-if="props.column.field === 'Button'">
+                        <a href="#" @click.prevent="syncAccesses(props.row.ID)"
+                           :class="{'opacity-2': loading.syncAccesses.includes(props.row.ID) || loading.syncAccesses.includes(-1)}"
+                           v-b-tooltip.hover
+                           class="o-hidden d-inline-block"
+                           title="همگام سازی دسترسی">
+                            <i class="i-Arrow-Refresh text-25 text-info mr-2 d-inline-block"
+                               :class="{'spin': loading.syncAccesses.includes(props.row.ID) || loading.syncAccesses.includes(-1)}"></i>
+                        </a>
                         <a @click.prevent="editAccessLevel(props.row)"
                            href=""
                            v-b-tooltip.hover
@@ -163,6 +179,11 @@
     import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
     export default {
+        metaInfo() {
+            return {
+                title: "دسترسی‌ها",
+            }
+        },
         components: {
             Treeselect
         },
@@ -172,7 +193,7 @@
                     addOrUpdateAccessLevel: false,
                     addOrUpdateAccessLevelText: '',
                     removeAccessLevel: false,
-                    syncData: false,
+                    syncAccesses: [],
                     getAccessLevels: true,
                 },
                 columns: [
@@ -189,6 +210,10 @@
                         field: "Devices"
                     },
                     {
+                        label: "محدوده زمانی",
+                        field: "Timezone_Name"
+                    },
+                    {
                         label: "عملیات",
                         field: "Button",
                         html: true,
@@ -202,6 +227,7 @@
                     Timezone_ID: null,
                     employee: [],
                     device: [],
+                    Is_Guest: false,
                     update: false
                 },
                 employeesList: [],
@@ -210,13 +236,33 @@
         },
         computed: {
             employees() {
-                return this.$store.state.api.employees.map(employee => {
-                    return {
-                        ...employee,
+                const departments = []
+                for (const employee of this.$store.state.api.employees)
+                    if (!departments.find(d => d.id === employee.Department_ID))
+                        departments.push({
+                            id: employee.Department_ID,
+                            label: employee.Department_Name,
+                            children: [],
+                        });
+
+                for (const employee of this.$store.state.api.employees) {
+                    const department = departments.find(d => d.id === employee.Department_ID)
+                    department.children.push({
                         id: employee.ID,
-                        label: (employee.Name || '') + ' ' + (employee.LastName || '')
-                    }
-                })
+                        label: (employee.Name || '') + ' ' + (employee.LastName || ''),
+                    })
+                }
+
+                return departments
+
+
+                // return this.$store.state.api.employees.map(employee => {
+                //     return {
+                //         ...employee,
+                //         id: employee.ID,
+                //         label: (employee.Name || '') + ' ' + (employee.LastName || '')
+                //     }
+                // })
             },
             devices() {
                 return this.$store.state.api.devices.map(device => {
@@ -233,32 +279,54 @@
                 this.loading.addOrUpdateAccessLevel = true;
                 this.loading.addOrUpdateAccessLevelText = 'ایجاد دسترسی...';
 
+                console.log(this.accessLevel.employee);
+                if (typeof this.accessLevel.employee === "string")
+                    this.accessLevel.employee = this.accessLevel.employee.split(',')
+
+                return console.log(this.accessLevel);
+
                 if (this.accessLevel.update) {
                     this.$store.dispatch('updateAccessLevel', this.accessLevel)
                         .then(() => {
-                            this.$bvModal.hide('addAccessLevel');
-                            this.$bvToast.toast(`دسترسی با موفقیت ویرایش شد`, {
-                                title: `ویرایش دسترسی`,
-                                variant: 'success',
-                                toaster: 'b-toaster-top-left'
-                            });
+                            this.loading.addOrUpdateAccessLevelText = 'ویرایش کارمندان و دستگاه‌ها...';
+                            this.$store.dispatch('addAccessLevelMembers', {
+                                ...this.accessLevel,
+                                ID: this.accessLevel.ID
+                            })
+                                .then(() => {
+                                    this.$bvModal.hide('addAccessLevel');
+                                    this.$bvToast.toast(`دسترسی با موفقیت ویرایش شد`, {
+                                        title: `ویرایش دسترسی`,
+                                        variant: 'success',
+                                        toaster: 'b-toaster-top-left'
+                                    });
+                                })
+                                .catch(err => {
+                                    console.log('Could not update accessLevel members', err);
+                                    this.$bvToast.toast(`ویرایش دسترسی با خطا همراه بود`, {
+                                        title: `ویرایش دسترسی`,
+                                        variant: 'danger',
+                                        toaster: 'b-toaster-top-left'
+                                    });
+                                })
+                                .finally(() => this.loading.addOrUpdateAccessLevel = false)
+
                         })
                         .catch(err => {
+                            this.loading.addOrUpdateAccessLevel = false;
                             console.log('Could not update accessLevel', err);
                             this.$bvToast.toast(`ویرایش دسترسی با خطا همراه بود`, {
                                 title: `ویرایش دسترسی`,
                                 variant: 'danger',
                                 toaster: 'b-toaster-top-left'
                             });
-
                         })
-                        .finally(() => this.loading.addOrUpdateAccessLevel = false)
+
                 } else {
 
                     this.$store.dispatch('addAccessLevel', this.accessLevel)
                         .then(accessLevel => {
                             this.loading.addOrUpdateAccessLevelText = 'افزودن کارمندان و دستگاه‌ها...';
-
                             this.$store.dispatch('addAccessLevelMembers', {...this.accessLevel, ID: accessLevel.ID})
                                 .then(() => {
                                     this.$bvModal.hide('addAccessLevel');
@@ -336,25 +404,25 @@
                         }
                     })
             },
-            syncData() {
-                if (this.loading.syncData) return;
-                this.loading.syncData = true;
-                this.$store.dispatch('syncData')
+            syncAccesses(accessIds) {
+                if (this.loading.syncAccesses.includes(accessIds)) return;
+                this.loading.syncAccesses.push(accessIds);
+                this.$store.dispatch('syncAccesses', Array.isArray(accessIds) ? accessIds : [accessIds])
                     .then(() => {
-                        this.$bvToast.toast(`همگام‌سازی دستگاه‌ها با موفقیت انجام شد`, {
+                        this.$bvToast.toast(`همگام‌سازی دسترسی(ها) با موفقیت انجام شد`, {
                             title: `همگام‌سازی`,
                             variant: 'success',
                             toaster: 'b-toaster-top-left',
                         });
                     })
                     .catch(() => {
-                        this.$bvToast.toast(`همگام‌سازی دستگاه‌ها با خطا همراه بود`, {
+                        this.$bvToast.toast(`همگام‌سازی دسترسی(ها) با خطا همراه بود`, {
                             title: `همگام‌سازی`,
                             variant: 'danger',
                             toaster: 'b-toaster-top-left'
                         });
                     })
-                    .finally(() => this.loading.syncData = false)
+                    .finally(() => this.loading.syncAccesses = this.loading.syncAccesses.filter(i => i !== accessIds))
             },
             onModalHidden() {
                 this.accessLevel = {
@@ -362,6 +430,7 @@
                     Timezone_ID: null,
                     employee: [],
                     device: [],
+                    Is_Guest: false,
                     update: false
                 }
             },
@@ -407,8 +476,8 @@
                 this.$store.dispatch('getTimezones')
                     .catch(e => {
                         console.log('Could not get timezones', e);
-                        this.$bvToast.toast(`دریافت لیست مناطق زمانی با خطا همراه بود`, {
-                            title: `لیست مناطق زمانی`,
+                        this.$bvToast.toast(`دریافت لیست محدوده زمانی با خطا همراه بود`, {
+                            title: `لیست محدوده زمانی`,
                             variant: 'danger',
                             toaster: 'b-toaster-top-left',
                             noAutoHide: true,

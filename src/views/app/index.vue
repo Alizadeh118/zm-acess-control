@@ -17,7 +17,7 @@
         computed: {
             ...mapGetters(["getThemeMode"])
         },
-        methods: {}
+        methods: {},
     };
 </script>
 <style lang="scss">

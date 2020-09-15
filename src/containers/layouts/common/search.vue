@@ -83,7 +83,7 @@
 </template>
 
 <script>
-    import { products } from '@/data/products.js'
+    // import { products } from '@/data/products.js'
     export default {
         props:[
             'isSearchOpen'
@@ -91,7 +91,7 @@
         data() {
             return {
                 issearchClose:false,
-                products: products,
+                // products: products,
                 search:''
             }
         },

@@ -1,11 +1,16 @@
 import axios from 'axios';
 
-const token = localStorage.getItem("token");
-if (token)
-    axios.defaults.headers.common.Authorization = `bearer ${token}`;
+let user = null;
+try {
+    user = localStorage.getItem("user");
+    user = JSON.parse(user);
+    axios.defaults.headers.common.Authorization = `bearer ${user.access_token}`;
+} catch (e) {
+    localStorage.removeItem("user");
+}
 
 const request = axios.create({
-    baseURL: 'http://172.20.10.5:8003/api',
+    baseURL: 'http://87.236.210.216:8001/api/',
     // baseURL: '/api',
 });
 
@@ -15,7 +20,10 @@ const state = {
     departments: [],
     timezones: [],
     accessLevels: [],
-    token: null,
+    users: [],
+    report: [],
+    privileges: [],
+    user: user,
 };
 
 // const getters = {
@@ -46,7 +54,19 @@ const actions = {
     },
     async getDevicesState({commit}) {
         for (const device of state.devices) {
-            try {
+
+            request.get(`/device/state/${device.ID}`)
+                .then(response => {
+                    commit("UPDATE_DEVICE_STATE", {
+                        id: device.ID,
+                        state: response.data
+                    });
+                }).catch(e => {
+                console.log(e);
+            })
+
+            /*
+            * try {
                 const response = await request.get(`/device/state/${device.ID}`);
                 commit("UPDATE_DEVICE_STATE", {
                     id: device.ID,
@@ -55,6 +75,7 @@ const actions = {
             } catch (e) {
                 console.log(e);
             }
+            * */
         }
     },
     async addDevice({dispatch}, device) {
@@ -86,7 +107,9 @@ const actions = {
     },
     async syncTime(ctx, deviceId) {
         try {
-            const response = await request.get(`/device/${deviceId}/sync/time`);
+            const response = await request.post(`/device/synctime`, {
+                devices: [deviceId]
+            });
             return response.data;
         } catch (e) {
             return Promise.reject(e);
@@ -113,7 +136,7 @@ const actions = {
     // employees
     async getEmployees({commit}) {
         try {
-            const response = await request.get('/employee');
+            const response = await request.post('/employee/get', {});
             commit("ADD_EMPLOYEES", response.data);
             return response.data;
         } catch (e) {
@@ -142,6 +165,26 @@ const actions = {
         try {
             const response = await request.delete(`/Employee/${EmployeeId}`);
             dispatch('getEmployees');
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    async toggleAvailability({dispatch}, {EmployeeId, available}) {
+        try {
+            const response = await request.post(`/Employee/${EmployeeId}/available`, {
+                available
+            });
+            dispatch('getEmployees');
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    async getPrivileges({commit}) {
+        try {
+            const response = await request.get('/Access/privilage');
+            commit("ADD_PRIVILEGES", response.data);
             return response.data;
         } catch (e) {
             return Promise.reject(e);
@@ -241,7 +284,7 @@ const actions = {
     },
     async addAccessLevelMembers({dispatch}, accessLevel) {
         try {
-            const response = await request.post('/access/member/' + accessLevel.ID, accessLevel);
+            const response = await request.post('/access/member/add/' + accessLevel.ID, accessLevel);
             dispatch('getAccessLevels');
             return response.data;
         } catch (e) {
@@ -266,10 +309,23 @@ const actions = {
             return Promise.reject(e);
         }
     },
-    async syncData({state}) {
+    async syncDevices({state}, deviceIds) {
         try {
-            const response = await request.post('/access/sync', {
-                devices: state.devices.map(d => d.ID)
+            if (deviceIds === -1)
+                deviceIds = state.devices.map(d => d.ID)
+
+            const response = await request.post('/access/sync/device', {
+                devices: deviceIds
+            });
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    async syncAccesses(ctx, accessIds) {
+        try {
+            const response = await request.post('/access/sync/access', {
+                access: accessIds
             });
             return response.data;
         } catch (e) {
@@ -279,7 +335,7 @@ const actions = {
     // account
     async login({commit}, data) {
         try {
-            const response =  await request.post('/account/token', new URLSearchParams({
+            const response = await request.post('/account/token', new URLSearchParams({
                 username: data.username,
                 password: data.password,
                 grant_type: "password"
@@ -296,22 +352,108 @@ const actions = {
     async logout({commit}) {
         commit('LOGOUT');
     },
+    async getUsers({commit}) {
+        try {
+            const response = await request.get('/account/users');
+            commit("ADD_USERS", response.data);
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    async addUser({dispatch}, data) {
+        try {
+            const response = await request.post('/account/register', data);
+            dispatch('getUsers');
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    async resetPassword(ctx, data) {
+        try {
+            const response = await request.post('/account/resetpassword', data);
+            // dispatch('getUsers');
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    async changePassword(ctx, data) {
+        try {
+            const response = await request.post('/account/changepassword', data);
+            // dispatch('getUsers');
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    // events
+    async getEvents() {
+        try {
+            const response = await request.post('/events');
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    async removeEvent(ctx, id) {
+        try {
+            const response = await request.delete('/events', {
+                data: {
+                    logs: [id]
+                }
+            });
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    // report
+    async getReport({commit}) {
+        try {
+            const response = await request.post('/report', {});
+            commit("ADD_REPORT", response.data);
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    async removeReport({dispatch}, id) {
+        try {
+            const response = await request.delete('/report', {
+                data: {
+                    logs: [id]
+                }
+            });
+            dispatch('getReport');
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
 
 };
 
 const mutations = {
-    LOGIN(state, {access_token}) {
-        state.token = access_token;
-        localStorage.setItem("token", access_token);
-        axios.defaults.headers.common.Authorization = `bearer ${access_token}`;
+    LOGIN(state, user) {
+        state.user = user;
+        localStorage.setItem("user", JSON.stringify(user));
+        request.defaults.headers.common.Authorization = `bearer ${user.access_token}`;
     },
     LOGOUT(state) {
-        state.token = null;
-        localStorage.removeItem("token");
+        state.user = null;
+        localStorage.removeItem("user");
         delete axios.defaults.headers.common.Authorization;
     },
     ADD_DEVICES(state, data) {
         state.devices = data;
+    },
+    ADD_PRIVILEGES(state, data) {
+        state.privileges = data;
+    },
+    ADD_REPORT(state, data) {
+        state.report = data;
     },
     UPDATE_DEVICE_STATE(state, data) {
         state.devices = state.devices.map(device => {
@@ -322,6 +464,9 @@ const mutations = {
     },
     ADD_EMPLOYEES(state, data) {
         state.employees = data;
+    },
+    ADD_USERS(state, data) {
+        state.users = data;
     },
     ADD_DEPARTMENTS(state, data) {
         state.departments = data;

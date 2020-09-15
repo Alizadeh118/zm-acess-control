@@ -15725,7 +15725,8 @@ a.typo_link.text-gray-900:after {
   width: 100%; }
 
 .layout-sidebar-compact.sidenav-open .main-content-wrap {
-  width: calc( 100% - 76px - 220px); }
+  width: calc(
+ 100% - 76px - 220px); }
 
 .layout-sidebar-compact.sidenav-open .sidebar-left {
   left: 0; }
@@ -24520,7 +24521,6 @@ span.ul-contact-detail__followers {
   margin: 25px 0; }
 
 .ul-weather-card__img-overlay {
-  background: url("/assets/images/products/weather-2.jpg");
   background-size: cover;
   height: 400px;
   background-position-y: center;

@@ -1,6 +1,6 @@
 <template>
     <div class="main-content">
-        <breadcumb page="کارمندان" />
+        <breadcumb page="کارمندان"/>
         <!-- <div class="wrapper"> -->
         <b-card class="mb-30">
             <vue-good-table
@@ -41,33 +41,11 @@
                              @ok.prevent="addOrUpdateEmployee" @hidden="onModalHidden">
                         <b-form>
                             <b-row>
-                                <b-col>
-                                    <b-form-group label="نام:">
-                                        <b-form-input
-                                                type="text"
-                                                required
-                                                placeholder="علی"
-                                                v-model="employee.Name"
-                                        ></b-form-input>
-                                    </b-form-group>
-                                </b-col>
-                                <b-col>
-                                    <b-form-group label="نام خانوادگی:">
-                                        <b-form-input
-                                                type="text"
-                                                required
-                                                placeholder="جوادی"
-                                                v-model="employee.LastName"
-                                        ></b-form-input>
-                                    </b-form-group>
-                                </b-col>
-                            </b-row>
-
-                            <b-row class="mt-3">
                                 <b-col cols="3">
                                     <b-form-group label="شناسه">
                                         <b-form-input
                                                 type="text"
+                                                :readonly="employee.update"
                                                 required
                                                 v-model="employee.BadgeNumber"
                                         ></b-form-input>
@@ -77,6 +55,7 @@
                                     <div>
                                         <b-form-group label="دپارتمان:">
                                             <treeselect v-model="employee.Department_ID" :options="departments"
+                                                        :defaultExpandLevel="1"
                                                         placeholder="دپارتمان‌(های) مربوط را انتخاب کنید"
                                                         clearAllText="حذف همه گزینه‌ها"/>
                                         </b-form-group>
@@ -84,9 +63,49 @@
                                 </b-col>
                             </b-row>
 
+                            <b-row class="mt-3">
+                                <b-col>
+                                    <b-form-group label="نام:">
+                                        <b-form-input
+                                                type="text"
+                                                required
+                                                v-model="employee.Name"
+                                        ></b-form-input>
+                                    </b-form-group>
+                                </b-col>
+                                <b-col>
+                                    <b-form-group label="نام خانوادگی:">
+                                        <b-form-input
+                                                type="text"
+                                                required
+                                                v-model="employee.LastName"
+                                        ></b-form-input>
+                                    </b-form-group>
+                                </b-col>
+                                <b-col cols="12">
+                                    <b-row>
+                                        <b-col cols="6">
+                                            <b-form-group label="مجوز دسترسی:">
+                                                <b-form-select
+                                                        required
+                                                        :options="$store.state.api.privileges"
+                                                        value-field="ID" text-field="Name"
+                                                        v-model="employee.Privilege_ID"
+                                                ></b-form-select>
+                                            </b-form-group>
+                                        </b-col>
+                                        <b-col cols="6" class="mt-32">
+                                            <b-form-checkbox v-model="employee.Is_Guest" class="ml-0">کارت مهمان
+                                            </b-form-checkbox>
+                                        </b-col>
+                                    </b-row>
+                                </b-col>
+                            </b-row>
+
                         </b-form>
                         <template v-slot:modal-footer="{ ok, cancel }">
-                            <div class="spinner-bubble spinner-bubble-primary spinner-modal" v-show="loading.addOrUpdateEmployee"></div>
+                            <div class="spinner-bubble spinner-bubble-sm spinner-bubble-primary spinner-modal"
+                                 v-show="loading.addOrUpdateEmployee"></div>
                             <b-button variant="secondary" @click="cancel()" :disabled="loading.addOrUpdateEmployee">
                                 انصراف
                             </b-button>
@@ -99,22 +118,42 @@
 
                 <template slot="table-row" slot-scope="props">
 
-                     <span v-if="props.column.field === 'Button'">
-                      <a @click.prevent="editEmployee(props.row)"
-                         href=""
-                         v-b-tooltip.hover
-                         class="o-hidden d-inline-block"
-                         title="ویرایش کارمند">
-                        <i class="i-Eraser-2 text-25 text-info mr-2"></i>
-                      </a>
-                      <a @click.prevent="removeEmployee(props.row)"
-                         href=""
-                         v-b-tooltip.hover
-                         class="o-hidden d-inline-block"
-                         title="حذف کارمند">
-                        <i class="i-Close-Window text-25 text-danger"></i>
-                        </a>
-                    </span>
+                    <div v-if="props.column.field === 'Button'"
+                         class="d-flex align-items-center justify-content-between">
+                        <div class="right text-16">
+                            <a v-if="0 && props.row.Is_Guest"
+                               @click.prevent="toggleAvailability(props.row)"
+                               href=""
+                               v-b-tooltip.hover
+                               class="o-hidden d-inline-block"
+                               title="تغییر دسترسی">
+                                <i class="i-Key text-25 mr-2 text-green"
+                                   :class="{'text-mute': !props.row.Is_Available}"></i>
+                            </a>
+                            <template v-if="props.row.Is_Guest">
+                                <b-badge variant="info" class="mr-2">مهمان</b-badge>
+                                <b-badge :variant="props.row.Is_Available ? 'success' : 'danger'">
+                                    {{ props.row.Is_Available ? 'در دسترس' : 'خارج از دسترس'}}
+                                </b-badge>
+                            </template>
+                        </div>
+                        <div class="left">
+                            <a @click.prevent="editEmployee(props.row)"
+                               href=""
+                               v-b-tooltip.hover
+                               class="o-hidden d-inline-block"
+                               title="ویرایش کارمند">
+                                <i class="i-Eraser-2 text-25 text-info mr-2"></i>
+                            </a>
+                            <a @click.prevent="removeEmployee(props.row)"
+                               href=""
+                               v-b-tooltip.hover
+                               class="o-hidden d-inline-block"
+                               title="حذف کارمند">
+                                <i class="i-Close-Window text-25 text-danger"></i>
+                            </a>
+                        </div>
+                    </div>
 
                 </template>
 
@@ -128,6 +167,11 @@
     import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
     export default {
+        metaInfo() {
+            return {
+                title: "کارمندان",
+            }
+        },
         components: {
             Treeselect
         },
@@ -140,6 +184,10 @@
                 },
                 columns: [
                     {
+                        label: "شماره پرسنلی",
+                        field: "BadgeNumber"
+                    },
+                    {
                         label: "نام",
                         field: "Name"
                     },
@@ -148,12 +196,8 @@
                         field: "LastName"
                     },
                     {
-                        label: "شماره پرسنلی",
-                        field: "BadgeNumber"
-                    },
-                    {
                         label: "دپارتمان",
-                        field: "Department.Name"
+                        field: "Department_Name"
                     },
                     {
                         label: "عملیات",
@@ -168,6 +212,9 @@
                     Name: '',
                     LastName: '',
                     Department_ID: null,
+                    Privilege_ID: null,
+                    Is_Guest: false,
+                    Is_Available: true,
                     update: false
                 },
             };
@@ -292,12 +339,32 @@
                         }
                     })
             },
+            toggleAvailability(employee) {
+                this.$store.dispatch('toggleAvailability', {EmployeeId: employee.ID, available: !employee.Is_Available})
+                    .then(() => {
+                        this.$bvToast.toast(`دسترسی کارمند با موفقیت تغییر کرد`, {
+                            title: `دسترسی کارمند`,
+                            variant: 'success',
+                            toaster: 'b-toaster-top-left'
+                        });
+                    })
+                    .catch(() => {
+                        this.$bvToast.toast(`تغییر دسترسی کارمند با خطا همراه بود`, {
+                            title: `دسترسی کارمند`,
+                            variant: 'danger',
+                            toaster: 'b-toaster-top-left'
+                        });
+                    })
+            },
             onModalHidden() {
                 this.employee = {
                     Name: '',
                     LastName: '',
                     Department_ID: null,
-                    update: false
+                    Privilege_ID: null,
+                    Is_Guest: false,
+                    Is_Available: true,
+                    update: false,
                 }
             },
         },
@@ -319,6 +386,17 @@
                     console.log(' Could not get departments', e);
                     this.$bvToast.toast(`دریافت لیست دپارتمان‌ها با خطا همراه بود`, {
                         title: `لیست دپارتمان`,
+                        variant: 'danger',
+                        toaster: 'b-toaster-top-left',
+                        noAutoHide: true,
+                    });
+                })
+
+            this.$store.dispatch('getPrivileges')
+                .catch(e => {
+                    console.log(' Could not get privileges', e);
+                    this.$bvToast.toast(`دریافت لیست مجوزها با خطا همراه بود`, {
+                        title: `لیست مجوزها`,
                         variant: 'danger',
                         toaster: 'b-toaster-top-left',
                         noAutoHide: true,

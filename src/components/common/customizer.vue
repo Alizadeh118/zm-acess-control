@@ -26,7 +26,7 @@
               >
                 <img
                   alt=""
-                  src="@/assets/images/screenshots/02_preview.png"
+                  src=""
                 /><i class="i-Eye"></i>
               </div>
               <div
@@ -36,7 +36,7 @@
               >
                 <img
                   alt=""
-                  src="@/assets/images/screenshots/04_preview.png"
+                  src=""
                 /><i class="i-Eye"></i>
               </div>
               <div
@@ -48,7 +48,7 @@
                 
                 <img
                   alt=""
-                  src="@/assets/images/screenshots/verticallayout.png"
+                  src=""
                 />
 
                 <i class="i-Eye"></i>

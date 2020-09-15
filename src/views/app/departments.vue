@@ -11,10 +11,7 @@
                       enabled: true,
                       placeholder: 'جستجو'
                     }"
-                    :sort-options="{
-                      enabled: true,
-                      initialSortBy: {field: 'Name', type: 'asc'}
-                    }"
+
                     :pagination-options="{
                       enabled: false,
                       mode: 'records',
@@ -26,7 +23,7 @@
                       allLabel: 'همه',
                     }"
                     styleClass="tableOne vgt-table"
-                    :rows="$store.state.api.departments"
+                    :rows="departmentsList"
             >
                 <div slot="emptystate" class="text-center py-2">
                     <span v-if="loading.getDepartments">در حال دریافت لیست دپارتمان‌ها...</span>
@@ -38,7 +35,7 @@
                     </b-button>
 
                     <b-modal id="addDepartment" :title="department.update ? 'ویرایش دپارتمان' : 'افزودن دپارتمان'"
-                             @ok.prevent="addOrUpdateDepartment" @hidden="onModalHidden" @show="department.Parent_ID = null">
+                             @ok.prevent="addOrUpdateDepartment" @hidden="onModalHidden">
                         <b-form>
                             <b-row>
                                 <b-col>
@@ -53,11 +50,11 @@
                                 </b-col>
                             </b-row>
 
-                            <b-row class="mt-3">
+                            <b-row class="mt-3" v-show="department.Parent_ID !== -1">
                                 <b-col>
                                     <div>
                                         <b-form-group label="دپارتمان پدر:">
-                                            <treeselect v-model="department.Parent_ID" :options="departments"
+                                            <treeselect v-model="department.Parent_ID" :options="departments" :defaultExpandLevel="Infinity"
                                                         placeholder="دپارتمان‌(های) مربوط را انتخاب کنید"
                                                         clearAllText="حذف همه گزینه‌ها"/>
                                         </b-form-group>
@@ -67,7 +64,8 @@
 
                         </b-form>
                         <template v-slot:modal-footer="{ ok, cancel }">
-                            <div class="spinner-bubble spinner-bubble-primary spinner-modal" v-show="loading.addOrUpdateDepartment"></div>
+                            <div class="spinner-bubble spinner-bubble-sm spinner-bubble-primary spinner-modal"
+                                 v-show="loading.addOrUpdateDepartment"></div>
                             <b-button variant="secondary" @click="cancel()" :disabled="loading.addOrUpdateDepartment">
                                 انصراف
                             </b-button>
@@ -80,7 +78,11 @@
 
                 <template slot="table-row" slot-scope="props">
 
-                     <span v-if="props.column.field === 'Button'">
+                    <span v-if="props.column.field === 'Name'">
+                        <span class="text-mute">{{ parentCount(props.row) }}</span>
+                        <span>{{ props.row.Name }}</span>
+                    </span>
+                    <span v-else-if="props.column.field === 'Button'">
                       <a @click.prevent="editDepartment(props.row)"
                          href=""
                          v-b-tooltip.hover
@@ -89,6 +91,8 @@
                         <i class="i-Eraser-2 text-25 text-info mr-2"></i>
                       </a>
                       <a @click.prevent="removeDepartment(props.row)"
+                         :class="{'opacity-2 pointer-events-none': props.row.Parent_ID === -1}"
+                         :disabled="props.row.Parent_ID === -1"
                          href=""
                          v-b-tooltip.hover
                          class="o-hidden d-inline-block"
@@ -109,6 +113,11 @@
     import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
     export default {
+        metaInfo() {
+            return {
+                title: "دپارتمان‌ها",
+            }
+        },
         components: {
             Treeselect
         },
@@ -122,11 +131,7 @@
                 columns: [
                     {
                         label: "نام دپارتمان",
-                        field: "Name"
-                    },
-                    {
-                        label: "دپارتمان پدر",
-                        field: "Parent_Department.Name"
+                        field: "Name",
                     },
                     {
                         label: "عملیات",
@@ -175,13 +180,26 @@
                 addIDAndLabelKeys(roots);
                 return roots;
             },
+            departmentsList() {
+                if (!this.departments.length) return []
+                const filler = (item, res = []) => {
+                    res.push({
+                        ID: item.ID,
+                        Name: item.Name,
+                        Parent_ID: item.Parent_ID,
+                        Parent_Department: item.Parent_Department,
+                    });
+                    if (item.children)
+                        for (const child of item.children)
+                            res.push(filler(child))
+                    return res.flat()
+                }
+                return filler(this.departments[0])
+            }
         },
         methods: {
             addOrUpdateDepartment() {
                 this.loading.addOrUpdateDepartment = true;
-
-                if (this.department.Parent_ID === null)
-                    this.department.Parent_ID = -1;
 
                 if (this.department.update) {
                     this.$store.dispatch('updateDepartment', this.department)
@@ -270,10 +288,17 @@
             onModalHidden() {
                 this.department = {
                     Name: '',
-                    Parent_ID: null,
+                    Parent_ID: 2,
                     update: false
                 }
             },
+            parentCount(item, s = '') {
+                if (item.Parent_Department) {
+                    s = `\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0`;
+                    return s += this.parentCount(item.Parent_Department);
+                }
+                return s + ' '
+            }
         },
         created() {
             this.$store.dispatch('getDepartments')

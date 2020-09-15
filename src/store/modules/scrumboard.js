@@ -12,34 +12,34 @@ const state = {
                         {
                             id: 1,
                             title: "Beautiful Duo",
-                            coverImage: require("@/assets/images/products/headphone-1.jpg"),
+                            // coverImage: require("@/assets/images/products/headphone-1.jpg"),
                             description: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.`,
                             comments: [
                                 {
                                     id: 1,
                                     
-                                    image: require("@/assets/images/faces/2.jpg"),
+                                    // image: require("@/assets/images/faces/2.jpg"),
                                     text: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.`,
                                     time: new Date()
                                 },
                                 {
                                     id: 2,
                                     
-                                    image: require("@/assets/images/faces/3.jpg"),
+                                    // image: require("@/assets/images/faces/3.jpg"),
                                     text: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industr`,
                                     time: new Date()
                                 },
                                 {
                                     id: 3,
                                     
-                                    image: require("@/assets/images/faces/5.jpg"),
+                                    // image: require("@/assets/images/faces/5.jpg"),
                                     text: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's `,
                                     time: new Date()
                                 },
                                 {
                                     id: 4,
                                     
-                                    image: require("@/assets/images/faces/4.jpg"),
+                                    // image: require("@/assets/images/faces/4.jpg"),
                                     text: `Lorem Ipsum is simply dummy text.`,
                                     time: new Date()
                                 },
@@ -48,20 +48,20 @@ const state = {
                         {
                             id: 2,
                             title: "Nested Dnd",
-                            coverImage: require("@/assets/images/products/headphone-1.jpg"),
+                            // coverImage: require("@/assets/images/products/headphone-1.jpg"),
                             description: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.`,
                             comments: [
                                 {
                                     id: 1,
                                     uid: "7863a6802ez0e277a0f98534",
-                                    image: require("@/assets/images/faces/2.jpg"),
+                                    // image: require("@/assets/images/faces/2.jpg"),
                                     text: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.`,
                                     time: new Date()
                                 },
                                 {
                                     id: 2,
                                     uid: "7863a6802ez0e277a0f98534",
-                                    image: require("@/assets/images/faces/2.jpg"),
+                                    // image: require("@/assets/images/faces/2.jpg"),
                                     text: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.`,
                                     time: new Date()
                                 }
@@ -77,7 +77,7 @@ const state = {
                         {
                             id: 1,
                             title: "Beautiful Duo Second",
-                            coverImage: require("@/assets/images/products/headphone-1.jpg"),
+                            // coverImage: require("@/assets/images/products/headphone-1.jpg"),
                             description: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.`,
                             comments: [
                                 {
@@ -91,7 +91,7 @@ const state = {
                         {
                             id: 2,
                             title: "Beautiful Duo Third",
-                            coverImage: require("@/assets/images/products/headphone-1.jpg"),
+                            // coverImage: require("@/assets/images/products/headphone-1.jpg"),
                             description: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.`,
                             comments: [
                                 {
@@ -117,13 +117,13 @@ const state = {
                         {
                             id: 1,
                             title: "Nested Duo",
-                            coverImage: require("@/assets/images/products/headphone-1.jpg"),
+                            // coverImage: require("@/assets/images/products/headphone-1.jpg"),
                             description: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.`,
                             comments: [
                                 {
                                     id: 1,
                                     uid: "7863a6802ez0e277a0f98534",
-                                    image: require("@/assets/images/faces/2.jpg"),
+                                    // image: require("@/assets/images/faces/2.jpg"),
                                     text: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.`,
                                     time: new Date()
                                 }
@@ -132,13 +132,13 @@ const state = {
                         {
                             id: 2,
                             title: "Nested Duo",
-                            coverImage: require("@/assets/images/products/headphone-1.jpg"),
+                            // coverImage: require("@/assets/images/products/headphone-1.jpg"),
                             description: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.`,
                             comments: [
                                 {
                                     id: 1,
                                     uid: "7863a6802ez0e277a0f98534",
-                                    image: require("@/assets/images/faces/4.jpg"),
+                                    // image: require("@/assets/images/faces/4.jpg"),
                                     text: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.`,
                                     time: new Date()
                                 }
@@ -250,7 +250,7 @@ const mutations = {
         }
         else{
             state.editCardList.comments.push({
-                image: require("@/assets/images/faces/1.jpg"),
+                // image: require("@/assets/images/faces/1.jpg"),
                 text: data,
                 time: new Date()
             })

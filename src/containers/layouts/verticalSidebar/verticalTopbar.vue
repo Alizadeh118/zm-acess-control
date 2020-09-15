@@ -183,7 +183,7 @@
         >
           <template slot="button-content">
             <img
-              src="@/assets/images/faces/1.jpg"
+              src=""
               id="userDropdown"
               alt
               data-toggle="dropdown"

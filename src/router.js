@@ -38,46 +38,58 @@ const routes = [
                 component: () => import("./views/app/access-levels"),
             },
             {
+                path: "/report",
+                component: () => import("./views/app/report"),
+            },
+            {
                 path: "/users",
                 component: () => import("./views/app/users"),
             },
-            // pages
             {
-                path: "/app/pages",
-                component: () => import("./views/app/pages"),
-                redirect: "/app/pages/profile",
-                children: [
-                    {
-                        path: "profile",
-                        component: () => import("./views/app/pages/profile")
-                    },
-                    {
-                        path: "error",
-                        component: () => import("./views/app/pages/notFound")
-                    },
-                    {
-                        path: "icons",
-                        component: () => import("./views/app/pages/icons")
-                    },
-                    {
-                        path: "search-result",
-                        component: () => import("./views/app/pages/search-result")
-                    },
-                    {
-                        path: "pricing-table",
-                        component: () => import("./views/app/pages/pricingTable")
-                    },
-                    {
-                        path: "faq",
-                        component: () => import("./views/app/pages/faq")
-                    },
-                    {
-                        path: "blank",
-                        component: () => import("./views/app/pages/blank")
-                    },
-
-                ]
+                path: "/events",
+                component: () => import("./views/app/events"),
             },
+            {
+                path: "/profile",
+                component: () => import("./views/app/profile"),
+            },
+            // pages
+            // {
+            //     path: "/app/pages",
+            //     component: () => import("./views/app/pages"),
+            //     redirect: "/app/pages/profile",
+            //     children: [
+            //         {
+            //             path: "profile",
+            //             component: () => import("./views/app/pages/profile")
+            //         },
+            //         {
+            //             path: "error",
+            //             component: () => import("./views/app/pages/notFound")
+            //         },
+            //         {
+            //             path: "icons",
+            //             component: () => import("./views/app/pages/icons")
+            //         },
+            //         {
+            //             path: "search-result",
+            //             component: () => import("./views/app/pages/search-result")
+            //         },
+            //         {
+            //             path: "pricing-table",
+            //             component: () => import("./views/app/pages/pricingTable")
+            //         },
+            //         {
+            //             path: "faq",
+            //             component: () => import("./views/app/pages/faq")
+            //         },
+            //         {
+            //             path: "blank",
+            //             component: () => import("./views/app/pages/blank")
+            //         },
+            //
+            //     ]
+            // },
         ]
     },
     {
@@ -85,10 +97,10 @@ const routes = [
         component: () => import("./views/app/sessions/login"), //webpackChunkName app
         beforeEnter: function (to, from, next) {
             if (
-                localStorage.getItem("token") != null &&
-                localStorage.getItem("token").length > 0
+                localStorage.getItem("user") != null &&
+                localStorage.getItem("user").length > 0
             )
-                next('/');
+                next('/devices');
             else
                 next();
 
@@ -98,7 +110,7 @@ const routes = [
 
     {
         path: "*",
-        component: () => import("./views/app/pages/notFound")
+        component: () => import("./views/app/notFound")
     }
 ];
 

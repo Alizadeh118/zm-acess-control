@@ -51,18 +51,6 @@
                     </li>
                     <li
                             @mouseenter="toggleSubMenu" @mouseleave="selectedParentMenu = null"
-                            :class="{ active: selectedParentMenu == 'time-zones' }"
-                            class="nav-item"
-                            data-item="time-zones"
-                    >
-                        <router-link tag="a" class="nav-item-hold" to="/time-zones" active-class="text-primary">
-                            <i class="nav-icon i-Over-Time"></i>
-                            <span class="nav-text">مناطق زمانی</span>
-                        </router-link>
-                        <div class="triangle"></div>
-                    </li>
-                    <li
-                            @mouseenter="toggleSubMenu" @mouseleave="selectedParentMenu = null"
                             :class="{ active: selectedParentMenu == 'access-levels' }"
                             class="nav-item"
                             data-item="access-levels"
@@ -75,6 +63,18 @@
                     </li>
                     <li
                             @mouseenter="toggleSubMenu" @mouseleave="selectedParentMenu = null"
+                            :class="{ active: selectedParentMenu == 'time-zones' }"
+                            class="nav-item"
+                            data-item="time-zones"
+                    >
+                        <router-link tag="a" class="nav-item-hold" to="/time-zones" active-class="text-primary">
+                            <i class="nav-icon i-Over-Time"></i>
+                            <span class="nav-text">محدوده زمانی</span>
+                        </router-link>
+                        <div class="triangle"></div>
+                    </li>
+                    <li
+                            @mouseenter="toggleSubMenu" @mouseleave="selectedParentMenu = null"
                             :class="{ active: selectedParentMenu == 'users' }"
                             class="nav-item"
                             data-item="users"
@@ -82,6 +82,30 @@
                         <router-link tag="a" class="nav-item-hold" to="/users" active-class="text-primary">
                             <i class="nav-icon i-Mens"></i>
                             <span class="nav-text">کاربران</span>
+                        </router-link>
+                        <div class="triangle"></div>
+                    </li>
+                    <li
+                            @mouseenter="toggleSubMenu" @mouseleave="selectedParentMenu = null"
+                            :class="{ active: selectedParentMenu == 'report' }"
+                            class="nav-item"
+                            data-item="report"
+                    >
+                        <router-link tag="a" class="nav-item-hold" to="/report" active-class="text-primary">
+                            <i class="nav-icon i-File-Horizontal-Text"></i>
+                            <span class="nav-text">گزارش</span>
+                        </router-link>
+                        <div class="triangle"></div>
+                    </li>
+                    <li
+                            @mouseenter="toggleSubMenu" @mouseleave="selectedParentMenu = null"
+                            :class="{ active: selectedParentMenu == 'events' }"
+                            class="nav-item"
+                            data-item="events"
+                    >
+                        <router-link tag="a" class="nav-item-hold" to="/events" active-class="text-primary">
+                            <i class="nav-icon i-Receipt-3"></i>
+                            <span class="nav-text">رخدادها</span>
                         </router-link>
                         <div class="triangle"></div>
                     </li>
