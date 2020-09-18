@@ -44,7 +44,7 @@
       text-align: center;
       width: $sidebar-left-width;
       height: 100%;
-      margin: 5px 0 0;
+      margin: 0;
       padding: 0;
       .nav-item {
         position: relative;
@@ -240,11 +240,11 @@
 }
 
 // dark
-@media (max-width: 1200px) {
-  .layout-sidebar-large .main-content-wrap.sidenav-open {
-    width: 100%;
-  }
-}
+//@media (max-width: 1200px) {
+//  .layout-sidebar-large .main-content-wrap.sidenav-open {
+//    width: 100%;
+//  }
+//}
 
 @media (max-width: 576px) {
   .main-content-wrap {

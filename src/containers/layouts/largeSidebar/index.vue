@@ -7,8 +7,8 @@
 
         <main>
             <div
-                    :class="{ 'sidenav-open': getSideBarToggleProperties.isSideNavOpen }"
-                    class="main-content-wrap d-flex flex-column">
+                    :class="{'w-100': !$store.getters.isAdmin}"
+                    class="main-content-wrap d-flex flex-column sidenav-open">
 
                 <transition name="page" mode="out-in">
                     <router-view/>

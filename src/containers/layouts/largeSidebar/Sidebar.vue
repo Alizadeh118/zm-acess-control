@@ -6,10 +6,10 @@
             @touchstart="isMenuOver = true"
     >
         <vue-perfect-scrollbar
+                v-if="$store.getters.isAdmin"
                 :settings="{ suppressScrollX: true, wheelPropagation: false }"
-                :class="{ open: getSideBarToggleProperties.isSideNavOpen }"
                 ref="myData"
-                class="sidebar-left rtl-ps-none ps scroll"
+                class="sidebar-left rtl-ps-none ps scroll open"
         >
             <div>
                 <ul class="navigation-left">

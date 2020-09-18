@@ -12,11 +12,11 @@
                       placeholder: 'جستجو'
                     }"
                     :sort-options="{
-                      enabled: true,
+                      enabled: false,
                       initialSortBy: {field: 'ID', type: 'desc'}
                     }"
                     :pagination-options="{
-                      enabled: false,
+                      enabled: true,
                       mode: 'records',
                       nextLabel: 'بعدی',
                       prevLabel: 'قبلی',
@@ -42,7 +42,7 @@
 <script>
 
     export default {
-        metaInfo(){
+        metaInfo() {
             return {
                 title: "رخدادها",
             }
@@ -72,13 +72,15 @@
                     },
                     {
                         label: "زمان",
-                        field: "Time"
+                        field: "Time_Persian",
+                        tdClass: "dir-ltr",
+                        formatFn: value => this.english2persian(value).replace('T', ' ')
                     },
                 ],
             };
         },
         methods: {
-            getEvents(){
+            getEvents() {
                 this.$store.dispatch('getEvents')
                     .then(events => this.events = events)
                     .catch(e => {

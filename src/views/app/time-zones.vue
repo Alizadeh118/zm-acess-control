@@ -16,7 +16,7 @@
                       initialSortBy: {field: 'Name', type: 'asc'}
                     }"
                     :pagination-options="{
-                      enabled: false,
+                      enabled: true,
                       mode: 'records',
                       nextLabel: 'بعدی',
                       prevLabel: 'قبلی',
@@ -233,7 +233,7 @@
                         </a>
 
                         <a href="#" @click.prevent="removeTimezone(props.row)"
-                           :class="{'opacity-2': loading.removeTimezone}"
+                           :class="{'opacity-2 pointer-events-none': loading.removeTimezone}"
                            v-b-tooltip.hover
                            class="o-hidden d-inline-block mx-3"
                            title="حذف محدوده زمانی">
@@ -346,7 +346,13 @@
                         })
                         .catch(err => {
                             console.log('Could not update timezone', err);
-                            this.$bvToast.toast(`ویرایش محدوده زمانی با خطا همراه بود`, {
+                            let msg
+                            try {
+                                msg = err.response.data.Message
+                            } catch (e) {
+                                msg = 'ویرایش محدوده زمانی با خطا همراه بود'
+                            }
+                            this.$bvToast.toast(msg, {
                                 title: `ویرایش محدوده زمانی`,
                                 variant: 'danger',
                                 toaster: 'b-toaster-top-left'
@@ -366,7 +372,13 @@
                         })
                         .catch(err => {
                             console.log('Could not add timezone', err);
-                            this.$bvToast.toast(`افزودن محدوده زمانی با خطا همراه بود`, {
+                            let msg
+                            try {
+                                msg = err.response.data.Message
+                            } catch (e) {
+                                msg = 'افزودن محدوده زمانی با خطا همراه بود'
+                            }
+                            this.$bvToast.toast(msg, {
                                 title: `افزودن محدوده زمانی`,
                                 variant: 'danger',
                                 toaster: 'b-toaster-top-left'

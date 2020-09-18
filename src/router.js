@@ -50,46 +50,9 @@ const routes = [
                 component: () => import("./views/app/events"),
             },
             {
-                path: "/profile",
-                component: () => import("./views/app/profile"),
+                path: "/security",
+                component: () => import("./views/app/security"),
             },
-            // pages
-            // {
-            //     path: "/app/pages",
-            //     component: () => import("./views/app/pages"),
-            //     redirect: "/app/pages/profile",
-            //     children: [
-            //         {
-            //             path: "profile",
-            //             component: () => import("./views/app/pages/profile")
-            //         },
-            //         {
-            //             path: "error",
-            //             component: () => import("./views/app/pages/notFound")
-            //         },
-            //         {
-            //             path: "icons",
-            //             component: () => import("./views/app/pages/icons")
-            //         },
-            //         {
-            //             path: "search-result",
-            //             component: () => import("./views/app/pages/search-result")
-            //         },
-            //         {
-            //             path: "pricing-table",
-            //             component: () => import("./views/app/pages/pricingTable")
-            //         },
-            //         {
-            //             path: "faq",
-            //             component: () => import("./views/app/pages/faq")
-            //         },
-            //         {
-            //             path: "blank",
-            //             component: () => import("./views/app/pages/blank")
-            //         },
-            //
-            //     ]
-            // },
         ]
     },
     {
@@ -106,8 +69,6 @@ const routes = [
 
         },
     },
-
-
     {
         path: "*",
         component: () => import("./views/app/notFound")
@@ -123,16 +84,16 @@ const router = new Router({
     }
 });
 
-router.beforeEach((to, from, next) => {
-    // If this isn't an initial page load.
-    if (to.path) {
-        // Start the route progress bar.
-
-        NProgress.start();
-        NProgress.set(0.1);
-    }
-    next();
-});
+// router.beforeEach((to, from, next) => {
+//     // If this isn't an initial page load.
+//     if (to.path) {
+//         // Start the route progress bar.
+//
+//         NProgress.start();
+//         NProgress.set(0.1);
+//     }
+//     next();
+// });
 
 router.afterEach(() => {
     // Remove initial loading

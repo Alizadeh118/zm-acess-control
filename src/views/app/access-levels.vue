@@ -16,7 +16,7 @@
                       initialSortBy: {field: 'Name', type: 'asc'}
                     }"
                     :pagination-options="{
-                      enabled: false,
+                      enabled: true,
                       mode: 'records',
                       nextLabel: 'بعدی',
                       prevLabel: 'قبلی',
@@ -105,36 +105,41 @@
                               @click="syncAccesses(-1)">
                         <i class="i-Arrow-Refresh align-middle d-inline-block mr-2"
                            :class="{'spin': loading.syncAccesses.includes(-1)}"></i>
-                        <span>همگام‌سازی دستگاه‌ها</span>
+                        <span>همگام‌سازی دسترسی‌ها</span>
                     </b-button>
                 </div>
 
 
                 <template slot="table-row" slot-scope="props">
 
-                    <div v-if="props.column.field === 'Button'">
-                        <a href="#" @click.prevent="syncAccesses(props.row.ID)"
-                           :class="{'opacity-2': loading.syncAccesses.includes(props.row.ID) || loading.syncAccesses.includes(-1)}"
-                           v-b-tooltip.hover
-                           class="o-hidden d-inline-block"
-                           title="همگام سازی دسترسی">
-                            <i class="i-Arrow-Refresh text-25 text-info mr-2 d-inline-block"
-                               :class="{'spin': loading.syncAccesses.includes(props.row.ID) || loading.syncAccesses.includes(-1)}"></i>
-                        </a>
-                        <a @click.prevent="editAccessLevel(props.row)"
-                           href=""
-                           v-b-tooltip.hover
-                           class="o-hidden d-inline-block"
-                           title="ویرایش دسترسی">
-                            <i class="i-Eraser-2 text-25 text-info mr-2"></i>
-                        </a>
-                        <a @click.prevent="removeAccessLevel(props.row)"
-                           href=""
-                           v-b-tooltip.hover
-                           class="o-hidden d-inline-block"
-                           title="حذف دسترسی">
-                            <i class="i-Close-Window text-25 text-danger"></i>
-                        </a>
+                    <div v-if="props.column.field === 'Button'" class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <b-badge variant="info" v-if="props.row.Is_Guest">مهمان</b-badge>
+                        </div>
+                        <div>
+                            <a href="#" @click.prevent="syncAccesses(props.row.ID)"
+                               :class="{'opacity-2 pointer-events-none': loading.syncAccesses.includes(props.row.ID) || loading.syncAccesses.includes(-1)}"
+                               v-b-tooltip.hover
+                               class="o-hidden d-inline-block"
+                               title="همگام سازی دسترسی">
+                                <i class="i-Arrow-Refresh text-25 text-info mr-2 d-inline-block"
+                                   :class="{'spin': loading.syncAccesses.includes(props.row.ID) || loading.syncAccesses.includes(-1)}"></i>
+                            </a>
+                            <a @click.prevent="editAccessLevel(props.row)"
+                               href=""
+                               v-b-tooltip.hover
+                               class="o-hidden d-inline-block"
+                               title="ویرایش دسترسی">
+                                <i class="i-Eraser-2 text-25 text-info mr-2"></i>
+                            </a>
+                            <a @click.prevent="removeAccessLevel(props.row)"
+                               href=""
+                               v-b-tooltip.hover
+                               class="o-hidden d-inline-block"
+                               title="حذف دسترسی">
+                                <i class="i-Close-Window text-25 text-danger"></i>
+                            </a>
+                        </div>
                     </div>
 
                     <div v-else-if="props.column.field === 'Employees'">
@@ -156,6 +161,11 @@
                 </template>
 
             </vue-good-table>
+            <b-modal id="syncAccessesProgressModal" title="دریافت داده‌ها" hide-footer no-close-on-backdrop
+                     no-close-on-esc hide-header-close>
+                <p class="mt-2 text-center">لطفا تا اتمام کامل عملیات منتظر بمانید</p>
+                <b-progress class="mb-2 mt-4" :value="syncAccessesProgressValue" striped animated></b-progress>
+            </b-modal>
         </b-card>
         <b-modal id="employees" title="لیست کارمندان" hide-footer>
             <b-list-group flush>
@@ -232,6 +242,8 @@
                 },
                 employeesList: [],
                 devicesList: [],
+                syncAccessesProgressValue: 0,
+                syncAccessesProgressInterval: null,
             };
         },
         computed: {
@@ -277,13 +289,11 @@
         methods: {
             addOrUpdateAccessLevel() {
                 this.loading.addOrUpdateAccessLevel = true;
-                this.loading.addOrUpdateAccessLevelText = 'ایجاد دسترسی...';
+                this.loading.addOrUpdateAccessLevelText = this.accessLevel.update ? 'ویرایش دسترسی...' : 'ایجاد دسترسی...';
 
-                console.log(this.accessLevel.employee);
                 if (typeof this.accessLevel.employee === "string")
                     this.accessLevel.employee = this.accessLevel.employee.split(',')
 
-                return console.log(this.accessLevel);
 
                 if (this.accessLevel.update) {
                     this.$store.dispatch('updateAccessLevel', this.accessLevel)
@@ -315,7 +325,13 @@
                         .catch(err => {
                             this.loading.addOrUpdateAccessLevel = false;
                             console.log('Could not update accessLevel', err);
-                            this.$bvToast.toast(`ویرایش دسترسی با خطا همراه بود`, {
+                            let msg
+                            try {
+                                msg = err.response.data.Message
+                            } catch (e) {
+                                msg = 'ویرایش دسترسی با خطا همراه بود'
+                            }
+                            this.$bvToast.toast(msg, {
                                 title: `ویرایش دسترسی`,
                                 variant: 'danger',
                                 toaster: 'b-toaster-top-left'
@@ -351,7 +367,13 @@
                         .catch(err => {
                             this.loading.addOrUpdateAccessLevel = false;
                             console.log('Could not add accessLevel', err);
-                            this.$bvToast.toast(`افزودن دسترسی با خطا همراه بود`, {
+                            let msg
+                            try {
+                                msg = err.response.data.Message
+                            } catch (e) {
+                                msg = 'افزودن دسترسی با خطا همراه بود'
+                            }
+                            this.$bvToast.toast(msg, {
                                 title: `افزودن دسترسی`,
                                 variant: 'danger',
                                 toaster: 'b-toaster-top-left'
@@ -407,6 +429,8 @@
             syncAccesses(accessIds) {
                 if (this.loading.syncAccesses.includes(accessIds)) return;
                 this.loading.syncAccesses.push(accessIds);
+                if (accessIds === -1)
+                    this.triggerProgressModal(true)
                 this.$store.dispatch('syncAccesses', Array.isArray(accessIds) ? accessIds : [accessIds])
                     .then(() => {
                         this.$bvToast.toast(`همگام‌سازی دسترسی(ها) با موفقیت انجام شد`, {
@@ -422,7 +446,13 @@
                             toaster: 'b-toaster-top-left'
                         });
                     })
-                    .finally(() => this.loading.syncAccesses = this.loading.syncAccesses.filter(i => i !== accessIds))
+                    .finally(() => {
+                        if (accessIds === -1)
+                            setTimeout(() => {
+                                this.triggerProgressModal(false)
+                            }, 1000)
+                        this.loading.syncAccesses = this.loading.syncAccesses.filter(i => i !== accessIds)
+                    })
             },
             onModalHidden() {
                 this.accessLevel = {
@@ -434,6 +464,18 @@
                     update: false
                 }
             },
+            triggerProgressModal(show = false) {
+                if (show) {
+                    this.$bvModal.show('syncAccessesProgressModal');
+                    this.syncAccessesProgressInterval = setInterval(() => {
+                        this.$store.dispatch('syncDevicesProgress')
+                            .then(value => this.syncAccessesProgressValue = value)
+                    }, 500)
+                } else {
+                    this.$bvModal.hide('syncAccessesProgressModal');
+                    clearInterval(this.syncAccessesProgressInterval);
+                }
+            }
         },
         created() {
             this.$store.dispatch('getAccessLevels')
@@ -496,7 +538,7 @@
     }
 
     .badge {
-        font-size: 80%;
+        font-size: 100%;
     }
 
     .vgt-wrap__actions-footer {

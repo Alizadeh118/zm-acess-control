@@ -1,43 +1,47 @@
 <template>
-  <div>
-    <router-view></router-view>
+    <div>
+        <router-view></router-view>
 
-    <!-- <customizer></customizer> -->
-  </div>
+        <!-- <customizer></customizer> -->
+    </div>
 </template>
 
 
 <script>
-import { mapGetters } from "vuex";
+    import {mapGetters} from "vuex";
 
-export default {
-  data() {
-    return {};
-  },
-  computed: {
-    ...mapGetters(["getThemeMode"]),
-    themeName() {
-      return this.getThemeMode.dark ? "dark-theme" : " ";
-    },
-    rtl() {
-      return this.getThemeMode.rtl ? "rtl" : " ";
-    }
-  },
-  metaInfo() {
-    return {
-      // if no subcomponents specify a metaInfo.title, this title will be used
-      title: "سامانه حافظ",
-      // all titles will be injected into this template
-      titleTemplate: "%s | زرین مصباح",
-      bodyAttrs: {
-        class: [this.themeName, "text-left"]
-      },
-      htmlAttrs: {
-        dir: this.rtl
-      }
+    export default {
+        data() {
+            return {};
+        },
+        computed: {
+            ...mapGetters(["getThemeMode"]),
+            themeName() {
+                return this.getThemeMode.dark ? "dark-theme" : " ";
+            },
+            rtl() {
+                return this.getThemeMode.rtl ? "rtl" : " ";
+            }
+        },
+        metaInfo() {
+            return {
+                // if no subcomponents specify a metaInfo.title, this title will be used
+                title: "سامانه حافظ",
+                // all titles will be injected into this template
+                titleTemplate: "%s | زرین مصباح",
+                bodyAttrs: {
+                    class: [this.themeName, "text-left"]
+                },
+                htmlAttrs: {
+                    dir: this.rtl
+                }
+            };
+        },
+        created() {
+            // if (!this.$store.getters.isAdmin)
+            //     this.$router.replace("/security")
+        }
     };
-  }
-};
 </script>
 
 <style>

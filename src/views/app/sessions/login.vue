@@ -91,7 +91,10 @@
                     password: this.password,
                 })
                     .then(() => {
-                        this.$router.push("/devices")
+                        if (this.$store.getters.isAdmin)
+                            this.$router.push("/devices")
+                        else
+                            this.$router.push("/security")
                     })
                     .catch(err => {
                         console.log(err);

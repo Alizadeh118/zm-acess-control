@@ -16,7 +16,7 @@
                       initialSortBy: {field: 'Role', type: 'desc'}
                     }"
                     :pagination-options="{
-                      enabled: false,
+                      enabled: true,
                       mode: 'records',
                       nextLabel: 'بعدی',
                       prevLabel: 'قبلی',
@@ -204,7 +204,13 @@
                             })
                             .catch(err => {
                                 console.log('Could not edit user', err);
-                                this.$bvToast.toast(`ویرایش رمز عبور شما با خطا همراه بود`, {
+                                let msg
+                                try {
+                                    msg = err.response.data.Message
+                                } catch (e) {
+                                    msg = 'ویرایش رمز عبور شما با خطا همراه بود'
+                                }
+                                this.$bvToast.toast(msg, {
                                     title: `ویرایش رمز عبور`,
                                     variant: 'danger',
                                     toaster: 'b-toaster-top-left'
@@ -226,7 +232,13 @@
                             })
                             .catch(err => {
                                 console.log('Could not edit user', err);
-                                this.$bvToast.toast(`ویرایش رمز عبور کاربر با خطا همراه بود`, {
+                                let msg
+                                try {
+                                    msg = err.response.data.Message
+                                } catch (e) {
+                                    msg = 'ویرایش رمز عبور کاربر با خطا همراه بود'
+                                }
+                                this.$bvToast.toast(msg, {
                                     title: `ویرایش رمز عبور`,
                                     variant: 'danger',
                                     toaster: 'b-toaster-top-left'
@@ -246,7 +258,13 @@
                         })
                         .catch(err => {
                             console.log('Could not add user', err);
-                            this.$bvToast.toast(`افزودن کاربر با خطا همراه بود`, {
+                            let msg
+                            try {
+                                msg = err.response.data.Message
+                            } catch (e) {
+                                msg = 'افزودن کاربر با خطا همراه بود'
+                            }
+                            this.$bvToast.toast(msg, {
                                 title: `افزودن کاربر`,
                                 variant: 'danger',
                                 toaster: 'b-toaster-top-left'

@@ -16,7 +16,7 @@
                       initialSortBy: {field: 'LastName', type: 'asc'}
                     }"
                     :pagination-options="{
-                      enabled: false,
+                      enabled: true,
                       mode: 'records',
                       nextLabel: 'بعدی',
                       prevLabel: 'قبلی',
@@ -85,10 +85,10 @@
                                 <b-col cols="12">
                                     <b-row>
                                         <b-col cols="6">
-                                            <b-form-group label="مجوز دسترسی:">
+                                            <b-form-group label="نقش کاربر:">
                                                 <b-form-select
                                                         required
-                                                        :options="$store.state.api.privileges"
+                                                        :options="privileges"
                                                         value-field="ID" text-field="Name"
                                                         v-model="employee.Privilege_ID"
                                                 ></b-form-select>
@@ -120,7 +120,7 @@
 
                     <div v-if="props.column.field === 'Button'"
                          class="d-flex align-items-center justify-content-between">
-                        <div class="right text-16">
+                        <div class="right">
                             <a v-if="0 && props.row.Is_Guest"
                                @click.prevent="toggleAvailability(props.row)"
                                href=""
@@ -250,6 +250,23 @@
                 addIDAndLabelKeys(roots);
                 return roots;
             },
+            privileges() {
+                const getPersianPrivilegeName = privilege => {
+                    switch (privilege) {
+                        case 'normal':
+                            return 'کاربر عادی'
+                        case 'admin':
+                            return 'مدیر ارشد'
+                        default:
+                            return privilege
+                    }
+                }
+                return this.$store.state.api.privileges.map(privilege => {
+                    privilege.Name = getPersianPrivilegeName(privilege.Name)
+                    return privilege
+                })
+
+            }
         },
         methods: {
             addOrUpdateEmployee() {
@@ -267,7 +284,13 @@
                         })
                         .catch(err => {
                             console.log('Could not update employee', err);
-                            this.$bvToast.toast(`ویرایش کارمند با خطا همراه بود`, {
+                            let msg
+                            try {
+                                msg = err.response.data.Message
+                            } catch (e) {
+                                msg = 'ویرایش کارمند با خطا همراه بود'
+                            }
+                            this.$bvToast.toast(msg, {
                                 title: `ویرایش کارمند`,
                                 variant: 'danger',
                                 toaster: 'b-toaster-top-left'
@@ -286,8 +309,14 @@
                             });
                         })
                         .catch(err => {
+                            let msg
+                            try {
+                                msg = err.response.data.Message
+                            } catch (e) {
+                                msg = 'افزودن کارمند با خطا همراه بود'
+                            }
                             console.log('Could not add employee', err);
-                            this.$bvToast.toast(`افزودن کارمند با خطا همراه بود`, {
+                            this.$bvToast.toast(msg, {
                                 title: `افزودن کارمند`,
                                 variant: 'danger',
                                 toaster: 'b-toaster-top-left'
@@ -328,8 +357,14 @@
                                         toaster: 'b-toaster-top-left'
                                     });
                                 })
-                                .catch(() => {
-                                    this.$bvToast.toast(`حذف کارمند با خطا همراه بود`, {
+                                .catch((err) => {
+                                    let msg
+                                    try {
+                                        msg = err.response.data.Message
+                                    } catch (e) {
+                                        msg = 'حذف کارمند با خطا همراه بود'
+                                    }
+                                    this.$bvToast.toast(msg, {
                                         title: `حذف کارمند`,
                                         variant: 'danger',
                                         toaster: 'b-toaster-top-left'
@@ -412,5 +447,9 @@
 
     .footer__row-count__label {
         float: left;
+    }
+
+    .badge {
+        font-size: 100%;
     }
 </style>

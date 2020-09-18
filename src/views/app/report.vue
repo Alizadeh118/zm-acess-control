@@ -8,7 +8,7 @@
                     :line-numbers="false"
                     :rtl="true"
                     :search-options="{
-                      enabled: true,
+                      enabled: false,
                       placeholder: 'جستجو'
                     }"
                     :sort-options="{
@@ -16,7 +16,7 @@
                       initialSortBy: {field: 'ID', type: 'desc'}
                     }"
                     :pagination-options="{
-                      enabled: false,
+                      enabled: true,
                       mode: 'records',
                       nextLabel: 'بعدی',
                       prevLabel: 'قبلی',
@@ -41,7 +41,7 @@
 <script>
 
     export default {
-        metaInfo(){
+        metaInfo() {
             return {
                 title: "گزارش",
             }
@@ -63,39 +63,73 @@
                     {
                         label: "نوع",
                         field: "type",
-                        formatFn: this.getPersianType
+                        formatFn: this.getPersianType,
+                        filterOptions: {
+                            enabled: true, // enable filter for this column
+                            placeholder: 'فیلتر بر اساس نوع', // placeholder for filter input
+                            // filterValue: 'Jane', // initial populated value for this filter
+                            filterDropdownItems: Object.values(this.$store.state.api.types).map(type => this.getPersianType(type))
+                            // filterFn: this.columnFilterFn, //custom filter function that
+                            // trigger: 'enter', //only trigger on enter not on keyup
+                        },
                     },
                     {
                         label: "کاربر",
                         field: "Employee_ID",
-                        formatFn: this.getEmployee
+                        formatFn: this.getEmployee,
+                        filterOptions: {
+                            enabled: true, // enable filter for this column
+                            placeholder: 'فیلتر بر اساس کاربر', // placeholder for filter input
+                            // filterValue: 'Jane', // initial populated value for this filter
+                            // filterDropdownItems: ['a', 'bbb','cc'], // dropdown (with selected values) instead of text input
+                            // filterFn: this.columnFilterFn, //custom filter function that
+                            // trigger: 'enter', //only trigger on enter not on keyup
+                        },
                     },
                     {
                         label: "دستگاه",
                         field: "Device_ID",
-                        formatFn: this.getDevice
+                        formatFn: this.getDevice,
+                        filterOptions: {
+                            enabled: true, // enable filter for this column
+                            placeholder: 'فیلتر بر اساس دستگاه', // placeholder for filter input
+                            // filterValue: 'Jane', // initial populated value for this filter
+                            // filterDropdownItems: ['a', 'bbb','cc'], // dropdown (with selected values) instead of text input
+                            // filterFn: this.columnFilterFn, //custom filter function that
+                            // trigger: 'enter', //only trigger on enter not on keyup
+                        },
                     },
                     {
                         label: "زمان",
-                        field: "Time"
+                        field: "Time_Persian",
+                        tdClass: "dir-ltr",
+                        formatFn: value => this.english2persian(value).replace('T', ' '),
+                        filterOptions: {
+                            enabled: true, // enable filter for this column
+                            placeholder: 'فیلتر بر اساس زمان', // placeholder for filter input
+                            // filterValue: 'Jane', // initial populated value for this filter
+                            // filterDropdownItems: ['a', 'bbb','cc'], // dropdown (with selected values) instead of text input
+                            // filterFn: this.columnFilterFn, //custom filter function that
+                            // trigger: 'enter', //only trigger on enter not on keyup
+                        },
                     },
                 ],
             };
         },
         methods: {
-            getDevice(id){
-                const device =  this.$store.state.api.devices.find(device=>device.ID === +id)
+            getDevice(id) {
+                const device = this.$store.state.api.devices.find(device => device.ID === +id)
                 if (device)
                     return device.Name
                 return '-'
             },
-            getEmployee(id){
-                const employee = this.$store.state.api.employees.find(employee=>employee.ID === +id)
+            getEmployee(id) {
+                const employee = this.$store.state.api.employees.find(employee => employee.ID === +id)
                 if (employee)
                     return employee.Name + ' ' + employee.LastName
                 return '-'
             },
-            getPersianType(type){
+            getPersianType(type) {
                 switch (type) {
                     case 'Fingerprint':
                         return 'اثر انگشت'
@@ -138,7 +172,7 @@
                         noAutoHide: true,
                     });
                 })
-                .then(()=>{
+                .then(() => {
                     if (!this.$store.state.api.devices.length)
                         this.$store.dispatch('getDevices')
                             .catch(e => {
@@ -157,6 +191,18 @@
                                 console.log('Could not get employees', e);
                                 this.$bvToast.toast(`دریافت لیست کارمندان با خطا همراه بود`, {
                                     title: `لیست کارمندان`,
+                                    variant: 'danger',
+                                    toaster: 'b-toaster-top-left',
+                                    noAutoHide: true,
+                                });
+                            });
+
+                    if (!this.$store.state.api.types.length)
+                        this.$store.dispatch('getTypes')
+                            .catch(e => {
+                                console.log('Could not get types', e);
+                                this.$bvToast.toast(`دریافت گونه‌های گزارش با خطا همراه بود`, {
+                                    title: `لیست گونه‌های گزارش`,
                                     variant: 'danger',
                                     toaster: 'b-toaster-top-left',
                                     noAutoHide: true,

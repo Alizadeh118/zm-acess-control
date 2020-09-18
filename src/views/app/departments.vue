@@ -11,7 +11,9 @@
                       enabled: true,
                       placeholder: 'جستجو'
                     }"
-
+                    :sort-options="{
+                      enabled: false,
+                    }"
                     :pagination-options="{
                       enabled: false,
                       mode: 'records',
@@ -213,7 +215,13 @@
                         })
                         .catch(err => {
                             console.log('Could not update department', err);
-                            this.$bvToast.toast(`ویرایش دپارتمان با خطا همراه بود`, {
+                            let msg
+                            try {
+                                msg = err.response.data.Message
+                            } catch (e) {
+                                msg = 'ویرایش دپارتمان با خطا همراه بود'
+                            }
+                            this.$bvToast.toast(msg, {
                                 title: `ویرایش دپارتمان`,
                                 variant: 'danger',
                                 toaster: 'b-toaster-top-left'
@@ -233,7 +241,13 @@
                         })
                         .catch(err => {
                             console.log('Could not add department', err);
-                            this.$bvToast.toast(`افزودن دپارتمان با خطا همراه بود`, {
+                            let msg
+                            try {
+                                msg = err.response.data.Message
+                            } catch (e) {
+                                msg = 'افزودن دپارتمان با خطا همراه بود'
+                            }
+                            this.$bvToast.toast(msg, {
                                 title: `افزودن دپارتمان`,
                                 variant: 'danger',
                                 toaster: 'b-toaster-top-left'

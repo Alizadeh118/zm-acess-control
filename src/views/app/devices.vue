@@ -16,7 +16,7 @@
                       initialSortBy: {field: 'Name', type: 'asc'}
                     }"
                     :pagination-options="{
-                      enabled: false,
+                      enabled: true,
                       mode: 'records',
                       nextLabel: 'بعدی',
                       prevLabel: 'قبلی',
@@ -114,7 +114,9 @@
                     </b-modal>
                 </div>
                 <div slot="table-actions-bottom" class="text-right mt-16">
-                    <b-button variant="dark" class="btn-rounded" :disabled="loading.syncDevices.includes(-1)" @click="syncDevices(-1)">
+                    <b-button variant="dark" class="btn-rounded"
+                              :disabled="!!loading.syncDevices.length || $store.state.api.devices.every(d=> d.State !== true)"
+                              @click="syncDevices(-1)">
                         <i class="i-Arrow-Refresh align-middle d-inline-block mr-2"
                            :class="{'spin': loading.syncDevices.includes(-1)}"></i>
                         <span>همگام‌سازی دستگاه‌ها</span>
@@ -130,7 +132,7 @@
                     <div v-else-if="props.column.field === 'Button'">
 
                         <a href="#" @click.prevent="syncDevices(props.row.ID)"
-                           :class="{'opacity-2': loading.syncDevices.includes(props.row.ID) || loading.syncDevices.includes(-1)}"
+                           :class="{'opacity-2 pointer-events-none': !props.row.State || loading.syncDevices.includes(props.row.ID) || loading.syncDevices.includes(-1)}"
                            v-b-tooltip.hover
                            class="o-hidden d-inline-block mx-3"
                            title="همگام سازی دستگاه">
@@ -139,7 +141,7 @@
                         </a>
 
                         <a href="#" @click.prevent="getDataFromDevice(props.row)"
-                           :class="{'opacity-2': loading.getDataFromDevice.includes(props.row.ID)}"
+                           :class="{'opacity-2 pointer-events-none': !props.row.State || loading.getDataFromDevice.includes(props.row.ID)}"
                            v-b-tooltip.hover
                            class="o-hidden d-inline-block mx-3"
                            title="دریافت داده‌های دستگاه">
@@ -147,7 +149,7 @@
                         </a>
 
                         <a href="#" @click.prevent="syncTime(props.row)"
-                           :class="{'opacity-2': loading.syncTime.includes(props.row.ID)}"
+                           :class="{'opacity-2 pointer-events-none': !props.row.State || loading.syncTime.includes(props.row.ID)}"
                            v-b-tooltip.hover
                            class="o-hidden d-inline-block mx-3"
                            title="تنظیم زمان دستگاه">
@@ -155,22 +157,15 @@
                         </a>
 
                         <a href="#" @click.prevent="clearData(props.row)"
-                           :class="{'opacity-2': loading.clearData.includes(props.row.ID)}"
+                           :class="{'opacity-2 pointer-events-none': !props.row.State || loading.clearData.includes(props.row.ID)}"
                            v-b-tooltip.hover
                            class="o-hidden d-inline-block mx-3"
                            title="پاکسازی داده‌های دستگاه">
                             <i class="i-Cloud-Remove text-25 text-warning"></i>
                         </a>
 
-                        <a href="#" @click.prevent="editDevice(props.row)"
-                           v-b-tooltip.hover
-                           class="o-hidden d-inline-block mx-3"
-                           title="ویرایش دستگاه">
-                            <i class="i-Eraser-2 text-25 text-info"></i>
-                        </a>
-
                         <a href="#" @click.prevent="removeDevice(props.row)"
-                           :class="{'opacity-2': loading.removeDevice}"
+                           :class="{'opacity-2 pointer-events-none': loading.removeDevice}"
                            v-b-tooltip.hover
                            class="o-hidden d-inline-block mx-3"
                            title="حذف دستگاه">
@@ -184,17 +179,17 @@
             </vue-good-table>
         </b-card>
 
-        <b-modal id="getDataFromDeviceProgressModal" title="دریافت داده‌ها" hide-footer no-close-on-backdrop
+        <b-modal id="syncDevicesProgressModal" title="دریافت داده‌ها" hide-footer no-close-on-backdrop
                  no-close-on-esc hide-header-close>
             <p class="mt-2 text-center">لطفا تا اتمام کامل عملیات منتظر بمانید</p>
-            <b-progress class="mb-2 mt-4" :value="getDataFromDeviceProgressValue" striped animated></b-progress>
+            <b-progress class="mb-2 mt-4" :value="syncDevicesProgressValue" striped animated></b-progress>
         </b-modal>
     </div>
 </template>
 
 <script>
     export default {
-        metaInfo(){
+        metaInfo() {
             return {
                 title: "دستگاه‌ها",
             }
@@ -245,8 +240,8 @@
                 },
                 syncTimeChecked: false,
                 clearDataChecked: false,
-                getDataFromDeviceProgressValue: 0,
-                getDataFromDeviceProgressInterval: null,
+                syncDevicesProgressValue: 0,
+                syncDevicesProgressInterval: null,
             };
         },
         methods: {
@@ -293,7 +288,13 @@
                         })
                         .catch(err => {
                             console.log('Could not add device', err);
-                            this.$bvToast.toast(`افزودن دستگاه با خطا همراه بود`, {
+                            let msg
+                            try {
+                                msg = err.response.data.Message
+                            } catch (e) {
+                                msg = 'افزودن دستگاه با خطا همراه بود'
+                            }
+                            this.$bvToast.toast(msg, {
                                 title: `افزودن دستگاه`,
                                 variant: 'danger',
                                 toaster: 'b-toaster-top-left'
@@ -306,13 +307,6 @@
                 setInterval(() => {
                     this.$store.dispatch('getDevicesState');
                 }, 60000) // sync devices state every 60 seconds
-            },
-            editDevice(device) {
-                this.device = {
-                    ...device,
-                    update: true
-                };
-                this.$bvModal.show('addDevice');
             },
             removeDevice(device) {
                 if (this.loading.removeDevice) return;
@@ -408,7 +402,7 @@
             },
             getDataFromDevice(device) {
                 if (this.loading.getDataFromDevice.includes(device.ID)) return;
-                this.loading.getDataFromDevice.push(device.ID);  // trigger modal
+                this.loading.getDataFromDevice.push(device.ID);
 
                 this.$store.dispatch('getDataFromDevice', device.ID)
                     .then(() => {
@@ -430,6 +424,8 @@
             syncDevices(deviceIds) {
                 if (this.loading.syncDevices.includes(deviceIds)) return;
                 this.loading.syncDevices.push(deviceIds);
+                if (deviceIds === -1)
+                    this.triggerProgressModal(true)
                 this.$store.dispatch('syncDevices', Array.isArray(deviceIds) ? deviceIds : [deviceIds])
                     .then(() => {
                         this.$bvToast.toast(`همگام‌سازی دستگاه(ها) با موفقیت انجام شد`, {
@@ -445,7 +441,13 @@
                             toaster: 'b-toaster-top-left'
                         });
                     })
-                    .finally(() => this.loading.syncDevices = this.loading.syncDevices.filter(i => i !== deviceIds))
+                    .finally(() => {
+                        if (deviceIds === -1)
+                            setTimeout(() => {
+                                this.triggerProgressModal(false)
+                            }, 1000)
+                        this.loading.syncDevices = this.loading.syncDevices.filter(i => i !== deviceIds)
+                    })
             },
             onModalHidden() {
                 this.device = {
@@ -458,26 +460,22 @@
                 this.syncTimeChecked = false;
                 this.clearDataChecked = false;
             },
-        },
-        watch: {
-            'loading.getDataFromDevice': {
-                handler(v) {
-                    if (v) {
-                        this.$bvModal.show('getDataFromDeviceProgressModal');
-                        this.getDataFromDeviceProgressInterval = setInterval(() => {
-                            this.$store.dispatch('getDataFromDeviceProgress')
-                                .then(value => this.getDataFromDeviceProgressValue = value)
-                        }, 500)
-                    } else {
-                        this.$bvModal.hide('getDataFromDeviceProgressModal');
-                        clearInterval(this.getDataFromDeviceProgressInterval);
-                    }
-                },
-                deep: true
+            triggerProgressModal(show = false) {
+                if (show) {
+                    this.$bvModal.show('syncDevicesProgressModal');
+                    this.syncDevicesProgressInterval = setInterval(() => {
+                        this.$store.dispatch('syncDevicesProgress')
+                            .then(value => this.syncDevicesProgressValue = value)
+                    }, 500)
+                } else {
+                    this.$bvModal.hide('syncDevicesProgressModal');
+                    clearInterval(this.syncDevicesProgressInterval);
+                }
             }
         },
         created() {
-            this.$store.dispatch('getDevices')
+            if (!this.$store.state.api.devices.length)
+                this.$store.dispatch('getDevices')
                 .catch(e => {
                     console.log('Could not get devices', e);
                     this.$bvToast.toast(`دریافت لیست دستگاه‌ها با خطا همراه بود`, {

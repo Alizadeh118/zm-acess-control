@@ -10,8 +10,8 @@ try {
 }
 
 const request = axios.create({
-    baseURL: 'http://87.236.210.216:8001/api/',
-    // baseURL: '/api',
+    // baseURL: 'http://87.236.210.216:8001/api/',
+    baseURL: '/api',
 });
 
 const state = {
@@ -23,12 +23,13 @@ const state = {
     users: [],
     report: [],
     privileges: [],
+    types: [],
     user: user,
 };
 
-// const getters = {
-//     invoiceList: state => state.rows,
-// };
+const getters = {
+    isAdmin: state => state.user && state.user.Role === 'admin',
+};
 
 const actions = {
     // devices
@@ -52,7 +53,7 @@ const actions = {
             return Promise.reject(e);
         }
     },
-    async getDevicesState({commit}) {
+    async getDevicesState({commit, state}) {
         for (const device of state.devices) {
 
             request.get(`/device/state/${device.ID}`)
@@ -125,9 +126,17 @@ const actions = {
             return Promise.reject(e);
         }
     },
-    async getDataFromDeviceProgress() {
+    async syncDevicesProgress() {
         try {
-            const response = await request.get(`/device/data/progress`);
+            const response = await request.get(`/access/sync/device/progress`);
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    async syncAccessesProgress() {
+        try {
+            const response = await request.get(`/access/sync/access/progress`);
             return response.data;
         } catch (e) {
             return Promise.reject(e);
@@ -183,7 +192,7 @@ const actions = {
     },
     async getPrivileges({commit}) {
         try {
-            const response = await request.get('/Access/privilage');
+            const response = await request.get('/Access/privilege');
             commit("ADD_PRIVILEGES", response.data);
             return response.data;
         } catch (e) {
@@ -311,7 +320,7 @@ const actions = {
     },
     async syncDevices({state}, deviceIds) {
         try {
-            if (deviceIds === -1)
+            if (deviceIds.length === 1 && deviceIds[0] === -1)
                 deviceIds = state.devices.map(d => d.ID)
 
             const response = await request.post('/access/sync/device', {
@@ -324,6 +333,8 @@ const actions = {
     },
     async syncAccesses(ctx, accessIds) {
         try {
+            if (accessIds.length === 1 && accessIds[0] === -1)
+                accessIds = state.accessLevels.map(a => a.ID)
             const response = await request.post('/access/sync/access', {
                 access: accessIds
             });
@@ -391,7 +402,7 @@ const actions = {
     // events
     async getEvents() {
         try {
-            const response = await request.post('/events');
+            const response = await request.post('/events', {});
             return response.data;
         } catch (e) {
             return Promise.reject(e);
@@ -432,6 +443,15 @@ const actions = {
             return Promise.reject(e);
         }
     },
+    async getTypes({commit}) {
+        try {
+            const response = await request.get('/report/type');
+            commit("ADD_TYPES", response.data);
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    }
 
 };
 
@@ -443,6 +463,15 @@ const mutations = {
     },
     LOGOUT(state) {
         state.user = null;
+        state.devices = [];
+        state.employees = [];
+        state.departments = [];
+        state.timezones = [];
+        state.accessLevels = [];
+        state.users = [];
+        state.report = [];
+        state.privileges = [];
+        state.types = [];
         localStorage.removeItem("user");
         delete axios.defaults.headers.common.Authorization;
     },
@@ -451,6 +480,9 @@ const mutations = {
     },
     ADD_PRIVILEGES(state, data) {
         state.privileges = data;
+    },
+    ADD_TYPES(state, data) {
+        state.types = data;
     },
     ADD_REPORT(state, data) {
         state.report = data;
@@ -481,7 +513,7 @@ const mutations = {
 
 export default {
     state,
-    // getters,
+    getters,
     actions,
     mutations
 };
