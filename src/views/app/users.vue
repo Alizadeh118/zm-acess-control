@@ -82,16 +82,30 @@
                                         ></b-form-input>
                                     </b-form-group>
                                 </b-col>
-                                <b-col cols="12" v-show="!user.update">
+                                <b-col cols="12" v-show="!user.update" class="mt-2">
+                                    <b-row>
+                                        <b-col>
+                                            <b-form-group label="نقش" :disabled="user.update">
+                                                <b-form-radio v-model="user.Role" v-for="role in $store.getters.roles" @change="user.Roles = []"
+                                                              :key="role.id" :value="role.id">
+                                                    <span style="font-size: 1.3em;">{{ role.title }}</span>
+                                                </b-form-radio>
+                                            </b-form-group>
+                                        </b-col>
 
-                                    <b-form-group label="نقش" :disabled="user.update">
-                                        <b-form-radio v-model="user.Is_Admin" name="admin" :value="true">
-                                            <span style="font-size: 1.3em;">مدیر</span>
-                                        </b-form-radio>
-                                        <b-form-radio v-model="user.Is_Admin" name="security" :value="false">
-                                            <span style="font-size: 1.3em;">نگهبان</span>
-                                        </b-form-radio>
-                                    </b-form-group>
+                                        <b-col v-if="selectedRole && selectedRole.items.length">
+                                            <b-form-group label="مجوز‌های کاربر">
+                                                <b-form-checkbox-group stacked v-model="user.Roles">
+                                                    <b-form-checkbox class="ml-0"
+                                                                     :key="item.id"
+                                                                     :value="item.id"
+                                                                     v-for="item in selectedRole.items">
+                                                        {{ item.title }}
+                                                    </b-form-checkbox>
+                                                </b-form-checkbox-group>
+                                            </b-form-group>
+                                        </b-col>
+                                    </b-row>
 
                                 </b-col>
                             </b-row>
@@ -177,7 +191,8 @@
                     OldPassword: '',
                     Password: '',
                     ConfirmPassword: '',
-                    Is_Admin: false,
+                    Role: '',
+                    Roles: [],
                     update: false,
                 },
             };
@@ -246,8 +261,9 @@
                             })
                             .finally(() => this.loading.addOrUpdateUser = false)
                 } else {
-
-                    this.$store.dispatch('addUser', this.user)
+                    const user = JSON.parse(JSON.stringify(this.user))
+                    user.Roles.push(user.Role)
+                    this.$store.dispatch('addUser', user)
                         .then(() => {
                             this.$bvModal.hide('addUser');
                             this.$bvToast.toast(`کاربر با موفقیت افزوده شد`, {
@@ -277,7 +293,8 @@
                 this.user = {
                     ...user,
                     UserName: user.Name,
-                    Is_Admin: user.Role === 'admin',
+                    Role: '',
+                    Roles: [],
                     update: true
                 };
                 this.$bvModal.show('addUser');
@@ -340,9 +357,14 @@
         computed: {
             ownUser() {
                 return this.$store.state.api.users.find(u => u.Name === this.$store.state.api.user.userName)
+            },
+            selectedRole() {
+                return this.$store.getters.roles.find(r => r.id === this.user.Role)
             }
         },
         created() {
+            this.$store.dispatch('getRoles');
+
             this.$store.dispatch('getUsers')
                 .catch(e => {
                     console.log('Could not get users', e);

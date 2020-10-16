@@ -10,8 +10,8 @@ try {
 }
 
 const request = axios.create({
-    // baseURL: 'http://87.236.210.216:8001/api/',
-    baseURL: '/api',
+    baseURL: 'http://87.236.210.216:8001/api/',
+    // baseURL: '/api',
 });
 
 const state = {
@@ -24,11 +24,29 @@ const state = {
     report: [],
     privileges: [],
     types: [],
+    roles: [],
     user: user,
 };
 
 const getters = {
-    isAdmin: state => state.user && state.user.Role === 'admin',
+    isAdmin: () => true,
+    roles: state => {
+        return state.roles.reduce((result, item)=> {
+            result.push({
+                id: Object.values(item.Key)[0],
+                title: Object.keys(item.Key)[0],
+                items: item.Value.reduce((values, i) => {
+                    values.push({
+                        id: Object.values(i)[0],
+                        title: Object.keys(i)[0],
+                    })
+                    return values
+                }, [])
+            })
+            return result
+        }, [])
+    }
+    // isAdmin: state => state.user && state.user.Role === 'admin',
 };
 
 const actions = {
@@ -399,6 +417,15 @@ const actions = {
             return Promise.reject(e);
         }
     },
+    async getRoles({commit}) {
+        try {
+            const response = await request.get('/account/roles');
+            commit("ADD_ROLES", response.data);
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
     // events
     async getEvents() {
         try {
@@ -499,6 +526,9 @@ const mutations = {
     },
     ADD_USERS(state, data) {
         state.users = data;
+    },
+    ADD_ROLES(state, data) {
+        state.roles = data;
     },
     ADD_DEPARTMENTS(state, data) {
         state.departments = data;

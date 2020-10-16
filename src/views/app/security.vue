@@ -17,7 +17,7 @@
                             <b-form-checkbox-group stacked v-model="accessLevels"
                                                    :options="accessLevelOptions"></b-form-checkbox-group>
                         </b-col>
-                        <b-col cols="12" class="text-center">
+                        <b-col cols="12" class="text-center mt-3">
                             <b-button variant="primary" class="px-5"
                                       :disabled="!(employees.length && accessLevels.length)">ورود مهمان
                             </b-button>
@@ -34,7 +34,7 @@
                             <b-form-checkbox-group stacked v-model="guests"
                                                    :options="guestOptions"></b-form-checkbox-group>
                         </b-col>
-                        <b-col cols="12" class="text-center">
+                        <b-col cols="12" class="text-center mt-3">
                             <b-button variant="danger" class="px-5" :disabled="!guests.length">خروج مهمان</b-button>
                         </b-col>
                     </b-row>
