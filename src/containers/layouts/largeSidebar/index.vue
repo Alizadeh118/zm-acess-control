@@ -7,7 +7,7 @@
 
         <main>
             <div
-                    :class="{'w-100': !$store.getters.isAdmin}"
+                    :class="{'w-100': $store.getters.isSecurity}"
                     class="main-content-wrap d-flex flex-column sidenav-open">
 
                 <transition name="page" mode="out-in">

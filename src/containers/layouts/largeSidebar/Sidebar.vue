@@ -6,7 +6,7 @@
             @touchstart="isMenuOver = true"
     >
         <vue-perfect-scrollbar
-                v-if="$store.getters.isAdmin"
+                v-if="!$store.getters.isSecurity"
                 :settings="{ suppressScrollX: true, wheelPropagation: false }"
                 ref="myData"
                 class="sidebar-left rtl-ps-none ps scroll open"
@@ -14,6 +14,7 @@
             <div>
                 <ul class="navigation-left">
                     <li
+                            v-if="can('devices')"
                             @mouseenter="toggleSubMenu" @mouseleave="selectedParentMenu = null"
                             :class="{ active: selectedParentMenu == 'devices' }"
                             class="nav-item"
@@ -26,6 +27,7 @@
                         <div class="triangle"></div>
                     </li>
                     <li
+                            v-if="can('employees')"
                             @mouseenter="toggleSubMenu" @mouseleave="selectedParentMenu = null"
                             :class="{ active: selectedParentMenu == 'employees' }"
                             class="nav-item"
@@ -38,6 +40,7 @@
                         <div class="triangle"></div>
                     </li>
                     <li
+                            v-if="can('departments')"
                             @mouseenter="toggleSubMenu" @mouseleave="selectedParentMenu = null"
                             :class="{ active: selectedParentMenu == 'departments' }"
                             class="nav-item"
@@ -50,6 +53,7 @@
                         <div class="triangle"></div>
                     </li>
                     <li
+                            v-if="can('accesslevels')"
                             @mouseenter="toggleSubMenu" @mouseleave="selectedParentMenu = null"
                             :class="{ active: selectedParentMenu == 'access-levels' }"
                             class="nav-item"
@@ -62,6 +66,7 @@
                         <div class="triangle"></div>
                     </li>
                     <li
+                            v-if="can('timezones')"
                             @mouseenter="toggleSubMenu" @mouseleave="selectedParentMenu = null"
                             :class="{ active: selectedParentMenu == 'time-zones' }"
                             class="nav-item"
@@ -74,6 +79,7 @@
                         <div class="triangle"></div>
                     </li>
                     <li
+                            v-if="can('users')"
                             @mouseenter="toggleSubMenu" @mouseleave="selectedParentMenu = null"
                             :class="{ active: selectedParentMenu == 'users' }"
                             class="nav-item"
@@ -86,6 +92,7 @@
                         <div class="triangle"></div>
                     </li>
                     <li
+                            v-if="can('report')"
                             @mouseenter="toggleSubMenu" @mouseleave="selectedParentMenu = null"
                             :class="{ active: selectedParentMenu == 'report' }"
                             class="nav-item"
@@ -98,6 +105,7 @@
                         <div class="triangle"></div>
                     </li>
                     <li
+                            v-if="can('events')"
                             @mouseenter="toggleSubMenu" @mouseleave="selectedParentMenu = null"
                             :class="{ active: selectedParentMenu == 'events' }"
                             class="nav-item"
@@ -106,6 +114,19 @@
                         <router-link tag="a" class="nav-item-hold" to="/events" active-class="text-primary">
                             <i class="nav-icon i-Receipt-3"></i>
                             <span class="nav-text">رخدادها</span>
+                        </router-link>
+                        <div class="triangle"></div>
+                    </li>
+                    <li
+                            v-if="can('settings')"
+                            @mouseenter="toggleSubMenu" @mouseleave="selectedParentMenu = null"
+                            :class="{ active: selectedParentMenu == 'settings' }"
+                            class="nav-item"
+                            data-item="settings"
+                    >
+                        <router-link tag="a" class="nav-item-hold" to="/settings" active-class="text-primary">
+                            <i class="nav-icon i-Gears"></i>
+                            <span class="nav-text">تنظیمات</span>
                         </router-link>
                         <div class="triangle"></div>
                     </li>
@@ -127,6 +148,8 @@
     import {isMobile} from "mobile-device-detect";
 
     import {mapGetters, mapActions} from "vuex";
+
+    import Roles from '@/roles'
 
     export default {
         components: {
@@ -221,6 +244,10 @@
                 dropdownMenus.forEach(dropdown => {
                     dropdown.classList.remove("open");
                 });
+            },
+
+            can(page){
+                return this.$store.state.api.user && (this.$store.state.api.user.roles.includes(Roles.admin) || this.$store.state.api.user.roles.includes(Roles[page]))
             }
         }
     };

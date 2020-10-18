@@ -1,6 +1,7 @@
 import Vue from "vue";
 import store from "./store";
 // import {isMobile} from "mobile-device-detect";
+import Role from './roles';
 import Router from "vue-router";
 import NProgress from "nprogress";
 import authenticate from "./auth/authenticate";
@@ -18,54 +19,75 @@ const routes = [
 
         children: [
             {
+                name: 'devices',
                 path: "/devices",
+                meta: { authorize: [Role.admin, Role.devices] },
                 component: () => import("./views/app/devices"),
             },
             {
+                name: 'employees',
                 path: "/employees",
+                meta: { authorize: [Role.admin, Role.employees] },
                 component: () => import("./views/app/employees"),
             },
             {
+                name: 'departments',
                 path: "/departments",
+                meta: { authorize: [Role.admin, Role.departments] },
                 component: () => import("./views/app/departments"),
             },
             {
+                name: 'timezones',
                 path: "/time-zones",
+                meta: { authorize: [Role.admin, Role.timezones] },
                 component: () => import("./views/app/time-zones"),
             },
             {
+                name: 'accesslevels',
                 path: "/access-levels",
+                meta: { authorize: [Role.admin, Role.accesslevels] },
                 component: () => import("./views/app/access-levels"),
             },
             {
+                name: 'report',
                 path: "/report",
+                meta: { authorize: [Role.admin, Role.report] },
                 component: () => import("./views/app/report"),
             },
             {
+                name: 'admin',
                 path: "/users",
+                meta: { authorize: [Role.admin] },
                 component: () => import("./views/app/users"),
             },
             {
+                name: 'events',
                 path: "/events",
+                meta: { authorize: [Role.admin, Role.events] },
                 component: () => import("./views/app/events"),
             },
             {
+                name: 'security',
                 path: "/security",
+                meta: { authorize: [Role.security] },
                 component: () => import("./views/app/security"),
+            },
+            {
+                name: 'settings',
+                path: "/settings",
+                meta: { authorize: [Role.admin] },
+                component: () => import("./views/app/settings"),
             },
         ]
     },
     {
         path: "/login",
-        component: () => import("./views/app/sessions/login"), //webpackChunkName app
+        component: () => import("./views/app/sessions/login"),
         beforeEnter: function (to, from, next) {
-            if (
-                localStorage.getItem("user") != null &&
-                localStorage.getItem("user").length > 0
-            )
-                next('/devices');
-            else
-                next();
+            if (store.state.api.user) {
+                return next({path: '/devices'});
+            }
+            next()
 
         },
     },

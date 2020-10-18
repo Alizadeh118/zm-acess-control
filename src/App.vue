@@ -26,9 +26,9 @@
         metaInfo() {
             return {
                 // if no subcomponents specify a metaInfo.title, this title will be used
-                title: "سامانه حافظ",
+                // title: "",
                 // all titles will be injected into this template
-                titleTemplate: "%s | زرین مصباح",
+                titleTemplate: "%s | " + this.$store.state.api.settings.company_name,
                 bodyAttrs: {
                     class: [this.themeName, "text-left"]
                 },
@@ -38,6 +38,9 @@
             };
         },
         created() {
+            this.$store.dispatch('getLogo')
+            this.$store.dispatch('getBackground')
+            this.$store.dispatch('getNames')
             // if (!this.$store.getters.isAdmin)
             //     this.$router.replace("/security")
         }

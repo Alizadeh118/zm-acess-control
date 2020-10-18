@@ -1,4 +1,8 @@
 import axios from 'axios';
+import Roles from '../../roles';
+
+const baseURL = 'http://87.236.210.216:8001/api/'
+// const baseURL = 'api/'
 
 let user = null;
 try {
@@ -9,10 +13,20 @@ try {
     localStorage.removeItem("user");
 }
 
-const request = axios.create({
-    baseURL: 'http://87.236.210.216:8001/api/',
-    // baseURL: '/api',
-});
+let settings = {
+    app_name: '',
+    company_name: '',
+    logo: '',
+    background: '',
+}
+try {
+    if (JSON.parse(localStorage.getItem('settings')))
+        settings = JSON.parse(localStorage.getItem('settings'))
+} catch (e) {
+    localStorage.removeItem("settings");
+}
+
+const request = axios.create({baseURL});
 
 const state = {
     devices: [],
@@ -25,13 +39,14 @@ const state = {
     privileges: [],
     types: [],
     roles: [],
-    user: user,
+    settings,
+    user,
 };
 
 const getters = {
-    isAdmin: () => true,
+    isSecurity: state => state.user && state.user.roles.includes(Roles.security),
     roles: state => {
-        return state.roles.reduce((result, item)=> {
+        return state.roles.reduce((result, item) => {
             result.push({
                 id: Object.values(item.Key)[0],
                 title: Object.keys(item.Key)[0],
@@ -46,7 +61,7 @@ const getters = {
             return result
         }, [])
     }
-    // isAdmin: state => state.user && state.user.Role === 'admin',
+    // isAdmin: state => state.user state.user && && state.user.Role === 'admin',
 };
 
 const actions = {
@@ -478,12 +493,81 @@ const actions = {
         } catch (e) {
             return Promise.reject(e);
         }
-    }
+    },
+    // settings
+    async setNames({dispatch}, data) {
+        try {
+            const response = await request.post('/setting/name', data);
+            dispatch('getNames')
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    async getNames({commit}) {
+        try {
+            const response = await request.get('/setting/name');
+            commit('SET_SETTINGS', response.data);
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    async setLogo({dispatch}, data) {
+        try {
+            const response = await request.post('/setting/logoApp', data);
+            dispatch('getLogo')
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    async getLogo({commit}) {
+        try {
+            const response = await request.get('/setting/logoApp');
+            const url = new URL(response.data)
+            // commit("SET_LOGO", baseURL + url.pathname)
+            commit("SET_LOGO", response.data)
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    async setBackground({dispatch}, data) {
+        try {
+            const response = await request.post('/setting/picLogin', data);
+            dispatch('getBackground')
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    async getBackground({commit}) {
+        try {
+            const response = await request.get('/setting/picLogin');
+            const url = new URL(response.data)
+            // commit("SET_BACKGROUND", baseURL + url.pathname)
+            commit("SET_BACKGROUND", response.data)
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
 
 };
 
 const mutations = {
     LOGIN(state, user) {
+        const userRoles = JSON.parse(user.uesrRoles)
+        const roles = []
+        for (const role in userRoles) {
+            if (userRoles[role].length)
+                for (const r of userRoles[role])
+                    roles.push(r)
+            else
+                roles.push(role)
+        }
+        user.roles = roles
         state.user = user;
         localStorage.setItem("user", JSON.stringify(user));
         request.defaults.headers.common.Authorization = `bearer ${user.access_token}`;
@@ -538,6 +622,19 @@ const mutations = {
     },
     ADD_ACCESS_LEVELS(state, data) {
         state.accessLevels = data;
+    },
+    SET_SETTINGS(state, data) {
+        for (const item of data)
+            state.settings[item.Name] = item.Value;
+        localStorage.setItem('settings', JSON.stringify(state.settings))
+    },
+    SET_LOGO(state, data) {
+        state.settings.logo = data
+        localStorage.setItem('settings', JSON.stringify(state.settings))
+    },
+    SET_BACKGROUND(state, data) {
+        state.settings.background = data
+        localStorage.setItem('settings', JSON.stringify(state.settings))
     },
 };
 

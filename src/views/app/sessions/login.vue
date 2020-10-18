@@ -1,7 +1,7 @@
 <template>
     <div
             class="auth-layout-wrap"
-            :style="{ backgroundImage: 'url(' + bgImage + ')' }"
+            :style="{ backgroundImage: 'url(' + $store.state.api.settings.background + ')' }"
     >
         <div class="auth-content">
             <div class="card o-hidden">
@@ -9,8 +9,8 @@
                     <div class="col-md-12">
                         <div class="p-4">
                             <div class="auth-logo text-center mb-20">
-                                <img :src="logo"/>
-                                <div class="text-primary">سامانه جامع مدیریت و کنترل تردد حافظ</div>
+                                <img :src="$store.state.api.settings.logo"/>
+                                <div class="text-primary">{{ $store.state.api.settings.app_name }}</div>
                             </div>
                             <b-form @submit.prevent="formSubmit" class="mt-5">
                                 <b-form-group :label="$t('session.username')" class="text-12">
@@ -63,6 +63,9 @@
 </template>
 <script>
 
+    import Roles from '@/roles'
+    import store from "../../../store";
+
     export default {
         metaInfo: {
             // if no subcomponents specify a metaInfo.title, this title will be used
@@ -91,10 +94,8 @@
                     password: this.password,
                 })
                     .then(() => {
-                        if (this.$store.getters.isAdmin)
-                            this.$router.push("/devices")
-                        else
-                            this.$router.push("/security")
+                        const role = Object.entries(Roles).find(role => role[1] === this.$store.state.api.user.roles[0])
+                        this.$router.push({name: role[0]})
                     })
                     .catch(err => {
                         console.log(err);

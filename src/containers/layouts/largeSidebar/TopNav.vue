@@ -1,10 +1,10 @@
 <template>
     <div class="main-header">
         <div>
-            <div class="logo d-inline-block align-middle">
-                <img src="@/assets/images/logo.png" alt/>
+            <div class="logo d-inline-block align-middle mx-36 w-auto">
+                <img :src="$store.state.api.settings.logo" class="w-auto"/>
             </div>
-            <span class="font-weight-bold text-primary">سامانه جامع مدیریت و کنترل تردد حافظ</span>
+            <span class="font-weight-bold text-primary">{{ $store.state.api.settings.company_name }}</span>
         </div>
 
         <div @click="sideBarToggle" class="menu-toggle" v-if="0">
@@ -145,6 +145,10 @@
         }
     };
 </script>
-
+<style>
+    .w-auto {
+        width: auto !important;
+    }
+</style>
 
 
