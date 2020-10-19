@@ -55,6 +55,12 @@ const routes = [
                 component: () => import("./views/app/report"),
             },
             {
+                name: 'guests',
+                path: "/guests",
+                meta: { authorize: [Role.admin, Role.report, Role.security] },
+                component: () => import("./views/app/guests"),
+            },
+            {
                 name: 'admin',
                 path: "/users",
                 meta: { authorize: [Role.admin] },
@@ -77,6 +83,11 @@ const routes = [
                 path: "/settings",
                 meta: { authorize: [Role.admin] },
                 component: () => import("./views/app/settings"),
+            },
+            {
+                name: 'icons',
+                path: "/icons",
+                component: () => import("./views/app/icons"),
             },
         ]
     },

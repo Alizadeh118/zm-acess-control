@@ -18,7 +18,7 @@
                                                    :options="accessLevelOptions"></b-form-checkbox-group>
                         </b-col>
                         <b-col cols="12" class="text-center mt-3">
-                            <b-button variant="primary" class="px-5"
+                            <b-button variant="primary" class="px-5" @click="enterGuest"
                                       :disabled="!(employees.length && accessLevels.length)">ورود مهمان
                             </b-button>
                         </b-col>
@@ -35,7 +35,7 @@
                                                    :options="guestOptions"></b-form-checkbox-group>
                         </b-col>
                         <b-col cols="12" class="text-center mt-3">
-                            <b-button variant="danger" class="px-5" :disabled="!guests.length">خروج مهمان</b-button>
+                            <b-button variant="danger" class="px-5" :disabled="!guests.length" @click="exitGuest">خروج مهمان</b-button>
                         </b-col>
                     </b-row>
                 </b-card>
@@ -85,7 +85,24 @@
             guestOptions() {
                 return this.$store.state.api.employees.filter(employee =>
                     employee.Is_Guest && !employee.Is_Available
-                )
+                ).map(employee => ({
+                    ...employee,
+                    value: employee.ID,
+                    text: employee.Name + ' ' + employee.LastName,
+                }))
+            },
+        },
+        methods:{
+            enterGuest(){
+                this.$store.dispatch('enterGuest', {
+                    employee: this.employees,
+                    access: this.accessLevels,
+                })
+            },
+            exitGuest(){
+                this.$store.dispatch('exitGuest', {
+                    employee: this.guests,
+                })
             },
         },
         created() {

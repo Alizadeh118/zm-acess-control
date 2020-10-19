@@ -105,6 +105,19 @@
                         <div class="triangle"></div>
                     </li>
                     <li
+                            v-if="can('guests')"
+                            @mouseenter="toggleSubMenu" @mouseleave="selectedParentMenu = null"
+                            :class="{ active: selectedParentMenu == 'guests' }"
+                            class="nav-item"
+                            data-item="guests"
+                    >
+                        <router-link tag="a" class="nav-item-hold" to="/guests" active-class="text-primary">
+                            <i class="nav-icon i-Notepad-2"></i>
+                            <span class="nav-text">مهمان‌ها</span>
+                        </router-link>
+                        <div class="triangle"></div>
+                    </li>
+                    <li
                             v-if="can('events')"
                             @mouseenter="toggleSubMenu" @mouseleave="selectedParentMenu = null"
                             :class="{ active: selectedParentMenu == 'events' }"

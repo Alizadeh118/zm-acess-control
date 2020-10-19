@@ -25,95 +25,126 @@
                       pageLabel: 'صفحه', // for 'pages' mode
                       allLabel: 'همه',
                     }"
+                    @on-selected-rows-change="selectionChanged"
+                    :select-options="{
+                    enabled: true,
+                    selectOnCheckboxOnly: true, // only select when checkbox is clicked instead of the row
+                    selectionInfoClass: 'custom-class',
+                    selectionText: 'ردیف انتخاب شده',
+                    clearSelectionText: 'انصراف',
+                    disableSelectInfo: true, // disable the select info panel on top
+                    selectAllByGroup: true, // when used in combination with a grouped table, add a checkbox in the header row to check/uncheck the entire group
+                  }"
                     styleClass="tableOne vgt-table"
-                    :rows="$store.state.api.employees"
-            >
+                    :rows="$store.state.api.employees">
                 <div slot="emptystate" class="text-center py-2">
                     <span v-if="loading.getEmployees">در حال دریافت لیست کارمندان...</span>
                     <span v-else>کارمندی برای نمایش وجود ندارد</span>
                 </div>
                 <div slot="table-actions" class="mb-4">
-                    <b-button variant="primary" class="btn-rounded d-none d-sm-block" v-b-modal.addEmployee
-                    ><i class="i-Add-Window align-middle text-white mr-2"> </i>افزودن کارمند
-                    </b-button>
-
-                    <b-modal id="addEmployee" :title="employee.update ? 'ویرایش کارمند' : 'افزودن کارمند'"
-                             @ok.prevent="addOrUpdateEmployee" @hidden="onModalHidden">
-                        <b-form>
-                            <b-row>
-                                <b-col cols="3">
-                                    <b-form-group label="شناسه">
-                                        <b-form-input
-                                                type="text"
-                                                :readonly="employee.update"
-                                                required
-                                                v-model="employee.BadgeNumber"
-                                        ></b-form-input>
-                                    </b-form-group>
-                                </b-col>
-                                <b-col>
-                                    <div>
-                                        <b-form-group label="دپارتمان:">
-                                            <treeselect v-model="employee.Department_ID" :options="departments"
-                                                        :defaultExpandLevel="1"
-                                                        placeholder="دپارتمان‌(های) مربوط را انتخاب کنید"
-                                                        clearAllText="حذف همه گزینه‌ها"/>
+                    <div class="d-flex">
+                        <b-button variant="primary" class="btn-rounded d-none d-sm-block mr-3" v-b-modal.addEmployee
+                        ><i class="i-Add-Window align-middle text-white mr-2"> </i>افزودن کارمند
+                        </b-button>
+                        <b-modal id="addEmployee" :title="employee.update ? 'ویرایش کارمند' : 'افزودن کارمند'"
+                                 @ok.prevent="addOrUpdateEmployee" @hidden="onModalHidden">
+                            <b-form>
+                                <b-row>
+                                    <b-col cols="3">
+                                        <b-form-group label="شناسه">
+                                            <b-form-input
+                                                    type="text"
+                                                    :readonly="employee.update"
+                                                    required
+                                                    v-model="employee.BadgeNumber"
+                                            ></b-form-input>
                                         </b-form-group>
-                                    </div>
-                                </b-col>
-                            </b-row>
-
-                            <b-row class="mt-3">
-                                <b-col>
-                                    <b-form-group label="نام:">
-                                        <b-form-input
-                                                type="text"
-                                                required
-                                                v-model="employee.Name"
-                                        ></b-form-input>
-                                    </b-form-group>
-                                </b-col>
-                                <b-col>
-                                    <b-form-group label="نام خانوادگی:">
-                                        <b-form-input
-                                                type="text"
-                                                required
-                                                v-model="employee.LastName"
-                                        ></b-form-input>
-                                    </b-form-group>
-                                </b-col>
-                                <b-col cols="12">
-                                    <b-row>
-                                        <b-col cols="6">
-                                            <b-form-group label="نقش کاربر:">
-                                                <b-form-select
-                                                        required
-                                                        :options="privileges"
-                                                        value-field="ID" text-field="Name"
-                                                        v-model="employee.Privilege_ID"
-                                                ></b-form-select>
+                                    </b-col>
+                                    <b-col>
+                                        <div>
+                                            <b-form-group label="دپارتمان:">
+                                                <treeselect v-model="employee.Department_ID" :options="departments"
+                                                            :defaultExpandLevel="1"
+                                                            placeholder="دپارتمان‌(های) مربوط را انتخاب کنید"
+                                                            clearAllText="حذف همه گزینه‌ها"/>
                                             </b-form-group>
-                                        </b-col>
-                                        <b-col cols="6" class="mt-32">
-                                            <b-form-checkbox v-model="employee.Is_Guest" class="ml-0">کارت مهمان
-                                            </b-form-checkbox>
-                                        </b-col>
-                                    </b-row>
-                                </b-col>
-                            </b-row>
+                                        </div>
+                                    </b-col>
+                                </b-row>
 
-                        </b-form>
-                        <template v-slot:modal-footer="{ ok, cancel }">
-                            <div class="spinner-bubble spinner-bubble-sm spinner-bubble-primary spinner-modal"
-                                 v-show="loading.addOrUpdateEmployee"></div>
-                            <b-button variant="secondary" @click="cancel()" :disabled="loading.addOrUpdateEmployee">
-                                انصراف
-                            </b-button>
-                            <b-button variant="primary" @click="ok()" :disabled="loading.addOrUpdateEmployee">
-                                {{ employee.update ? 'تایید و ویرایش کارمند' : 'تایید و افزودن کارمند' }}
-                            </b-button>
-                        </template>
-                    </b-modal>
+                                <b-row class="mt-3">
+                                    <b-col>
+                                        <b-form-group label="نام:">
+                                            <b-form-input
+                                                    type="text"
+                                                    required
+                                                    v-model="employee.Name"
+                                            ></b-form-input>
+                                        </b-form-group>
+                                    </b-col>
+                                    <b-col>
+                                        <b-form-group label="نام خانوادگی:">
+                                            <b-form-input
+                                                    type="text"
+                                                    required
+                                                    v-model="employee.LastName"
+                                            ></b-form-input>
+                                        </b-form-group>
+                                    </b-col>
+                                    <b-col cols="12">
+                                        <b-row>
+                                            <b-col cols="6">
+                                                <b-form-group label="نقش کاربر:">
+                                                    <b-form-select
+                                                            required
+                                                            :options="privileges"
+                                                            value-field="ID" text-field="Name"
+                                                            v-model="employee.Privilege_ID"
+                                                    ></b-form-select>
+                                                </b-form-group>
+                                            </b-col>
+                                            <b-col cols="6" class="mt-32">
+                                                <b-form-checkbox v-model="employee.Is_Guest" class="ml-0">کارت مهمان
+                                                </b-form-checkbox>
+                                            </b-col>
+                                        </b-row>
+                                    </b-col>
+                                </b-row>
+
+                            </b-form>
+                            <template v-slot:modal-footer="{ ok, cancel }">
+                                <div class="spinner-bubble spinner-bubble-sm spinner-bubble-primary spinner-modal"
+                                     v-show="loading.addOrUpdateEmployee"></div>
+                                <b-button variant="secondary" @click="cancel()" :disabled="loading.addOrUpdateEmployee">
+                                    انصراف
+                                </b-button>
+                                <b-button variant="primary" @click="ok()" :disabled="loading.addOrUpdateEmployee">
+                                    {{ employee.update ? 'تایید و ویرایش کارمند' : 'تایید و افزودن کارمند' }}
+                                </b-button>
+                            </template>
+                        </b-modal>
+
+                        <b-button variant="info" class="btn-rounded mr-3"
+                                  :class="{'pointer-events-none opacity-2': !selectedEmployeeIds.length || !!loading.toggleAbility.length}"
+                                  :disabled="!selectedEmployeeIds.length || !!loading.toggleAbility.length"
+                                  @click="toggleAbility(selectedEmployeeIds, true)"
+                        ><i class="i-Unlock-2 align-middle text-white mr-2"> </i>فعال کردن
+                        </b-button>
+
+                        <b-button variant="warning" class="btn-rounded mr-3"
+                                  :class="{'pointer-events-none opacity-2': !selectedEmployeeIds.length || !!loading.toggleAbility.length}"
+                                  :disabled="!selectedEmployeeIds.length || !!loading.toggleAbility.length"
+                                  @click="toggleAbility(selectedEmployeeIds, false)"
+                        ><i class="i-Lock-2 align-middle text-white mr-2"> </i>غیرفعال کردن
+                        </b-button>
+
+                        <b-button variant="danger" class="btn-rounded mr-3"
+                                  :class="{'pointer-events-none opacity-2': !selectedEmployeeIds.length || !!loading.removeEmployees.length}"
+                                  :disabled="!selectedEmployeeIds.length || !!loading.removeEmployees.length"
+                                  @click="removeEmployees(selectedEmployeeIds)"
+                        ><i class="i-Close align-middle text-white mr-2"> </i>حذف
+                        </b-button>
+                    </div>
                 </div>
 
                 <template slot="table-row" slot-scope="props">
@@ -138,6 +169,15 @@
                             </template>
                         </div>
                         <div class="left">
+                            <a @click.prevent="toggleAbility(props.row.ID, !props.row.Is_Enable)"
+                               href=""
+                               v-b-tooltip.hover
+                               class="o-hidden d-inline-block"
+                               :class="{'opacity-2 pointer-events-none': loading.toggleAbility.includes(props.row.ID)}"
+                               :title="props.row.Is_Enable ? 'غیرفعال کردن' : 'فعال کردن'">
+                                <i class="i-Lock-2 text-25 text-info mr-2"
+                                   :class="{'i-Unlock-2 text-warning' : props.row.Is_Enable}"></i>
+                            </a>
                             <a @click.prevent="editEmployee(props.row)"
                                href=""
                                v-b-tooltip.hover
@@ -149,6 +189,7 @@
                                href=""
                                v-b-tooltip.hover
                                class="o-hidden d-inline-block"
+                               :class="{'opacity-2 pointer-events-none': loading.removeEmployees.includes(props.row.ID)}"
                                title="حذف کارمند">
                                 <i class="i-Close-Window text-25 text-danger"></i>
                             </a>
@@ -179,8 +220,9 @@
             return {
                 loading: {
                     addOrUpdateEmployee: false,
-                    removeEmployee: false,
+                    removeEmployees: [],
                     getEmployees: true,
+                    toggleAbility: [],
                 },
                 columns: [
                     {
@@ -217,6 +259,7 @@
                     Is_Available: true,
                     update: false
                 },
+                selectedEmployeeIds: [],
             };
         },
         computed: {
@@ -348,8 +391,8 @@
                     })
                     .then(ok => {
                         if (ok) {
-                            this.loading.removeEmployee = true;
-                            this.$store.dispatch('removeEmployee', employee.ID)
+                            this.loading.removeEmployees.push(employee.ID)
+                            this.$store.dispatch('removeEmployee', [employee.ID])
                                 .then(() => {
                                     this.$bvToast.toast(`کارمند با موفقیت حذف شد`, {
                                         title: `حذف کارمند`,
@@ -370,7 +413,48 @@
                                         toaster: 'b-toaster-top-left'
                                     });
                                 })
-                                .finally(() => this.loading.removeEmployee = false)
+                                .finally(() => this.loading.removeEmployees = this.loading.removeEmployees.filter(i => i !== employee.ID))
+                        }
+                    })
+            },
+            removeEmployees(employeeIds) {
+                const msg = `آیا واقعا می‌خواهید ${employeeIds.length} کارمند انتخاب شده را حذف کنید؟`;
+                this.$bvModal
+                    .msgBoxConfirm(msg, {
+                        title: "حذف کارمند",
+                        buttonSize: "sm",
+                        okVariant: "danger",
+                        okTitle: "بله، کارمندان حذف شودن",
+                        cancelTitle: "انصراف",
+                        footerClass: "p-2",
+                        hideHeaderClose: false,
+                        centered: true
+                    })
+                    .then(ok => {
+                        if (ok) {
+                            this.loading.removeEmployees = this.loading.removeEmployees.concat(employeeIds)
+                            this.$store.dispatch('removeEmployee', employeeIds)
+                                .then(() => {
+                                    this.$bvToast.toast(`کارمندان با موفقیت حذف شدند`, {
+                                        title: `حذف کارمند`,
+                                        variant: 'success',
+                                        toaster: 'b-toaster-top-left'
+                                    });
+                                })
+                                .catch((err) => {
+                                    let msg
+                                    try {
+                                        msg = err.response.data.Message
+                                    } catch (e) {
+                                        msg = 'حذف کارمندان با خطا همراه بود'
+                                    }
+                                    this.$bvToast.toast(msg, {
+                                        title: `حذف کارمند`,
+                                        variant: 'danger',
+                                        toaster: 'b-toaster-top-left'
+                                    });
+                                })
+                                .finally(() => this.loading.removeEmployees = this.loading.removeEmployees.filter(i => !employeeIds.includes(i)))
                         }
                     })
             },
@@ -402,6 +486,42 @@
                     update: false,
                 }
             },
+            selectionChanged(data) {
+                this.selectedEmployeeIds = data.selectedRows.map(employee => employee.ID)
+            },
+            toggleAbility(employeeIds, enabled) {
+                if (this.loading.toggleAbility.includes(employeeIds)) return;
+
+                if (Array.isArray(employeeIds))
+                    this.loading.toggleAbility = this.loading.toggleAbility.concat(employeeIds)
+                else
+                    this.loading.toggleAbility.push(employeeIds)
+
+                this.$store.dispatch('toggleAbility', {
+                    employeeIds: Array.isArray(employeeIds) ? employeeIds : [employeeIds],
+                    enabled
+                })
+                    .then(() => {
+                        this.$bvToast.toast(`${enabled ? 'فعال سازی' : 'غیر فعال سازی'} کارمند با موفقیت انجام شد`, {
+                            title: `${enabled ? 'فعال سازی' : 'غیر فعال سازی'} کارمند`,
+                            variant: 'success',
+                            toaster: 'b-toaster-top-left'
+                        });
+                    })
+                    .catch(() => {
+                        this.$bvToast.toast(`${enabled ? 'فعال سازی' : 'غیر فعال سازی'} کارمند با خطا همراه بود`, {
+                            title: `${enabled ? 'فعال سازی' : 'غیر فعال سازی'} کارمند`,
+                            variant: 'danger',
+                            toaster: 'b-toaster-top-left'
+                        });
+                    })
+                    .finally(() => {
+                        if (Array.isArray(employeeIds))
+                            this.loading.toggleAbility = this.loading.toggleAbility.filter(i => !employeeIds.includes(i))
+                        else
+                            this.loading.toggleAbility = this.loading.toggleAbility.filter(i => i !== employeeIds)
+                    })
+            }
         },
         created() {
             this.$store.dispatch('getEmployees')

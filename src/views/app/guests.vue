@@ -1,6 +1,6 @@
 <template>
     <div class="main-content">
-        <breadcumb page="گزارش"/>
+        <breadcumb page="گزارش مهمان‌ها"/>
         <!-- <div class="wrapper"> -->
         <b-card class="mb-30">
             <vue-good-table
@@ -28,76 +28,6 @@
                     styleClass="tableOne vgt-table"
                     :rows="$store.state.api.report"
             >
-                <div slot="table-actions" class="mb-4">
-                    <b-button variant="primary" class="btn-rounded" v-b-modal.search
-                    ><i class="i-Magnifi-Glass1 align-middle text-white mr-2"> </i>جستجو
-                    </b-button>
-
-                    <b-modal id="search" title="جستجو"
-                             size="lg"
-                             @ok.prevent="search" @hidden="onModalHidden">
-
-                        <b-form>
-                            <b-row>
-                                <b-col cols="3">
-                                    <b-form-group label="نوع">
-                                        <treeselect :options="types" v-model="search.TypeID"
-                                                    value-consists-of="LEAF_PRIORITY"
-                                                    noOptionsText="گزینه‌ای وجود ندارد"
-                                                    placeholder=""
-                                                    :limit="6" :limitText="count => `+${count}`"
-                                                    clearAllText="حذف همه گزینه‌ها"/>
-                                    </b-form-group>
-                                </b-col>
-                                <b-col cols="3">
-                                    <b-form-group label="شناسه کاربر">
-                                        <b-form-input v-model="search.BadgeNumber"></b-form-input>
-                                    </b-form-group>
-                                </b-col>
-                                <b-col>
-                                    <b-form-group label="کاربر">
-                                        <treeselect :options="employees"
-                                                    value-consists-of="LEAF_PRIORITY"
-                                                    noOptionsText="گزینه‌ای وجود ندارد"
-                                                    placeholder=""
-                                                    :limit="6" :limitText="count => `+${count}`"
-                                                    clearAllText="حذف همه گزینه‌ها"/>
-                                    </b-form-group>
-                                </b-col>
-                            </b-row>
-                            <b-row>
-                                <b-col>
-                                    <b-form-group label="از تاریخ">
-                                        <b-form-input readonly id="date_from" v-model="date"></b-form-input>
-                                        <date-picker element="date_from" v-model="date"></date-picker>
-                                    </b-form-group>
-                                </b-col>
-                                <b-col>
-                                    <b-form-group label="تا تاریخ">
-                                        <b-form-input readonly id="date_to" v-model="date"></b-form-input>
-                                        <date-picker element="date_to" v-model="date"></date-picker>
-                                    </b-form-group>
-                                </b-col>
-                            </b-row>
-
-
-
-                        </b-form>
-                        <template v-slot:modal-footer="{ ok, cancel }">
-                            <div class="spinner-modal d-flex align-items-center">
-                                <div class="spinner-bubble spinner-bubble-primary"
-                                     v-show="loading.search"></div>
-                                <span class="ml-4 text-primary" v-show="loading.search">دریافت داده‌ها...</span>
-                            </div>
-                            <b-button variant="secondary" @click="cancel()" :disabled="loading.search">
-                                انصراف
-                            </b-button>
-                            <b-button variant="primary" @click="ok()" :disabled="loading.search">
-                                جستجو
-                            </b-button>
-                        </template>
-                    </b-modal>
-                </div>
                 <div slot="emptystate" class="text-center py-2">
                     <span v-if="loading.getReport">در حال دریافت گزارش...</span>
                     <span v-else>گزارشی برای نمایش وجود ندارد</span>
@@ -109,15 +39,8 @@
 </template>
 
 <script>
-    import VuePersianDatetimePicker from 'vue-persian-datetime-picker';
-    import Treeselect from '@riophae/vue-treeselect'
-    import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
     export default {
-        components: {
-            datePicker: VuePersianDatetimePicker,
-            Treeselect
-        },
         metaInfo() {
             return {
                 title: "گزارش",
@@ -125,18 +48,10 @@
         },
         data() {
             return {
-                search: {
-                    BadgeNumber: '',
-                    MinTime: '',
-                    MaxTime: '',
-                    TypeID: '',
-                    deviceID: '',
-                },
                 report: [],
                 loading: {
                     removeReport: false,
                     getReport: true,
-                    search: false,
                 },
                 columns: [
                     {
@@ -149,74 +64,57 @@
                         label: "نوع",
                         field: "type",
                         formatFn: this.getPersianType,
+                        filterOptions: {
+                            enabled: true, // enable filter for this column
+                            placeholder: 'فیلتر بر اساس نوع', // placeholder for filter input
+                            // filterValue: 'Jane', // initial populated value for this filter
+                            filterDropdownItems: Object.values(this.$store.state.api.types).map(type => this.getPersianType(type))
+                            // filterFn: this.columnFilterFn, //custom filter function that
+                            // trigger: 'enter', //only trigger on enter not on keyup
+                        },
                     },
                     {
                         label: "کاربر",
                         field: "Employee_ID",
                         formatFn: this.getEmployee,
+                        filterOptions: {
+                            enabled: true, // enable filter for this column
+                            placeholder: 'فیلتر بر اساس کاربر', // placeholder for filter input
+                            // filterValue: 'Jane', // initial populated value for this filter
+                            // filterDropdownItems: ['a', 'bbb','cc'], // dropdown (with selected values) instead of text input
+                            // filterFn: this.columnFilterFn, //custom filter function that
+                            // trigger: 'enter', //only trigger on enter not on keyup
+                        },
                     },
                     {
                         label: "دستگاه",
                         field: "Device_ID",
                         formatFn: this.getDevice,
+                        filterOptions: {
+                            enabled: true, // enable filter for this column
+                            placeholder: 'فیلتر بر اساس دستگاه', // placeholder for filter input
+                            // filterValue: 'Jane', // initial populated value for this filter
+                            // filterDropdownItems: ['a', 'bbb','cc'], // dropdown (with selected values) instead of text input
+                            // filterFn: this.columnFilterFn, //custom filter function that
+                            // trigger: 'enter', //only trigger on enter not on keyup
+                        },
                     },
                     {
                         label: "زمان",
                         field: "Time_Persian",
                         tdClass: "dir-ltr",
                         formatFn: value => this.english2persian(value).replace('T', ' '),
+                        filterOptions: {
+                            enabled: true, // enable filter for this column
+                            placeholder: 'فیلتر بر اساس زمان', // placeholder for filter input
+                            // filterValue: 'Jane', // initial populated value for this filter
+                            // filterDropdownItems: ['a', 'bbb','cc'], // dropdown (with selected values) instead of text input
+                            // filterFn: this.columnFilterFn, //custom filter function that
+                            // trigger: 'enter', //only trigger on enter not on keyup
+                        },
                     },
                 ],
             };
-        },
-        computed:{
-            employees() {
-                const departments = []
-                for (const employee of this.$store.state.api.employees)
-                    if (!departments.find(d => d.id === employee.Department_ID))
-                        departments.push({
-                            id: employee.Department_ID,
-                            label: employee.Department_Name,
-                            children: [],
-                        });
-
-                for (const employee of this.$store.state.api.employees) {
-                    const department = departments.find(d => d.id === employee.Department_ID)
-                    department.children.push({
-                        id: employee.ID,
-                        label: (employee.Name || '') + ' ' + (employee.LastName || ''),
-                    })
-                }
-
-                return departments
-
-
-                // return this.$store.state.api.employees.map(employee => {
-                //     return {
-                //         ...employee,
-                //         id: employee.ID,
-                //         label: (employee.Name || '') + ' ' + (employee.LastName || '')
-                //     }
-                // })
-            },
-            devices() {
-                return this.$store.state.api.devices.map(device => {
-                    return {
-                        ...device,
-                        id: device.ID,
-                        label: device.Name
-                    }
-                })
-            },
-            types(){
-                const r = []
-                for (const [id, label] of Object.entries(this.$store.state.api.types) )
-                    r.push({
-                        id,
-                        label: this.getPersianType(label)
-                    })
-                return r
-            }
         },
         methods: {
             getDevice(id) {
@@ -262,10 +160,6 @@
                     })
                     .finally(() => this.loading.removeReport = false)
             },
-            search(){
-
-            },
-            onModalHidden(){},
         },
         created() {
             this.$store.dispatch('getReport')
@@ -319,8 +213,3 @@
         }
     };
 </script>
-<style>
-    .vgt-global-search__actions {
-        order: -1;
-    }
-</style>

@@ -203,9 +203,13 @@ const actions = {
             return Promise.reject(e);
         }
     },
-    async removeEmployee({dispatch}, EmployeeId) {
+    async removeEmployee({dispatch}, employeeIds) {
         try {
-            const response = await request.delete(`/Employee/${EmployeeId}`);
+            const response = await request.delete(`/Employee`, {
+                data: {
+                    employee: employeeIds
+                }
+            });
             dispatch('getEmployees');
             return response.data;
         } catch (e) {
@@ -216,6 +220,18 @@ const actions = {
         try {
             const response = await request.post(`/Employee/${EmployeeId}/available`, {
                 available
+            });
+            dispatch('getEmployees');
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    async toggleAbility({dispatch}, {employeeIds, enabled}) {
+        try {
+            const response = await request.post(`/Employee/enable`, {
+                employee: employeeIds,
+                enable: enabled
             });
             dispatch('getEmployees');
             return response.data;
@@ -548,6 +564,25 @@ const actions = {
             const url = new URL(response.data)
             // commit("SET_BACKGROUND", baseURL + url.pathname)
             commit("SET_BACKGROUND", response.data)
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    // security
+    async enterGuest({dispatch}, data) {
+        try {
+            const response = await request.post('/access/member/add', data);
+            dispatch('getEmployees')
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    async exitGuest({dispatch}, data) {
+        try {
+            const response = await request.post('/access/member/remove', data);
+            dispatch('getEmployees')
             return response.data;
         } catch (e) {
             return Promise.reject(e);
