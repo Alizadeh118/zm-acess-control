@@ -1,8 +1,8 @@
 import axios from 'axios';
 import Roles from '../../roles';
 
-const baseURL = 'http://87.236.210.216:8001/api/'
-// const baseURL = 'api/'
+const baseURL = 'http://87.236.210.216:8001/api'
+// const baseURL = 'api'
 
 let user = null;
 try {
@@ -479,10 +479,27 @@ const actions = {
         }
     },
     // report
-    async getReport({commit}) {
+    async getReport({commit, dispatch}, data) {
         try {
-            const response = await request.post('/report', {});
-            commit("ADD_REPORT", response.data);
+            const count = await dispatch('getReportCount')
+            const response = await request.post('/report', {
+                page_size: data.perPage,
+                page_number: data.page,
+            });
+            commit("ADD_REPORT", {
+                rows: response.data,
+                totalRecords: count
+            });
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    async getReportCount(ctx, data) {
+        try {
+            const response = await request.post('/report/count', {
+
+            });
             return response.data;
         } catch (e) {
             return Promise.reject(e);
@@ -542,8 +559,7 @@ const actions = {
         try {
             const response = await request.get('/setting/logoApp');
             const url = new URL(response.data)
-            // commit("SET_LOGO", baseURL + url.pathname)
-            commit("SET_LOGO", response.data)
+            commit("SET_LOGO", baseURL + url.pathname.replace(/.*api/, ''))
             return response.data;
         } catch (e) {
             return Promise.reject(e);
@@ -562,8 +578,7 @@ const actions = {
         try {
             const response = await request.get('/setting/picLogin');
             const url = new URL(response.data)
-            // commit("SET_BACKGROUND", baseURL + url.pathname)
-            commit("SET_BACKGROUND", response.data)
+            commit("SET_BACKGROUND", baseURL + url.pathname.replace(/.*api/, ''))
             return response.data;
         } catch (e) {
             return Promise.reject(e);
@@ -588,6 +603,14 @@ const actions = {
             return Promise.reject(e);
         }
     },
+    async addGuest(ctx, data){
+        try {
+            const response = await request.post('/guests', data);
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    }
 
 };
 

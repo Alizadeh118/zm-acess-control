@@ -16,9 +16,13 @@
 
         <div class="header-part-right pr-3">
 
-            <template v-if="0">
-                <span v-if="$store.state.api.user">{{$store.state.api.user.userName}}</span>
-                <router-link tag="i" class="i-Business-Man header-icon" to="/profile"></router-link>
+            <template v-if="isSecurity">
+                <router-link to="/security" class="header-icon text px-2 mr-2" active-class="active">
+                    <span>پیشخوان</span>
+                </router-link>
+                <router-link to="/guests" class="header-icon text px-2" active-class="active">
+                    <span>گزارشات</span>
+                </router-link>
             </template>
 
 
@@ -48,6 +52,8 @@
     import {mapGetters, mapActions} from "vuex";
     import {mixin as clickaway} from "vue-clickaway";
 
+    import Roles from '@/roles'
+
     export default {
         mixins: [clickaway],
         components: {
@@ -69,7 +75,10 @@
             // document.addEventListener("click", this.closeMegaMenu);
         },
         computed: {
-            ...mapGetters(["getSideBarToggleProperties"])
+            ...mapGetters(["getSideBarToggleProperties"]),
+            isSecurity(){
+                return this.$store.state.api.user && this.$store.state.api.user.roles.includes(Roles.security)
+            }
         },
 
         methods: {

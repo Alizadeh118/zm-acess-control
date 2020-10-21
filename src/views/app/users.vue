@@ -86,7 +86,8 @@
                                     <b-row>
                                         <b-col>
                                             <b-form-group label="نقش" :disabled="user.update">
-                                                <b-form-radio v-model="user.Role" v-for="role in $store.getters.roles" @change="user.Roles = []"
+                                                <b-form-radio v-model="user.Role" v-for="role in $store.getters.roles"
+                                                              @change="user.Roles = []"
                                                               :key="role.id" :value="role.id">
                                                     <span style="font-size: 1.3em;">{{ role.title }}</span>
                                                 </b-form-radio>
@@ -343,15 +344,17 @@
                     update: false
                 }
             },
-            getPersianRole(role) {
+            getPersianRole(role, row) {
+                const roles = row.SubRoles.length ? ` (${row.SubRoles.join('، ')})` : ''
                 switch (role) {
                     case 'admin':
-                        return 'مدیر'
+                        role = 'مدیر'
+                        break
                     case 'security':
-                        return 'نگهبان'
-                    default:
-                        return role
+                        role = 'نگهبان'
+                        break
                 }
+                return role + roles
             }
         },
         computed: {

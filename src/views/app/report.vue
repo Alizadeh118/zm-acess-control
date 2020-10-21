@@ -4,19 +4,20 @@
         <!-- <div class="wrapper"> -->
         <b-card class="mb-30">
             <vue-good-table
-                    :columns="columns"
+                    mode="remote"
+                    @on-page-change="onPageChange"
+                    @on-per-page-change="onPerPageChange"
+                    :totalRows="totalRecords"
+                    :totalRecords="totalRecords"
                     :line-numbers="false"
                     :rtl="true"
-                    :search-options="{
-                      enabled: false,
-                      placeholder: 'جستجو'
-                    }"
                     :sort-options="{
-                      enabled: true,
-                      initialSortBy: {field: 'ID', type: 'desc'}
+                      enabled: false,
                     }"
+
                     :pagination-options="{
                       enabled: true,
+                      dropdownAllowAll: false,
                       mode: 'records',
                       nextLabel: 'بعدی',
                       prevLabel: 'قبلی',
@@ -26,7 +27,8 @@
                       allLabel: 'همه',
                     }"
                     styleClass="tableOne vgt-table"
-                    :rows="$store.state.api.report"
+                    :columns="columns"
+                    :rows="rows"
             >
                 <div slot="table-actions" class="mb-4">
                     <b-button variant="primary" class="btn-rounded" v-b-modal.search
@@ -68,18 +70,17 @@
                             <b-row>
                                 <b-col>
                                     <b-form-group label="از تاریخ">
-                                        <b-form-input readonly id="date_from" v-model="date"></b-form-input>
-                                        <date-picker element="date_from" v-model="date"></date-picker>
+                                        <b-form-input readonly id="date_from" v-model="search.MinTime"></b-form-input>
+                                        <date-picker element="date_from" v-model="search.MinTime"></date-picker>
                                     </b-form-group>
                                 </b-col>
                                 <b-col>
                                     <b-form-group label="تا تاریخ">
-                                        <b-form-input readonly id="date_to" v-model="date"></b-form-input>
-                                        <date-picker element="date_to" v-model="date"></date-picker>
+                                        <b-form-input readonly id="date_to" v-model="search.MaxTime"></b-form-input>
+                                        <date-picker element="date_to" v-model="search.MaxTime"></date-picker>
                                     </b-form-group>
                                 </b-col>
                             </b-row>
-
 
 
                         </b-form>
@@ -99,7 +100,7 @@
                     </b-modal>
                 </div>
                 <div slot="emptystate" class="text-center py-2">
-                    <span v-if="loading.getReport">در حال دریافت گزارش...</span>
+                    <span v-if="isLoading">در حال دریافت گزارش...</span>
                     <span v-else>گزارشی برای نمایش وجود ندارد</span>
                 </div>
 
@@ -138,12 +139,15 @@
                     getReport: true,
                     search: false,
                 },
+
+
+                isLoading: false,
                 columns: [
                     {
                         label: 'ID',
                         field: 'ID',
                         type: 'number',
-                        hidden: true,
+                        // hidden: true,
                     },
                     {
                         label: "نوع",
@@ -167,9 +171,15 @@
                         formatFn: value => this.english2persian(value).replace('T', ' '),
                     },
                 ],
+                rows: [],
+                totalRecords: 0,
+                serverParams: {
+                    page: 1,
+                    perPage: 10
+                }
             };
         },
-        computed:{
+        computed: {
             employees() {
                 const departments = []
                 for (const employee of this.$store.state.api.employees)
@@ -208,9 +218,9 @@
                     }
                 })
             },
-            types(){
+            types() {
                 const r = []
-                for (const [id, label] of Object.entries(this.$store.state.api.types) )
+                for (const [id, label] of Object.entries(this.$store.state.api.types))
                     r.push({
                         id,
                         label: this.getPersianType(label)
@@ -262,13 +272,43 @@
                     })
                     .finally(() => this.loading.removeReport = false)
             },
-            search(){
+            // search() {
 
+            // },
+            onModalHidden() {
             },
-            onModalHidden(){},
+
+            updateParams(newProps) {
+                this.serverParams = Object.assign({}, this.serverParams, newProps);
+            },
+
+            onPageChange(params) {
+                this.updateParams({page: params.currentPage});
+                this.loadItems();
+            },
+
+            onPerPageChange(params) {
+                this.updateParams({perPage: params.currentPerPage});
+                this.loadItems();
+            },
+
+            // load items is what brings back the rows from server
+            loadItems() {
+                this.$store.dispatch('getReport', this.serverParams)
+                    .then(response => {
+                        this.totalRecords = response.totalRecords;
+                        this.rows = response.rows;
+                    });
+            }
         },
         created() {
-            this.$store.dispatch('getReport')
+            this.loadItems()
+            // setTimeout(()=>this.loadItems(), 5000)
+            return true;
+            this.$store.dispatch('getReport', {
+                perPage: this.perPage,
+                pageNumber: this.pageNumber
+            })
                 .catch(e => {
                     console.log('Could not get report', e);
                     this.$bvToast.toast(`دریافت گزارش با خطا همراه بود`, {
