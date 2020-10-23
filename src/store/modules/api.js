@@ -35,7 +35,6 @@ const state = {
     timezones: [],
     accessLevels: [],
     users: [],
-    report: [],
     privileges: [],
     types: [],
     roles: [],
@@ -481,25 +480,30 @@ const actions = {
     // report
     async getReport({commit, dispatch}, data) {
         try {
-            const count = await dispatch('getReportCount')
-            const response = await request.post('/report', {
+            for (const key in data.filter)
+                !!data.filter[key] || delete data.filter[key]
+
+            data = {
+                ...data.filter,
                 page_size: data.perPage,
-                page_number: data.page,
-            });
-            commit("ADD_REPORT", {
+                page_number: data.page - 1,
+            }
+
+            console.log(data);
+            const count = await dispatch('getReportCount', data)
+
+            const response = await request.post('/report', data);
+            return {
                 rows: response.data,
                 totalRecords: count
-            });
-            return response.data;
+            };
         } catch (e) {
             return Promise.reject(e);
         }
     },
     async getReportCount(ctx, data) {
         try {
-            const response = await request.post('/report/count', {
-
-            });
+            const response = await request.post('/report/count', data);
             return response.data;
         } catch (e) {
             return Promise.reject(e);
@@ -603,14 +607,44 @@ const actions = {
             return Promise.reject(e);
         }
     },
-    async addGuest(ctx, data){
+    async addGuest(ctx, data) {
         try {
             const response = await request.post('/guests', data);
             return response.data;
         } catch (e) {
             return Promise.reject(e);
         }
-    }
+    },
+    async getGuestsCount(ctx, data) {
+        try {
+            const response = await request.post('/guests/count', data);
+            return response.data;
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
+    async getGuests({dispatch}, data) {
+        try {
+            for (const key in data.filter)
+                !!data.filter[key] || delete data.filter[key]
+
+            data = {
+                ...data.filter,
+                page_size: data.perPage,
+                page_number: data.page - 1,
+            }
+
+            const count = await dispatch('getGuestsCount', data)
+
+            const response = await request.post('/guests/get', data);
+            return {
+                rows: response.data,
+                totalRecords: count
+            };
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    },
 
 };
 

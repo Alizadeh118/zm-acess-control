@@ -254,6 +254,7 @@
                     Name: '',
                     LastName: '',
                     Department_ID: null,
+                    BadgeNumber: null,
                     Privilege_ID: null,
                     Is_Guest: false,
                     Is_Available: true,
@@ -314,7 +315,7 @@
         methods: {
             addOrUpdateEmployee() {
                 this.loading.addOrUpdateEmployee = true;
-
+                this.employee.BadgeNumber = this.persian2english(this.employee.BadgeNumber)
                 if (this.employee.update) {
                     this.$store.dispatch('updateEmployee', this.employee)
                         .then(() => {
@@ -480,6 +481,7 @@
                     Name: '',
                     LastName: '',
                     Department_ID: null,
+                    BadgeNumber: null,
                     Privilege_ID: null,
                     Is_Guest: false,
                     Is_Available: true,

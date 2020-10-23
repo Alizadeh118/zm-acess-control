@@ -159,7 +159,10 @@
             async enterGuest() {
                 this.loading.enterGuest = true
                 for (const guest of this.guestsToAdd)
-                    await this.$store.dispatch('addGuest', guest)
+                    await this.$store.dispatch('addGuest', {
+                        ...guest,
+                        PassportID: this.persian2english(guest.PassportID)
+                    })
 
                 await this.$store.dispatch('enterGuest', {
                     employee: this.employees.map(e => e.ID),
@@ -187,7 +190,6 @@
                         Accessories: '',
                         Reason: '',
                     })
-                console.log('employees watcher', this.employees.length, this.guestsToAdd);
             }
         },
         created() {
