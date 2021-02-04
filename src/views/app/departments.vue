@@ -45,7 +45,6 @@
                                         <b-form-input
                                                 type="text"
                                                 required
-                                                placeholder="علی"
                                                 v-model="department.Name"
                                         ></b-form-input>
                                     </b-form-group>

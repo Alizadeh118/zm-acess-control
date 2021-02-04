@@ -189,12 +189,12 @@
 
 <script>
     export default {
-        metaInfo() {
+        metaInfo () {
             return {
                 title: "دستگاه‌ها",
             }
         },
-        data() {
+        data () {
             return {
                 loading: {
                     clearData: [],
@@ -242,17 +242,18 @@
                 clearDataChecked: false,
                 syncDevicesProgressValue: 0,
                 syncDevicesProgressInterval: null,
+                getDevicesStateInterval: null
             };
         },
         methods: {
-            addOrUpdateDevice() {
+            addOrUpdateDevice () {
                 this.loading.addOrUpdateDevice = true;
 
-                for (const key in this.device)
-                    if (this.device[key].length)
+                for ( const key in this.device )
+                    if ( this.device[key].length )
                         this.device[key] = this.persian2english(this.device[key]);
 
-                if (this.device.update) {
+                if ( this.device.update ) {
                     this.$store.dispatch('updateDevice', this.device)
                         .then(() => {
                             this.$bvModal.hide('addDevice')
@@ -275,9 +276,9 @@
                 } else {
                     this.$store.dispatch('addDevice', this.device)
                         .then(device => {
-                            if (this.syncTimeChecked)
+                            if ( this.syncTimeChecked )
                                 this.syncTime(device);
-                            if (this.clearDataChecked)
+                            if ( this.clearDataChecked )
                                 this.clearData(device);
                             this.$bvModal.hide('addDevice');
                             this.$bvToast.toast(`دستگاه با موفقیت افزوده شد`, {
@@ -291,7 +292,7 @@
                             let msg
                             try {
                                 msg = err.response.data.Message
-                            } catch (e) {
+                            } catch ( e ) {
                                 msg = 'افزودن دستگاه با خطا همراه بود'
                             }
                             this.$bvToast.toast(msg, {
@@ -303,14 +304,15 @@
                         .finally(() => this.loading.addOrUpdateDevice = false)
                 }
             },
-            getDevicesState() {
-                setInterval(() => {
-                    this.$store.dispatch('getDevicesState');
+            getDevicesState () {
+                this.$store.dispatch('getDevicesState');
+                this.getDevicesStateInterval = setTimeout(() => {
+                    this.getDevicesState()
                 }, 60000) // sync devices state every 60 seconds
             },
-            removeDevice(device) {
-                if (this.loading.removeDevice) return;
-                const msg = `آیا واقعا می‌خواهید دستگاه با نام «${device.Name}» را حذف کنید؟`
+            removeDevice (device) {
+                if ( this.loading.removeDevice ) return;
+                const msg = `آیا واقعا می‌خواهید دستگاه با نام «${ device.Name }» را حذف کنید؟`
                 this.$bvModal
                     .msgBoxConfirm(msg, {
                         title: "حذف دستگاه",
@@ -323,7 +325,7 @@
                         centered: true
                     })
                     .then(ok => {
-                        if (ok) {
+                        if ( ok ) {
                             this.loading.removeDevice = true;
                             this.$store.dispatch('removeDevice', device.ID)
                                 .then(() => {
@@ -344,9 +346,9 @@
                         }
                     })
             },
-            clearData(device) {
-                if (this.loading.clearData.includes(device.ID)) return;
-                const msg = `آیا واقعا می‌خواهید داده‌های دستگاه با نام «${device.Name}» را حذف کنید؟`
+            clearData (device) {
+                if ( this.loading.clearData.includes(device.ID) ) return;
+                const msg = `آیا واقعا می‌خواهید داده‌های دستگاه با نام «${ device.Name }» را حذف کنید؟`
                 this.$bvModal
                     .msgBoxConfirm(msg, {
                         title: "پاکسازی داده‌های دستگاه",
@@ -359,7 +361,7 @@
                         centered: true
                     })
                     .then(ok => {
-                        if (ok) {
+                        if ( ok ) {
                             this.loading.clearData.push(device.ID)
                             this.$store.dispatch('clearData', device.ID)
                                 .then(() => {
@@ -380,8 +382,8 @@
                         }
                     })
             },
-            syncTime(device) {
-                if (this.loading.syncTime.includes(device.ID)) return;
+            syncTime (device) {
+                if ( this.loading.syncTime.includes(device.ID) ) return;
                 this.loading.syncTime.push(device.ID);
                 this.$store.dispatch('syncTime', device.ID)
                     .then(() => {
@@ -400,8 +402,8 @@
                     })
                     .finally(() => this.loading.syncTime = this.loading.syncTime.filter(i => i !== device.ID))
             },
-            getDataFromDevice(device) {
-                if (this.loading.getDataFromDevice.includes(device.ID)) return;
+            getDataFromDevice (device) {
+                if ( this.loading.getDataFromDevice.includes(device.ID) ) return;
                 this.loading.getDataFromDevice.push(device.ID);
 
                 this.$store.dispatch('getDataFromDevice', device.ID)
@@ -421,10 +423,10 @@
                     })
                     .finally(() => this.loading.getDataFromDevice = this.loading.getDataFromDevice.filter(i => i !== device.ID))
             },
-            syncDevices(deviceIds) {
-                if (this.loading.syncDevices.includes(deviceIds)) return;
+            syncDevices (deviceIds) {
+                if ( this.loading.syncDevices.includes(deviceIds) ) return;
                 this.loading.syncDevices.push(deviceIds);
-                if (deviceIds === -1)
+                if ( deviceIds === -1 )
                     this.triggerProgressModal(true)
                 this.$store.dispatch('syncDevices', Array.isArray(deviceIds) ? deviceIds : [deviceIds])
                     .then(() => {
@@ -442,14 +444,14 @@
                         });
                     })
                     .finally(() => {
-                        if (deviceIds === -1)
+                        if ( deviceIds === -1 )
                             setTimeout(() => {
                                 this.triggerProgressModal(false)
                             }, 1000)
                         this.loading.syncDevices = this.loading.syncDevices.filter(i => i !== deviceIds)
                     })
             },
-            onModalHidden() {
+            onModalHidden () {
                 this.device = {
                     Name: '',
                     IP: '',
@@ -460,8 +462,8 @@
                 this.syncTimeChecked = false;
                 this.clearDataChecked = false;
             },
-            triggerProgressModal(show = false) {
-                if (show) {
+            triggerProgressModal (show = false) {
+                if ( show ) {
                     this.$bvModal.show('syncDevicesProgressModal');
                     this.syncDevicesProgressInterval = setInterval(() => {
                         this.$store.dispatch('syncDevicesProgress')
@@ -473,20 +475,26 @@
                 }
             }
         },
-        created() {
-            if (!this.$store.state.api.devices.length)
+        created () {
+            if ( !this.$store.state.api.devices.length )
                 this.$store.dispatch('getDevices')
-                .catch(e => {
-                    console.log('Could not get devices', e);
-                    this.$bvToast.toast(`دریافت لیست دستگاه‌ها با خطا همراه بود`, {
-                        title: `لیست دستگاه‌ها`,
-                        variant: 'danger',
-                        toaster: 'b-toaster-top-left',
-                        noAutoHide: true,
-                    });
-                })
-                .finally(() => this.loading.getDevices = false)
+                    .catch(e => {
+                        console.log('Could not get devices', e);
+                        this.$bvToast.toast(`دریافت لیست دستگاه‌ها با خطا همراه بود`, {
+                            title: `لیست دستگاه‌ها`,
+                            variant: 'danger',
+                            toaster: 'b-toaster-top-left',
+                            noAutoHide: true,
+                        });
+                    })
+                    .finally(() => this.loading.getDevices = false)
 
+            this.$store.commit('CHANGE_WANT_TO_GET_DEVICES_STATE', true)
+            this.getDevicesState()
+        },
+        beforeDestroy () {
+            this.$store.commit('CHANGE_WANT_TO_GET_DEVICES_STATE', false)
+            clearInterval(this.getDevicesStateInterval)
         }
     };
 </script>

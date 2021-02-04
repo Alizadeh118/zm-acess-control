@@ -113,7 +113,7 @@
                     >
                         <router-link tag="a" class="nav-item-hold" to="/guests" active-class="text-primary">
                             <i class="nav-icon i-Notepad-2"></i>
-                            <span class="nav-text">مهمان‌ها</span>
+                            <span class="nav-text">گزارش مهمان</span>
                         </router-link>
                         <div class="triangle"></div>
                     </li>

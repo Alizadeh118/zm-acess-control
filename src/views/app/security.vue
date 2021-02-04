@@ -5,37 +5,29 @@
                 <b-card>
                     <b-row>
                         <b-col class="box">
-                            <h4 class="card-title">کارت‌های موجود</h4>
-                            <b-form-checkbox-group stacked v-model="employees"
-                                                   :options="employeeOptions"></b-form-checkbox-group>
-                        </b-col>
-                        <b-col cols="auto">
-                            <div class="border-left position-absolute h-100"></div>
-                        </b-col>
-                        <b-col class="box">
-                            <h4 class="card-title">دسترسی‌های مهمان</h4>
-                            <b-form-checkbox-group stacked v-model="accessLevels"
-                                                   :options="accessLevelOptions"></b-form-checkbox-group>
+                            <h4 class="card-title">مهمان‌های در دسترس</h4>
+                            <b-form-radio-group stacked v-model="employee"
+                                                :options="employeeOptions"></b-form-radio-group>
                         </b-col>
                         <b-col cols="12" class="text-center mt-3">
                             <b-button variant="primary" class="px-5" v-b-modal.addGuest
-                                      :disabled="!(employees.length && accessLevels.length)">ورود مهمان
+                                      :disabled="!employee.ID">ورود مهمان
                             </b-button>
                         </b-col>
                     </b-row>
                 </b-card>
             </b-col>
 
-            <b-col cols="4">
+            <b-col>
                 <b-card>
                     <b-row>
                         <b-col cols="12" class="box">
-                            <h4 class="card-title">دسترسی‌های مهمان</h4>
-                            <b-form-checkbox-group stacked v-model="guests"
-                                                   :options="guestOptions"></b-form-checkbox-group>
+                            <h4 class="card-title">مهمان‌های وارد شده</h4>
+                            <b-form-radio-group stacked v-model="guest"
+                                                :options="guestOptions"></b-form-radio-group>
                         </b-col>
                         <b-col cols="12" class="text-center mt-3">
-                            <b-button variant="danger" class="px-5" :disabled="!guests.length" @click="exitGuest">خروج
+                            <b-button variant="danger" class="px-5" :disabled="!guest" @click="exitGuest">خروج
                                 مهمان
                             </b-button>
                         </b-col>
@@ -44,41 +36,40 @@
             </b-col>
         </b-row>
 
-
         <b-modal id="addGuest" title="ورود مهمان" size="xl" @ok.prevent="enterGuest">
             <ol>
-                <li v-for="(employee, i) in employees">
+                <li>
                     <div class="mb-1">{{ employee.Name + ' ' + employee.LastName }}</div>
                     <b-form>
                         <b-form-row class="mb-2" ref="form">
                             <b-col cols="4" xl>
                                 <b-form-group>
                                     <b-form-input placeholder="نام" type="text"
-                                                  v-model="guestsToAdd[i].Name"></b-form-input>
+                                                  v-model="guestsToAdd.Name"></b-form-input>
                                 </b-form-group>
                             </b-col>
                             <b-col cols="4" xl>
                                 <b-form-group>
                                     <b-form-input placeholder="نام خانوادگی" type="text"
-                                                  v-model="guestsToAdd[i].FName"></b-form-input>
+                                                  v-model="guestsToAdd.FName"></b-form-input>
                                 </b-form-group>
                             </b-col>
                             <b-col cols="4" xl>
                                 <b-form-group>
                                     <b-form-input placeholder="کد ملی" type="text"
-                                                  v-model="guestsToAdd[i].PassportID"></b-form-input>
+                                                  v-model="guestsToAdd.PassportID"></b-form-input>
                                 </b-form-group>
                             </b-col>
                             <b-col cols="5" xl="3">
                                 <b-form-group>
                                     <b-form-input placeholder="وسایل همراه" type="text"
-                                                  v-model="guestsToAdd[i].Accessories"></b-form-input>
+                                                  v-model="guestsToAdd.Accessories"></b-form-input>
                                 </b-form-group>
                             </b-col>
                             <b-col cols="7" xl="4">
                                 <b-form-group>
                                     <b-form-input placeholder="علت مراجعه" type="text"
-                                                  v-model="guestsToAdd[i].Reason"></b-form-input>
+                                                  v-model="guestsToAdd.Reason"></b-form-input>
                                 </b-form-group>
                             </b-col>
 
@@ -108,26 +99,23 @@
 <script>
 
     export default {
-        metaInfo() {
+        metaInfo () {
             return {
                 title: "سامانه حافظ",
             }
         },
-        data() {
+        data () {
             return {
-                guestsToAdd: [],
                 loading: {
-                    getAccessLevels: true,
                     getEmployees: true,
                     enterGuest: false,
                 },
-                employees: [],
-                accessLevels: [],
-                guests: [],
-            };
+                employee: {},
+                guest: null,
+            }
         },
         computed: {
-            employeeOptions() {
+            employeeOptions () {
                 return this.$store.state.api.employees.filter(employee =>
                     employee.Is_Guest && employee.Is_Available
                 ).map(employee => ({
@@ -136,16 +124,7 @@
                     text: employee.Name + ' ' + employee.LastName,
                 }))
             },
-            accessLevelOptions() {
-                return this.$store.state.api.accessLevels.filter(al =>
-                    al.Is_Guest
-                ).map(al => ({
-                    ...al,
-                    value: al.ID,
-                    text: al.Name,
-                }))
-            },
-            guestOptions() {
+            guestOptions () {
                 return this.$store.state.api.employees.filter(employee =>
                     employee.Is_Guest && !employee.Is_Available
                 ).map(employee => ({
@@ -154,61 +133,39 @@
                     text: employee.Name + ' ' + employee.LastName,
                 }))
             },
+            guestsToAdd () {
+                return {
+                    Employee_ID: this.employee.ID,
+                    Name: '',
+                    FName: '',
+                    PassportID: '',
+                    Accessories: '',
+                    Reason: ''
+                }
+            },
         },
         methods: {
-            async enterGuest() {
+            async enterGuest () {
                 this.loading.enterGuest = true
-                for (const guest of this.guestsToAdd)
-                    await this.$store.dispatch('addGuest', {
-                        ...guest,
-                        PassportID: this.persian2english(guest.PassportID)
-                    })
 
-                await this.$store.dispatch('enterGuest', {
-                    employee: this.employees.map(e => e.ID),
-                    access: this.accessLevels,
+                await this.$store.dispatch('addGuest', {
+                    ...this.guestsToAdd,
+                    PassportID: this.persian2english(this.guestsToAdd.PassportID)
                 })
-                this.$bvModal.hide('addEmployee');
-                this.guestsToAdd = []
+                this.employee = {}
+                this.$bvModal.hide('addGuest');
                 this.loading.enterGuest = false
             },
-            exitGuest() {
+            exitGuest () {
                 this.$store.dispatch('exitGuest', {
-                    employee: this.guests,
+                    employee: [this.guest],
                 })
+                    .then(() => this.guest = null)
             },
         },
-        watch: {
-            employees() {
-                this.guestsToAdd = []
-                for (let i = 0; i < this.employees.length; i++)
-                    this.guestsToAdd.push({
-                        Employee_ID: this.employees[i].ID,
-                        Name: '',
-                        FName: '',
-                        PassportID: '',
-                        Accessories: '',
-                        Reason: '',
-                    })
-            }
-        },
-        created() {
+        created () {
 
-            if (!this.$store.state.api.accessLevels.length)
-                this.$store.dispatch('getAccessLevels')
-                    .catch(e => {
-                        console.log('Could not get accessLevels', e);
-                        this.$bvToast.toast(`دریافت لیست سطوح دسترسی با خطا همراه بود`, {
-                            title: `لیست سطوح دسترسی`,
-                            variant: 'danger',
-                            toaster: 'b-toaster-top-left',
-                            noAutoHide: true,
-                        });
-                    })
-                    .finally(() => this.loading.getAccessLevels = false);
-
-
-            if (!this.$store.state.api.employees.length)
+            if ( !this.$store.state.api.employees.length )
                 this.$store.dispatch('getEmployees')
                     .catch(e => {
                         console.log('Could not get employees', e);
@@ -223,7 +180,7 @@
 
 
         }
-    };
+    }
 </script>
 <style>
     .box {

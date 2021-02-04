@@ -1,6 +1,6 @@
 <template>
     <div class="main-content">
-        <breadcumb page="گزارش مهمان‌ها"/>
+        <breadcumb page="گزارش مهمان"/>
         <!-- <div class="wrapper"> -->
         <b-card class="mb-30">
             <vue-good-table

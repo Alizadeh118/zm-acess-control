@@ -81,9 +81,6 @@
                                             clearAllText="حذف همه گزینه‌ها"/>
                             </b-form-group>
 
-                            <b-form-checkbox v-model="accessLevel.Is_Guest" class="ml-0">دسترسی مهمان</b-form-checkbox>
-
-
                         </b-form>
                         <template v-slot:modal-footer="{ ok, cancel }">
                             <div class="spinner-modal d-flex align-items-center">
@@ -112,34 +109,31 @@
 
                 <template slot="table-row" slot-scope="props">
 
-                    <div v-if="props.column.field === 'Button'" class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <b-badge variant="info" v-if="props.row.Is_Guest">مهمان</b-badge>
-                        </div>
-                        <div>
-                            <a href="#" @click.prevent="syncAccesses(props.row.ID)"
-                               :class="{'opacity-2 pointer-events-none': loading.syncAccesses.includes(props.row.ID) || loading.syncAccesses.includes(-1)}"
-                               v-b-tooltip.hover
-                               class="o-hidden d-inline-block"
-                               title="همگام سازی دسترسی">
-                                <i class="i-Arrow-Refresh text-25 text-info mr-2 d-inline-block"
-                                   :class="{'spin': loading.syncAccesses.includes(props.row.ID) || loading.syncAccesses.includes(-1)}"></i>
-                            </a>
-                            <a @click.prevent="editAccessLevel(props.row)"
-                               href=""
-                               v-b-tooltip.hover
-                               class="o-hidden d-inline-block"
-                               title="ویرایش دسترسی">
-                                <i class="i-Eraser-2 text-25 text-info mr-2"></i>
-                            </a>
-                            <a @click.prevent="removeAccessLevel(props.row)"
-                               href=""
-                               v-b-tooltip.hover
-                               class="o-hidden d-inline-block"
-                               title="حذف دسترسی">
-                                <i class="i-Close-Window text-25 text-danger"></i>
-                            </a>
-                        </div>
+                    <div v-if="props.column.field === 'Button'">
+
+                        <a href="#" @click.prevent="syncAccesses(props.row.ID)"
+                           :class="{'opacity-2 pointer-events-none': loading.syncAccesses.includes(props.row.ID) || loading.syncAccesses.includes(-1)}"
+                           v-b-tooltip.hover
+                           class="o-hidden d-inline-block"
+                           title="همگام سازی دسترسی">
+                            <i class="i-Arrow-Refresh text-25 text-info mr-2 d-inline-block"
+                               :class="{'spin': loading.syncAccesses.includes(props.row.ID) || loading.syncAccesses.includes(-1)}"></i>
+                        </a>
+                        <a @click.prevent="editAccessLevel(props.row)"
+                           href=""
+                           v-b-tooltip.hover
+                           class="o-hidden d-inline-block"
+                           title="ویرایش دسترسی">
+                            <i class="i-Eraser-2 text-25 text-info mr-2"></i>
+                        </a>
+                        <a @click.prevent="removeAccessLevel(props.row)"
+                           href=""
+                           v-b-tooltip.hover
+                           class="o-hidden d-inline-block"
+                           title="حذف دسترسی">
+                            <i class="i-Close-Window text-25 text-danger"></i>
+                        </a>
+
                     </div>
 
                     <div v-else-if="props.column.field === 'Employees'">
@@ -189,7 +183,7 @@
     import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
     export default {
-        metaInfo() {
+        metaInfo () {
             return {
                 title: "دسترسی‌ها",
             }
@@ -197,7 +191,7 @@
         components: {
             Treeselect
         },
-        data() {
+        data () {
             return {
                 loading: {
                     addOrUpdateAccessLevel: false,
@@ -228,8 +222,8 @@
                         field: "Button",
                         html: true,
                         sortable: false,
-                        tdClass: "text-right",
-                        thClass: "text-right"
+                        tdClass: "",
+                        thClass: ""
                     }
                 ],
                 accessLevel: {
@@ -247,17 +241,17 @@
             };
         },
         computed: {
-            employees() {
+            employees () {
                 const departments = []
-                for (const employee of this.$store.state.api.employees)
-                    if (!departments.find(d => d.id === employee.Department_ID))
+                for ( const employee of this.$store.state.api.employees )
+                    if ( !departments.find(d => d.id === employee.Department_ID) )
                         departments.push({
                             id: employee.Department_ID,
                             label: employee.Department_Name,
                             children: [],
                         });
 
-                for (const employee of this.$store.state.api.employees) {
+                for ( const employee of this.$store.state.api.employees ) {
                     const department = departments.find(d => d.id === employee.Department_ID)
                     department.children.push({
                         id: employee.ID,
@@ -276,7 +270,7 @@
                 //     }
                 // })
             },
-            devices() {
+            devices () {
                 return this.$store.state.api.devices.map(device => {
                     return {
                         ...device,
@@ -287,15 +281,15 @@
             },
         },
         methods: {
-            addOrUpdateAccessLevel() {
+            addOrUpdateAccessLevel () {
                 this.loading.addOrUpdateAccessLevel = true;
                 this.loading.addOrUpdateAccessLevelText = this.accessLevel.update ? 'ویرایش دسترسی...' : 'ایجاد دسترسی...';
 
-                if (typeof this.accessLevel.employee === "string")
+                if ( typeof this.accessLevel.employee === "string" )
                     this.accessLevel.employee = this.accessLevel.employee.split(',')
 
 
-                if (this.accessLevel.update) {
+                if ( this.accessLevel.update ) {
                     this.$store.dispatch('updateAccessLevel', this.accessLevel)
                         .then(() => {
                             this.loading.addOrUpdateAccessLevelText = 'ویرایش کارمندان و دستگاه‌ها...';
@@ -328,7 +322,7 @@
                             let msg
                             try {
                                 msg = err.response.data.Message
-                            } catch (e) {
+                            } catch ( e ) {
                                 msg = 'ویرایش دسترسی با خطا همراه بود'
                             }
                             this.$bvToast.toast(msg, {
@@ -343,7 +337,7 @@
                     this.$store.dispatch('addAccessLevel', this.accessLevel)
                         .then(accessLevel => {
                             this.loading.addOrUpdateAccessLevelText = 'افزودن کارمندان و دستگاه‌ها...';
-                            this.$store.dispatch('addAccessLevelMembers', {...this.accessLevel, ID: accessLevel.ID})
+                            this.$store.dispatch('addAccessLevelMembers', { ...this.accessLevel, ID: accessLevel.ID })
                                 .then(() => {
                                     this.$bvModal.hide('addAccessLevel');
                                     this.$bvToast.toast(`دسترسی با موفقیت افزوده شد`, {
@@ -370,7 +364,7 @@
                             let msg
                             try {
                                 msg = err.response.data.Message
-                            } catch (e) {
+                            } catch ( e ) {
                                 msg = 'افزودن دسترسی با خطا همراه بود'
                             }
                             this.$bvToast.toast(msg, {
@@ -381,7 +375,7 @@
                         })
                 }
             },
-            editAccessLevel(accessLevel) {
+            editAccessLevel (accessLevel) {
                 this.accessLevel = {
                     ...accessLevel,
                     employee: accessLevel.Employees.map(e => e.ID),
@@ -390,9 +384,9 @@
                 };
                 this.$bvModal.show('addAccessLevel');
             },
-            removeAccessLevel(accessLevel) {
+            removeAccessLevel (accessLevel) {
 
-                const msg = `آیا واقعا می‌خواهید دسترسی «${accessLevel.Name}» را حذف کنید؟`;
+                const msg = `آیا واقعا می‌خواهید دسترسی «${ accessLevel.Name }» را حذف کنید؟`;
                 this.$bvModal
                     .msgBoxConfirm(msg, {
                         title: "حذف دسترسی",
@@ -405,7 +399,7 @@
                         centered: true
                     })
                     .then(ok => {
-                        if (ok) {
+                        if ( ok ) {
                             this.loading.removeAccessLevel = true;
                             this.$store.dispatch('removeAccessLevel', accessLevel.ID)
                                 .then(() => {
@@ -426,10 +420,10 @@
                         }
                     })
             },
-            syncAccesses(accessIds) {
-                if (this.loading.syncAccesses.includes(accessIds)) return;
+            syncAccesses (accessIds) {
+                if ( this.loading.syncAccesses.includes(accessIds) ) return;
                 this.loading.syncAccesses.push(accessIds);
-                if (accessIds === -1)
+                if ( accessIds === -1 )
                     this.triggerProgressModal(true)
                 this.$store.dispatch('syncAccesses', Array.isArray(accessIds) ? accessIds : [accessIds])
                     .then(() => {
@@ -447,14 +441,14 @@
                         });
                     })
                     .finally(() => {
-                        if (accessIds === -1)
+                        if ( accessIds === -1 )
                             setTimeout(() => {
                                 this.triggerProgressModal(false)
                             }, 1000)
                         this.loading.syncAccesses = this.loading.syncAccesses.filter(i => i !== accessIds)
                     })
             },
-            onModalHidden() {
+            onModalHidden () {
                 this.accessLevel = {
                     Name: '',
                     Timezone_ID: null,
@@ -464,8 +458,8 @@
                     update: false
                 }
             },
-            triggerProgressModal(show = false) {
-                if (show) {
+            triggerProgressModal (show = false) {
+                if ( show ) {
                     this.$bvModal.show('syncAccessesProgressModal');
                     this.syncAccessesProgressInterval = setInterval(() => {
                         this.$store.dispatch('syncDevicesProgress')
@@ -477,7 +471,7 @@
                 }
             }
         },
-        created() {
+        created () {
             this.$store.dispatch('getAccessLevels')
                 .catch(e => {
                     console.log('Could not get accessLevels', e);
@@ -490,7 +484,7 @@
                 })
                 .finally(() => this.loading.getAccessLevels = false);
 
-            if (!this.$store.state.api.devices.length)
+            if ( !this.$store.state.api.devices.length )
                 this.$store.dispatch('getDevices')
                     .catch(e => {
                         console.log('Could not get devices', e);
@@ -502,7 +496,7 @@
                         });
                     });
 
-            if (!this.$store.state.api.employees.length)
+            if ( !this.$store.state.api.employees.length )
                 this.$store.dispatch('getEmployees')
                     .catch(e => {
                         console.log('Could not get employees', e);
@@ -514,7 +508,7 @@
                         });
                     });
 
-            if (!this.$store.state.api.timezones.length)
+            if ( !this.$store.state.api.timezones.length )
                 this.$store.dispatch('getTimezones')
                     .catch(e => {
                         console.log('Could not get timezones', e);
