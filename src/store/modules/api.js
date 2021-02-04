@@ -86,9 +86,9 @@ const actions = {
         }
     },
     async getDevicesState ({ commit, state }) {
+        console.log('here', state.devices);
         for ( const device of state.devices ) {
-
-            if ( state.wantToGetDevicesState ) {
+            if ( state.wantToGetDevicesState && (!device.stateUpdatedAt || Date.now() - device.stateUpdatedAt > 60000 )) {
                 try {
                     const response = await request.get(`/device/state/${ device.ID }`)
                     commit("UPDATE_DEVICE_STATE", {
@@ -683,8 +683,10 @@ const mutations = {
     },
     UPDATE_DEVICE_STATE (state, data) {
         state.devices = state.devices.map(device => {
-            if ( device.ID === data.id )
+            if ( device.ID === data.id ) {
                 device.State = data.state;
+                device.stateUpdatedAt = Date.now()
+            }
             return device;
         })
     },

@@ -487,10 +487,17 @@
                             noAutoHide: true,
                         });
                     })
+                    .then(() => {
+                        this.$store.commit('CHANGE_WANT_TO_GET_DEVICES_STATE', true)
+                        this.getDevicesState()
+                    })
                     .finally(() => this.loading.getDevices = false)
 
-            this.$store.commit('CHANGE_WANT_TO_GET_DEVICES_STATE', true)
-            this.getDevicesState()
+            else {
+                this.$store.commit('CHANGE_WANT_TO_GET_DEVICES_STATE', true)
+                this.getDevicesState()
+            }
+
         },
         beforeDestroy () {
             this.$store.commit('CHANGE_WANT_TO_GET_DEVICES_STATE', false)
