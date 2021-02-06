@@ -92,6 +92,19 @@
                         <div class="triangle"></div>
                     </li>
                     <li
+                            v-if="can('security')"
+                            @mouseenter="toggleSubMenu" @mouseleave="selectedParentMenu = null"
+                            :class="{ active: selectedParentMenu == 'security' }"
+                            class="nav-item"
+                            data-item="security"
+                    >
+                        <router-link tag="a" class="nav-item-hold" to="/security" active-class="text-primary">
+                            <i class="nav-icon i-Lock-User"></i>
+                            <span class="nav-text">تعریف مهمان</span>
+                        </router-link>
+                        <div class="triangle"></div>
+                    </li>
+                    <li
                             v-if="can('report')"
                             @mouseenter="toggleSubMenu" @mouseleave="selectedParentMenu = null"
                             :class="{ active: selectedParentMenu == 'report' }"

@@ -27,8 +27,8 @@
                                                 :options="guestOptions"></b-form-radio-group>
                         </b-col>
                         <b-col cols="12" class="text-center mt-3">
-                            <b-button variant="danger" class="px-5" :disabled="!guest" @click="exitGuest">خروج
-                                مهمان
+                            <b-button variant="danger" class="px-5" :disabled="loading.exitGuest || !guest" @click="exitGuest">
+                                خروج مهمان
                             </b-button>
                         </b-col>
                     </b-row>
@@ -109,6 +109,7 @@
                 loading: {
                     getEmployees: true,
                     enterGuest: false,
+                    exitGuest: false,
                 },
                 employee: {},
                 guest: null,
@@ -157,10 +158,10 @@
                 this.loading.enterGuest = false
             },
             exitGuest () {
-                this.$store.dispatch('exitGuest', {
-                    employee: [this.guest],
-                })
+                this.loading.exitGuest = true
+                this.$store.dispatch('exitGuest', this.guest)
                     .then(() => this.guest = null)
+                    .finally(() => this.loading.exitGuest = false)
             },
         },
         created () {

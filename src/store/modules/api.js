@@ -88,7 +88,7 @@ const actions = {
     async getDevicesState ({ commit, state }) {
         console.log('here', state.devices);
         for ( const device of state.devices ) {
-            if ( state.wantToGetDevicesState && (!device.stateUpdatedAt || Date.now() - device.stateUpdatedAt > 60000 )) {
+            if ( state.wantToGetDevicesState && (!device.stateUpdatedAt || Date.now() - device.stateUpdatedAt > 30000 )) {
                 try {
                     const response = await request.get(`/device/state/${ device.ID }`)
                     commit("UPDATE_DEVICE_STATE", {
@@ -588,9 +588,9 @@ const actions = {
             return Promise.reject(e);
         }
     },
-    async exitGuest ({ dispatch }, data) {
+    async exitGuest ({ dispatch }, id) {
         try {
-            const response = await request.post('/access/member/remove', data);
+            const response = await request.post(`/guests/${id}/exit`);
             await dispatch('getEmployees')
             return response.data;
         } catch ( e ) {

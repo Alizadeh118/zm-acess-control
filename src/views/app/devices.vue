@@ -131,46 +131,58 @@
 
                     <div v-else-if="props.column.field === 'Button'">
 
-                        <a href="#" @click.prevent="syncDevices(props.row.ID)"
-                           :class="{'opacity-2 pointer-events-none': !props.row.State || loading.syncDevices.includes(props.row.ID) || loading.syncDevices.includes(-1)}"
-                           v-b-tooltip.hover
-                           class="o-hidden d-inline-block mx-3"
-                           title="همگام سازی دستگاه">
-                            <i class="i-Arrow-Refresh text-25 text-info d-inline-block"
-                               :class="{'spin': loading.syncDevices.includes(props.row.ID) || loading.syncDevices.includes(-1)}"></i>
-                        </a>
+                        <template v-if="[42, 44].includes(+props.row.ID)">
+                            <a :href="'http://' + props.row.IP"
+                               target="_blank"
+                               v-b-tooltip.hover
+                               class="o-hidden d-inline-block mx-3"
+                               title="تنظیمات">
+                                <i class="i-Data-Settings text-25 text-info d-inline-block"></i>
+                            </a>
+                        </template>
 
-                        <a href="#" @click.prevent="getDataFromDevice(props.row)"
-                           :class="{'opacity-2 pointer-events-none': !props.row.State || loading.getDataFromDevice.includes(props.row.ID)}"
-                           v-b-tooltip.hover
-                           class="o-hidden d-inline-block mx-3"
-                           title="دریافت داده‌های دستگاه">
-                            <i class="i-Data-Download text-25 text-info"></i>
-                        </a>
+                        <template v-else>
+                            <a href="#" @click.prevent="syncDevices(props.row.ID)"
+                               :class="{'opacity-2 pointer-events-none': !props.row.State || loading.syncDevices.includes(props.row.ID) || loading.syncDevices.includes(-1)}"
+                               v-b-tooltip.hover
+                               class="o-hidden d-inline-block mx-3"
+                               title="همگام سازی دستگاه">
+                                <i class="i-Arrow-Refresh text-25 text-info d-inline-block"
+                                   :class="{'spin': loading.syncDevices.includes(props.row.ID) || loading.syncDevices.includes(-1)}"></i>
+                            </a>
 
-                        <a href="#" @click.prevent="syncTime(props.row)"
-                           :class="{'opacity-2 pointer-events-none': !props.row.State || loading.syncTime.includes(props.row.ID)}"
-                           v-b-tooltip.hover
-                           class="o-hidden d-inline-block mx-3"
-                           title="تنظیم زمان دستگاه">
-                            <i class="i-Clock-Back text-25 text-info"></i>
-                        </a>
+                            <a href="#" @click.prevent="getDataFromDevice(props.row)"
+                               :class="{'opacity-2 pointer-events-none': !props.row.State || loading.getDataFromDevice.includes(props.row.ID)}"
+                               v-b-tooltip.hover
+                               class="o-hidden d-inline-block mx-3"
+                               title="دریافت داده‌های دستگاه">
+                                <i class="i-Data-Download text-25 text-info"></i>
+                            </a>
 
-                        <a href="#" @click.prevent="clearData(props.row)"
-                           :class="{'opacity-2 pointer-events-none': !props.row.State || loading.clearData.includes(props.row.ID)}"
-                           v-b-tooltip.hover
-                           class="o-hidden d-inline-block mx-3"
-                           title="پاکسازی داده‌های دستگاه">
-                            <i class="i-Cloud-Remove text-25 text-warning"></i>
-                        </a>
+                            <a href="#" @click.prevent="syncTime(props.row)"
+                               :class="{'opacity-2 pointer-events-none': !props.row.State || loading.syncTime.includes(props.row.ID)}"
+                               v-b-tooltip.hover
+                               class="o-hidden d-inline-block mx-3"
+                               title="تنظیم زمان دستگاه">
+                                <i class="i-Clock-Back text-25 text-info"></i>
+                            </a>
 
-                        <a href="#" @click.prevent="removeDevice(props.row)"
-                           :class="{'opacity-2 pointer-events-none': loading.removeDevice}"
-                           v-b-tooltip.hover
-                           class="o-hidden d-inline-block mx-3"
-                           title="حذف دستگاه">
-                            <i class="i-Close-Window text-25 text-danger"></i>
-                        </a>
+                            <a href="#" @click.prevent="clearData(props.row)"
+                               :class="{'opacity-2 pointer-events-none': !props.row.State || loading.clearData.includes(props.row.ID)}"
+                               v-b-tooltip.hover
+                               class="o-hidden d-inline-block mx-3"
+                               title="پاکسازی داده‌های دستگاه">
+                                <i class="i-Cloud-Remove text-25 text-warning"></i>
+                            </a>
+
+                            <a href="#" @click.prevent="removeDevice(props.row)"
+                               :class="{'opacity-2 pointer-events-none': loading.removeDevice}"
+                               v-b-tooltip.hover
+                               class="o-hidden d-inline-block mx-3"
+                               title="حذف دستگاه">
+                                <i class="i-Close-Window text-25 text-danger"></i>
+                            </a>
+                        </template>
 
                     </div>
 
@@ -308,7 +320,7 @@
                 this.$store.dispatch('getDevicesState');
                 this.getDevicesStateInterval = setTimeout(() => {
                     this.getDevicesState()
-                }, 60000) // sync devices state every 60 seconds
+                }, 30000) // sync devices state every 60 seconds
             },
             removeDevice (device) {
                 if ( this.loading.removeDevice ) return;
@@ -488,8 +500,8 @@
                         });
                     })
                     .then(() => {
-                        this.$store.commit('CHANGE_WANT_TO_GET_DEVICES_STATE', true)
-                        this.getDevicesState()
+                        // this.$store.commit('CHANGE_WANT_TO_GET_DEVICES_STATE', true)
+                        // this.getDevicesState()
                     })
                     .finally(() => this.loading.getDevices = false)
 

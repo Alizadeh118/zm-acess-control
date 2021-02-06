@@ -75,7 +75,7 @@ const routes = [
             {
                 name: 'security',
                 path: "/security",
-                meta: { authorize: [Role.security] },
+                meta: { authorize: [Role.admin, Role.security] },
                 component: () => import("./views/app/security"),
             },
             {
